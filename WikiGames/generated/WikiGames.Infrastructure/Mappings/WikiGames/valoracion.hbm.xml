@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <joined-subclass name="Valoracion" table="Valoracion" extends="Contenido">
+    <key column="id"/>
+    <property name="Puntuacion" type="Single">
+      <column name="puntuacion" not-null="true"/>
+    </property>
+    <many-to-one name="Videojuego" class="Videojuego">
+      <column name="FK_Videojuego_videojuego" not-null="true"/>
+    </many-to-one>
+  </joined-subclass>
+  <query name="ValoracionReadAllHQL">from Valoracion</query>
+</hibernate-mapping>

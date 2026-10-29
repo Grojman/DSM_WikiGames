@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <class name="Notificacion" table="Notificacion">
+    <id name="Id" column="id" type="Int32">
+      <generator class="hilo"/>
+    </id>
+    <property name="Texto" type="String">
+      <column name="texto" not-null="true"/>
+    </property>
+    <property name="Fecha" type="Date">
+      <column name="fecha" sql-type="date" not-null="true"/>
+    </property>
+    <many-to-one name="Denuncia" class="Denuncia">
+      <column name="FK_Denuncia_denuncia"/>
+    </many-to-one>
+    <bag name="Notificados">
+      <key>
+        <column name="FK_Notificacion_notificados"/>
+      </key>
+      <one-to-many class="Usuario"/>
+    </bag>
+  </class>
+  <query name="NotificacionReadAllHQL">from Notificacion</query>
+</hibernate-mapping>

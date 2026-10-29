@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <class name="Rechazo" table="Rechazo">
+    <id name="Id" column="id" type="Int32">
+      <generator class="hilo"/>
+    </id>
+    <property name="Fecha" type="Date">
+      <column name="fecha" sql-type="date" not-null="true"/>
+    </property>
+    <property name="Motivo" type="String">
+      <column name="motivo" not-null="true"/>
+    </property>
+    <many-to-one name="Videojuego" class="Videojuego">
+      <column name="FK_Videojuego_videojuego" not-null="true"/>
+    </many-to-one>
+    <many-to-one name="Gestor" class="Usuario">
+      <column name="FK_Usuario_gestor" not-null="true"/>
+    </many-to-one>
+  </class>
+  <query name="RechazoReadAllHQL">from Rechazo</query>
+</hibernate-mapping>

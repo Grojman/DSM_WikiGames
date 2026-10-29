@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <joined-subclass name="Videojuego" table="Videojuego" extends="Contenido">
+    <key column="id"/>
+    <property name="Titulo" type="String">
+      <column name="titulo" not-null="true"/>
+    </property>
+    <property name="Enlace" type="String">
+      <column name="enlace" not-null="true"/>
+    </property>
+    <property name="NumeroLikes" type="Int32">
+      <column name="numeroLikes" not-null="true"/>
+    </property>
+    <property name="Imagen" type="String">
+      <column name="imagen" not-null="true"/>
+    </property>
+    <property name="Estado" type="WikiGames.Domain.Enums.EstadoContenido, WikiGames.Domain">
+      <column name="estado" not-null="true"/>
+    </property>
+    <bag name="Temas" inverse="true">
+      <key>
+        <column name="FK_Videojuego_videojuego"/>
+      </key>
+      <one-to-many class="TemaConversacion"/>
+    </bag>
+    <bag name="Valoraciones" cascade="all-delete-orphan" inverse="true">
+      <key>
+        <column name="FK_Videojuego_videojuego"/>
+      </key>
+      <one-to-many class="Valoracion"/>
+    </bag>
+    <many-to-one name="Rechazo" class="Rechazo">
+      <column name="FK_Rechazo_rechazo"/>
+    </many-to-one>
+    <bag name="Categorias" inverse="true">
+      <key>
+        <column name="FK_Videojuego_videojuego"/>
+      </key>
+      <one-to-many class="Categoria"/>
+    </bag>
+  </joined-subclass>
+  <query name="VideojuegoReadAllHQL">from Videojuego</query>
+</hibernate-mapping>

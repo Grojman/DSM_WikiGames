@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <class name="Denuncia" table="Denuncia">
+    <id name="Id" column="id" type="Int32">
+      <generator class="hilo"/>
+    </id>
+    <property name="Fecha" type="Date">
+      <column name="fecha" sql-type="date" not-null="true"/>
+    </property>
+    <property name="Estado" type="WikiGames.Domain.Enums.EstadoContenido, WikiGames.Domain">
+      <column name="estado" not-null="true"/>
+    </property>
+    <many-to-one name="Notificacion" class="Notificacion">
+      <column name="FK_Notificacion_notificacion"/>
+    </many-to-one>
+    <many-to-one name="Denunciante" class="Usuario">
+      <column name="FK_Usuario_denunciante" not-null="true"/>
+    </many-to-one>
+    <many-to-one name="Denunciado" class="Usuario">
+      <column name="FK_Usuario_denunciado"/>
+    </many-to-one>
+    <many-to-one name="ContenidoDenunciado" class="Contenido">
+      <column name="FK_Contenido_contenidoDenunciado"/>
+    </many-to-one>
+  </class>
+  <query name="DenunciaReadAllHQL">from Denuncia</query>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+{
+  "generation": {
+    "orm": "nhibernate",
+    "outputDirectory": "generated",
+    "projectName": "WikiGames",
+    "targetFramework": "net9.0",
+    "database": "sqlite"
+  },
+  "database": {
+    "provider": "sqlite",
+    "name": "WikiGames",
+    "file": "WikiGames.db"
+  }
+}

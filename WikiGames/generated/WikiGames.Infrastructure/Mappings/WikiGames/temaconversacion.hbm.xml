@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <joined-subclass name="TemaConversacion" table="TemaConversacion" extends="Contenido">
+    <key column="id"/>
+    <property name="Titulo" type="String">
+      <column name="titulo" not-null="true"/>
+    </property>
+    <many-to-one name="Videojuego" class="Videojuego">
+      <column name="FK_Videojuego_videojuego" not-null="true"/>
+    </many-to-one>
+    <bag name="Comentarios" inverse="true">
+      <key>
+        <column name="FK_TemaConversacion_tema"/>
+      </key>
+      <one-to-many class="Comentario"/>
+    </bag>
+  </joined-subclass>
+  <query name="TemaConversacionReadAllHQL">from TemaConversacion</query>
+</hibernate-mapping>

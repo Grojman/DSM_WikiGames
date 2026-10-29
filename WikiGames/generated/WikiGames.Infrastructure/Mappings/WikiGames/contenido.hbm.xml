@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <class name="Contenido" table="Contenido">
+    <id name="Id" column="id" type="Int32">
+      <generator class="hilo"/>
+    </id>
+    <property name="Texto" type="String">
+      <column name="texto" not-null="true"/>
+    </property>
+    <property name="FechaCreacion" type="Date">
+      <column name="fechaCreacion" sql-type="date" not-null="true"/>
+    </property>
+    <property name="NumeroMeGusta" type="Int32">
+      <column name="numeroMeGusta" not-null="true"/>
+    </property>
+    <many-to-one name="UsuarioCreador" class="Usuario">
+      <column name="FK_Usuario_usuarioCreador" not-null="true"/>
+    </many-to-one>
+    <bag name="Acciones" inverse="true">
+      <key>
+        <column name="FK_Contenido_contenidoAfectado"/>
+      </key>
+      <one-to-many class="AccionSistema"/>
+    </bag>
+    <bag name="Denuncias" inverse="true">
+      <key>
+        <column name="FK_Contenido_contenidoDenunciado"/>
+      </key>
+      <one-to-many class="Denuncia"/>
+    </bag>
+    <bag name="UsuarioFavorito">
+      <key>
+        <column name="FK_Contenido_usuarioFavorito"/>
+      </key>
+      <one-to-many class="Usuario"/>
+    </bag>
+  </class>
+  <query name="ContenidoReadAllHQL">from Contenido</query>
+</hibernate-mapping>

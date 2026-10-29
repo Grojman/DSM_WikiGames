@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="WikiGames.Domain"
+                   namespace="WikiGames.Domain.Entities">
+  <joined-subclass name="Comentario" table="Comentario" extends="Contenido">
+    <key column="id"/>
+    <many-to-one name="Tema" class="TemaConversacion">
+      <column name="FK_TemaConversacion_tema" not-null="true"/>
+    </many-to-one>
+    <bag name="Respuestas" inverse="true">
+      <key>
+        <column name="FK_Comentario_comentarioAsociado"/>
+      </key>
+      <one-to-many class="Comentario"/>
+    </bag>
+    <many-to-one name="ComentarioAsociado" class="Comentario">
+      <column name="FK_Comentario_comentarioAsociado"/>
+    </many-to-one>
+  </joined-subclass>
+  <query name="ComentarioReadAllHQL">from Comentario</query>
+</hibernate-mapping>

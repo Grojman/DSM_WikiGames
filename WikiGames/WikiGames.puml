@@ -1,0 +1,185 @@
+@startuml WikiGames
+skinparam packageStyle rectangle
+title WikiGames Domain
+
+package "WikiGames" {
+  enum Rol {
+    Registrado
+    Moderador
+    Administrador
+  }
+
+  enum EstadoContenido {
+    Pendiente
+    Aprobado
+    Rechazado
+  }
+
+  class Usuario <<User>> {
+    -id: long <<oid>> <<isToken>>
+    -name: string
+    -password: string <<password>>
+    -rolUsuario: Rol
+    --
+    +new(p_name: string, p_password: string <<password>>, p_rolUsuario: Rol): Usuario <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_name: string, p_password: string <<password>>, p_rolUsuario: Rol): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Usuario <<ReadOID>>
+    +readAll(): Usuario[*] <<ReadAll>>
+    +actualizarRol(p_oid: long <<oid>>, p_oid_admin: long <<oid>>, nuevo_rol: Rol): void <<Custom>>
+    +addDenunciasRecibida(p_oid: long <<oid>>, p_denuncia_oids: long[*] <<oid>>): void <<Relationer>>
+  }
+
+  class Videojuego {
+    -titulo: string
+    -enlace: string
+    -numeroLikes: int
+    -imagen: string
+    -estado: EstadoContenido
+    --
+    +new(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_titulo: string, p_enlace: string, p_numeroLikes: int, p_imagen: string, p_estado: EstadoContenido): Videojuego <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_titulo: string, p_enlace: string, p_numeroLikes: int, p_imagen: string, p_estado: EstadoContenido): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Videojuego <<ReadOID>>
+    +readAll(): Videojuego[*] <<ReadAll>>
+  }
+
+  class Categoria {
+    -id: long <<oid>> <<isToken>>
+    -name: string
+    --
+    +new(p_name: string, p_videojuego_oid: long <<oid>>): Categoria <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_name: string, p_videojuego_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Categoria <<ReadOID>>
+    +readAll(): Categoria[*] <<ReadAll>>
+    +addHijo(p_oid: long <<oid>>, p_categoria2_oids: long[*] <<oid>>): void <<Relationer>>
+    +addPadre(p_oid: long <<oid>>, p_categoria2_oid: long <<oid>>): void <<Relationer>>
+  }
+
+  class TemaConversacion {
+    -titulo: string
+    --
+    +new(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_titulo: string, p_videojuego_oid: long <<oid>>): TemaConversacion <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_titulo: string, p_videojuego_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): TemaConversacion <<ReadOID>>
+    +readAll(): TemaConversacion[*] <<ReadAll>>
+  }
+
+  class Comentario {
+    +new(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_tema_oid: long <<oid>>): Comentario <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_tema_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Comentario <<ReadOID>>
+    +readAll(): Comentario[*] <<ReadAll>>
+    +addComentarioAsociado(p_oid: long <<oid>>, p_comentario2_oid: long <<oid>>): void <<Relationer>>
+    +addRespuesta(p_oid: long <<oid>>, p_comentario2_oids: long[*] <<oid>>): void <<Relationer>>
+  }
+
+  class Denuncia {
+    -id: long <<oid>>
+    -fecha: Date
+    -estado: EstadoContenido
+    --
+    +new(p_fecha: Date, p_estado: EstadoContenido, p_denunciante_oid: long <<oid>>): Denuncia <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_fecha: Date, p_estado: EstadoContenido, p_denunciante_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Denuncia <<ReadOID>>
+    +readAll(): Denuncia[*] <<ReadAll>>
+    +addDenunciado(p_oid: long <<oid>>, p_usuario_oid: long <<oid>>): void <<Relationer>>
+    +addContenidoDenunciado(p_oid: long <<oid>>, p_contenido_oid: long <<oid>>): void <<Relationer>>
+  }
+
+  class Valoracion {
+    -puntuacion: float
+    --
+    +new(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_puntuacion: float, p_videojuego_oid: long <<oid>>): Valoracion <<New>>
+    +newValorValidado(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_puntuacion: float, p_videojuego_oid: long <<oid>>): Valoracion <<New, customized>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_puntuacion: float, p_videojuego_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Valoracion <<ReadOID>>
+    +readAll(): Valoracion[*] <<ReadAll>>
+    +actualizarMediaVideojuego(p_oid: long <<oid>>): void <<CustomTransaction>>
+  }
+
+  class AccionSistema {
+    -id: long <<oid>>
+    -fecha: Date
+    -descripcion: string
+    --
+    +newUsuarioValido(p_fecha: Date, p_descripcion: string, p_causante_oid: long <<oid>>, p_contenidoAfectado_oid: long <<oid>>): AccionSistema <<New, customized>>
+    +new(p_fecha: Date, p_descripcion: string, p_causante_oid: long <<oid>>, p_contenidoAfectado_oid: long <<oid>>): AccionSistema <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_fecha: Date, p_descripcion: string, p_causante_oid: long <<oid>>, p_contenidoAfectado_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): AccionSistema <<ReadOID>>
+    +readAll(): AccionSistema[*] <<ReadAll>>
+  }
+
+  class Rechazo {
+    -id: long <<oid>>
+    -fecha: Date
+    -motivo: string
+    --
+    +newUsuarioValido(p_fecha: Date, p_motivo: string, p_videojuego_oid: long <<oid>>, p_gestor_oid: long <<oid>>): Rechazo <<New, customized>>
+    +new(p_fecha: Date, p_motivo: string, p_videojuego_oid: long <<oid>>, p_gestor_oid: long <<oid>>): Rechazo <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_fecha: Date, p_motivo: string, p_videojuego_oid: long <<oid>>, p_gestor_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Rechazo <<ReadOID>>
+    +readAll(): Rechazo[*] <<ReadAll>>
+  }
+
+  class Contenido {
+    -id: long <<oid>>
+    -texto: string
+    -fechaCreacion: Date
+    -numeroMeGusta: int
+    --
+    +new(p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_usuarioCreador_oid: long <<oid>>): Contenido <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fechaCreacion: Date, p_numeroMeGusta: int, p_usuarioCreador_oid: long <<oid>>): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Contenido <<ReadOID>>
+    +readAll(): Contenido[*] <<ReadAll>>
+    +addDenuncia(p_oid: long <<oid>>, p_denuncia_oids: long[*] <<oid>>): void <<Relationer>>
+    +darMeGusta(p_oid: long <<oid>>): void <<Custom>>
+    +retirarMeGusta(p_oid: long <<oid>>): void <<Custom>>
+  }
+
+  class Notificacion {
+    -id: long <<oid>>
+    -texto: string
+    -fecha: Date
+    --
+    +new(p_texto: string, p_fecha: Date): Notificacion <<New>>
+    +destroy(p_oid: long <<oid>>): void <<Destroy>>
+    +modify(p_oid: long <<oid>>, p_texto: string, p_fecha: Date): void <<Modifier>>
+    +readOID(p_oid: long <<oid>>): Notificacion <<ReadOID>>
+    +readAll(): Notificacion[*] <<ReadAll>>
+  }
+
+  ' Inheritance
+  Contenido <|-- Videojuego
+  Contenido <|-- TemaConversacion
+  Contenido <|-- Comentario
+  Contenido <|-- Valoracion
+
+  ' Relationships
+  Usuario "usuarioCreador\n1" o-- "contenidoGenerado\n0..*" Contenido
+  Videojuego "videojuego\n1" o-- "temas\n0..*" TemaConversacion
+  Videojuego "videojuego\n1" *-- "valoraciones\n0..*" Valoracion
+  TemaConversacion "tema\n1" o-- "comentarios\n0..*" Comentario
+  Videojuego "videojuego\n1" -- "rechazo\n0..1" Rechazo
+  Comentario "comentarioAsociado\n0..1" -- "respuestas\n0..*" Comentario
+  Categoria "padre\n0..1" -- "hijos\n0..*" Categoria
+  Videojuego "videojuego\n1" -- "categorias\n0..*" Categoria
+  Denuncia "denuncia\n0..1" -- "notificacion\n0..1" Notificacion
+  Usuario "gestor\n1" -- "rechazos\n0..*" Rechazo
+  Usuario "causante\n1" -- "acciones\n0..*" AccionSistema
+  AccionSistema "acciones\n0..*" -- "contenidoAfectado\n1" Contenido
+  Notificacion "notificaciones\n0..*" -- "notificados\n0..*" Usuario
+  Denuncia "denunciasGeneradas\n0..*" -- "denunciante\n1" Usuario
+  Usuario "denunciado\n0..1" -- "denunciasRecibidas\n0..*" Denuncia
+  Denuncia "denuncias\n0..*" -- "contenidoDenunciado\n0..1" Contenido
+  Usuario "usuarioFavorito\n0..*" o-- "contenidoFavorito\n0..*" Contenido
+}
+@enduml
