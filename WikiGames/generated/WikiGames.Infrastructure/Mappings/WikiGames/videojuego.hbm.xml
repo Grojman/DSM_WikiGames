@@ -10,9 +10,6 @@
     <property name="Enlace" type="String">
       <column name="enlace" not-null="true"/>
     </property>
-    <property name="NumeroLikes" type="Int32">
-      <column name="numeroLikes" not-null="true"/>
-    </property>
     <property name="Imagen" type="String">
       <column name="imagen" not-null="true"/>
     </property>

@@ -41,22 +41,6 @@ public sealed partial class DenunciaService : ServiceEntity<Denuncia>
     public Task<Denuncia> ModifierDenunciaDefaultAsync(Denuncia entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Denuncia> NewAsync(DateTime p_fecha, EstadoContenido p_estado, int p_denunciante_oid)
-    {
-        Usuario denuncianteEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_denunciante_oid)
-            ?? throw new ModelException("Usuario not found for Denuncia.Denunciante.");
-
-        Denuncia entity = new Denuncia
-        {
-            Fecha = p_fecha,
-            Estado = p_estado,
-            Denunciante = denuncianteEntity,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Denuncia entity = await _repository.ReadAsync(p_oid)

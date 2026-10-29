@@ -41,21 +41,6 @@ public sealed partial class CategoriaService : ServiceEntity<Categoria>
     public Task<Categoria> ModifierCategoriaDefaultAsync(Categoria entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Categoria> NewAsync(string p_name, int p_videojuego_oid)
-    {
-        Videojuego videojuegoEntity = await _unitOfWork.VideojuegoRepository.ReadAsync(p_videojuego_oid)
-            ?? throw new ModelException("Videojuego not found for Categoria.Videojuego.");
-
-        Categoria entity = new Categoria
-        {
-            Name = p_name,
-            Videojuego = videojuegoEntity,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Categoria entity = await _repository.ReadAsync(p_oid)

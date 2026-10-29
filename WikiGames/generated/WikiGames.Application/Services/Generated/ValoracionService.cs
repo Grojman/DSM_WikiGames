@@ -41,7 +41,7 @@ public sealed partial class ValoracionService : ServiceEntity<Valoracion>
     public Task<Valoracion> ModifierValoracionDefaultAsync(Valoracion entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Valoracion> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_videojuego_oid, int p_usuarioCreador_oid)
+    public async Task<Valoracion> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_usuarioCreador_oid, int p_videojuego_oid)
     {
         Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
             ?? throw new ModelException("Usuario not found for Valoracion.UsuarioCreador.");
@@ -70,7 +70,7 @@ public sealed partial class ValoracionService : ServiceEntity<Valoracion>
         await _repository.DeleteAsync(entity);
     }
 
-    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_videojuego_oid, int p_usuarioCreador_oid)
+    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_usuarioCreador_oid, int p_videojuego_oid)
     {
         Valoracion entity = await _repository.ReadAsync(p_oid)
             ?? throw new ModelException("Valoracion not found.");

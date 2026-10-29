@@ -41,23 +41,6 @@ public sealed partial class ContenidoService : ServiceEntity<Contenido>
     public Task<Contenido> ModifierContenidoDefaultAsync(Contenido entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Contenido> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, int p_usuarioCreador_oid)
-    {
-        Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
-            ?? throw new ModelException("Usuario not found for Contenido.UsuarioCreador.");
-
-        Contenido entity = new Contenido
-        {
-            Texto = p_texto,
-            FechaCreacion = p_fechaCreacion,
-            NumeroMeGusta = p_numeroMeGusta,
-            UsuarioCreador = usuarioCreadorEntity,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Contenido entity = await _repository.ReadAsync(p_oid)

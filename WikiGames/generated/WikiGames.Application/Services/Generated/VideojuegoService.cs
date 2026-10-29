@@ -41,28 +41,6 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
     public Task<Videojuego> ModifierVideojuegoDefaultAsync(Videojuego entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Videojuego> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, string p_titulo, string p_enlace, int p_numeroLikes, string p_imagen, EstadoContenido p_estado, int p_usuarioCreador_oid)
-    {
-        Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
-            ?? throw new ModelException("Usuario not found for Videojuego.UsuarioCreador.");
-
-        Videojuego entity = new Videojuego
-        {
-            Texto = p_texto,
-            FechaCreacion = p_fechaCreacion,
-            NumeroMeGusta = p_numeroMeGusta,
-            Titulo = p_titulo,
-            Enlace = p_enlace,
-            NumeroLikes = p_numeroLikes,
-            Imagen = p_imagen,
-            Estado = p_estado,
-            UsuarioCreador = usuarioCreadorEntity,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Videojuego entity = await _repository.ReadAsync(p_oid)
@@ -70,7 +48,7 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         await _repository.DeleteAsync(entity);
     }
 
-    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, string p_titulo, string p_enlace, int p_numeroLikes, string p_imagen, EstadoContenido p_estado, int p_usuarioCreador_oid)
+    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, string p_titulo, string p_enlace, string p_imagen, EstadoContenido p_estado, int p_usuarioCreador_oid)
     {
         Videojuego entity = await _repository.ReadAsync(p_oid)
             ?? throw new ModelException("Videojuego not found.");
@@ -79,7 +57,6 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         entity.NumeroMeGusta = p_numeroMeGusta;
         entity.Titulo = p_titulo;
         entity.Enlace = p_enlace;
-        entity.NumeroLikes = p_numeroLikes;
         entity.Imagen = p_imagen;
         entity.Estado = p_estado;
         await _repository.SaveAsync(entity);

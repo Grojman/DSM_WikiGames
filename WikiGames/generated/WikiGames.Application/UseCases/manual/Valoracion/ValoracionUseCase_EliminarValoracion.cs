@@ -4,7 +4,7 @@ using WikiGames.Application.Services;
 using WikiGames.Domain.Entities;
 using WikiGames.Domain.Enums;
 
-        /*PROTECTED REGION ID(usingWikiGames.Application.UseCases_Valoracion_actualizarMediaVideojuego) ENABLED START*/
+        /*PROTECTED REGION ID(usingWikiGames.Application.UseCases_Valoracion_eliminarValoracion) ENABLED START*/
         // references to other libraries
         /*PROTECTED REGION END*/
 
@@ -12,15 +12,15 @@ namespace WikiGames.Application.UseCases.Valoracion;
 
 public sealed partial class ValoracionUseCase
 {
-    public async Task ActualizarMediaVideojuegoAsync(int p_oid)
+    public async Task EliminarValoracionAsync(int p_oid)
     {
-        /*PROTECTED REGION ID(WikiGames.Application.UseCases_Valoracion_actualizarMediaVideojuego) ENABLED START*/
+        /*PROTECTED REGION ID(WikiGames.Application.UseCases_Valoracion_eliminarValoracion) ENABLED START*/
         // Resolve external infrastructure services with _utils!.GetRequiredService<TService>() when this use case receives IUnitOfWorkUtils.
         ValoracionService valoracionService = null!;
 
         try
         {
-            await _unitOfWork.BeginTransactionAsync("ValoracionUseCase.ActualizarMediaVideojuegoAsync");
+            await _unitOfWork.BeginTransactionAsync("ValoracionUseCase.EliminarValoracionAsync");
             valoracionService = new ValoracionService(_unitOfWork);
 
             // Write here your custom transaction code...
@@ -31,7 +31,7 @@ public sealed partial class ValoracionUseCase
         catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync();
-            throw new ModelException("Application error while executing use case Valoracion.actualizarMediaVideojuego.", ex);
+            throw new ModelException("Application error while executing use case Valoracion.eliminarValoracion.", ex);
         }
         /*PROTECTED REGION END*/
     }

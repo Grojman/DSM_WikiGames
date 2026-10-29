@@ -16,39 +16,39 @@ public sealed class ManualOperationTests
     }
 
     [Fact]
-    public async Task Usuario_ActualizarRol_Custom_Manual_Contract()
+    public async Task Videojuego_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Usuario:actualizarRol:arrange">
+        // <haria-protected id="test:customized:Videojuego:newCustomized:arrange">
         // Create a test unit of work and assign service before enabling the generated invocation.
         // </haria-protected>
 
-        var operationName = "actualizarRol";
-        var operationType = "Custom";
+        var operationName = "newCustomized";
+        var operationType = "New";
         var executeManualInvocation = false;
-        UsuarioService? service = null;
+        VideojuegoService? service = null;
         object? invocationResult = null;
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Usuario:actualizarRol:invoke">
-        await ((dynamic)service!).ActualizarRolAsync(default(int), default(int), Rol.Registrado);
+        // <haria-protected id="test:customized:Videojuego:newCustomized:invoke">
+        invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Videojuego Texto", new DateTime(2026, 1, 1), "Sample Videojuego Titulo", "Sample Videojuego Enlace", "Sample Videojuego Imagen", default(int));
         // </haria-protected>
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Usuario:actualizarRol:assert">
+        // <haria-protected id="test:customized:Videojuego:newCustomized:assert">
         EnsureContractOutput(operationName, operationType);
         // </haria-protected>
     }
 
     [Fact]
-    public async Task Videojuego_AceptarVideojuego_Custom_Manual_Contract()
+    public async Task Videojuego_AprobarVideojuego_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Videojuego:aceptarVideojuego:arrange">
+        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:arrange">
         // Create a test unit of work and assign service before enabling the generated invocation.
         // </haria-protected>
 
-        var operationName = "aceptarVideojuego";
+        var operationName = "aprobarVideojuego";
         var operationType = "Custom";
         var executeManualInvocation = false;
         VideojuegoService? service = null;
@@ -56,51 +56,155 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Videojuego:aceptarVideojuego:invoke">
-        await ((dynamic)service!).AceptarVideojuegoAsync(default(int), default(int));
+        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:invoke">
+        await ((dynamic)service!).AprobarVideojuegoAsync(default(int));
         // </haria-protected>
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Videojuego:aceptarVideojuego:assert">
+        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:assert">
         EnsureContractOutput(operationName, operationType);
         // </haria-protected>
     }
 
     [Fact]
-    public async Task Valoracion_NewValorValidado_Customized_Manual_Contract()
+    public async Task Videojuego_RechazarVideojuego_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:customized:Valoracion:newValorValidado:arrange">
+        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:arrange">
         // Create a test unit of work and assign service before enabling the generated invocation.
         // </haria-protected>
 
-        var operationName = "newValorValidado";
-        var operationType = "New";
+        var operationName = "rechazarVideojuego";
+        var operationType = "Custom";
         var executeManualInvocation = false;
-        ValoracionService? service = null;
+        VideojuegoService? service = null;
         object? invocationResult = null;
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:Valoracion:newValorValidado:invoke">
-        invocationResult = await ((dynamic)service!).NewValorValidadoAsync("Sample Valoracion Texto", new DateTime(2026, 1, 1), 1, 1.5f, default(int));
+        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:invoke">
+        await ((dynamic)service!).RechazarVideojuegoAsync(default(int));
         // </haria-protected>
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:Valoracion:newValorValidado:assert">
+        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:assert">
         EnsureContractOutput(operationName, operationType);
         // </haria-protected>
     }
 
     [Fact]
-    public async Task Valoracion_ActualizarMediaVideojuego_CustomTransaction_Manual_Contract()
+    public async Task Categoria_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarMediaVideojuego:arrange">
+        // <haria-protected id="test:customized:Categoria:newCustomized:arrange">
+        // Create a test unit of work and assign service before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "newCustomized";
+        var operationType = "New";
+        var executeManualInvocation = false;
+        CategoriaService? service = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:customized:Categoria:newCustomized:invoke">
+        invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Categoria Name", default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:customized:Categoria:newCustomized:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
+    public async Task Denuncia_NewCustomized_Customized_Manual_Contract()
+    {
+        // <haria-protected id="test:customized:Denuncia:newCustomized:arrange">
+        // Create a test unit of work and assign service before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "newCustomized";
+        var operationType = "New";
+        var executeManualInvocation = false;
+        DenunciaService? service = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:customized:Denuncia:newCustomized:invoke">
+        invocationResult = await ((dynamic)service!).NewCustomizedAsync(new DateTime(2026, 1, 1), default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:customized:Denuncia:newCustomized:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
+    public async Task Denuncia_AprobarDenuncia_Custom_Manual_Contract()
+    {
+        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:arrange">
+        // Create a test unit of work and assign service before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "aprobarDenuncia";
+        var operationType = "Custom";
+        var executeManualInvocation = false;
+        DenunciaService? service = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:invoke">
+        await ((dynamic)service!).AprobarDenunciaAsync(default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
+    public async Task Denuncia_RechazarDenuncia_Custom_Manual_Contract()
+    {
+        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:arrange">
+        // Create a test unit of work and assign service before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "rechazarDenuncia";
+        var operationType = "Custom";
+        var executeManualInvocation = false;
+        DenunciaService? service = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:invoke">
+        await ((dynamic)service!).RechazarDenunciaAsync(default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
+    public async Task Valoracion_ActualizarValoracion_CustomTransaction_Manual_Contract()
+    {
+        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:arrange">
         // Create a test unit of work and assign useCase before enabling the generated invocation.
         // </haria-protected>
 
-        var operationName = "actualizarMediaVideojuego";
+        var operationName = "actualizarValoracion";
         var operationType = "CustomTransaction";
         var executeManualInvocation = false;
         ValoracionUseCase? useCase = null;
@@ -108,39 +212,65 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarMediaVideojuego:invoke">
-        await ((dynamic)useCase!).ActualizarMediaVideojuegoAsync(default(int));
+        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:invoke">
+        await ((dynamic)useCase!).ActualizarValoracionAsync(default(int), 1.5f);
         // </haria-protected>
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarMediaVideojuego:assert">
+        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:assert">
         EnsureContractOutput(operationName, operationType);
         // </haria-protected>
     }
 
     [Fact]
-    public async Task AccionSistema_NewUsuarioValido_Customized_Manual_Contract()
+    public async Task Valoracion_NuevaValoracion_CustomTransaction_Manual_Contract()
     {
-        // <haria-protected id="test:customized:AccionSistema:newUsuarioValido:arrange">
-        // Create a test unit of work and assign service before enabling the generated invocation.
+        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:arrange">
+        // Create a test unit of work and assign useCase before enabling the generated invocation.
         // </haria-protected>
 
-        var operationName = "newUsuarioValido";
-        var operationType = "New";
+        var operationName = "nuevaValoracion";
+        var operationType = "CustomTransaction";
         var executeManualInvocation = false;
-        AccionSistemaService? service = null;
+        ValoracionUseCase? useCase = null;
         object? invocationResult = null;
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:AccionSistema:newUsuarioValido:invoke">
-        invocationResult = await ((dynamic)service!).NewUsuarioValidoAsync(new DateTime(2026, 1, 1), "Sample AccionSistema Descripcion", default(int), default(int));
+        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:invoke">
+        await ((dynamic)useCase!).NuevaValoracionAsync(default(int));
         // </haria-protected>
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:AccionSistema:newUsuarioValido:assert">
+        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
+    public async Task Valoracion_EliminarValoracion_CustomTransaction_Manual_Contract()
+    {
+        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:arrange">
+        // Create a test unit of work and assign useCase before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "eliminarValoracion";
+        var operationType = "CustomTransaction";
+        var executeManualInvocation = false;
+        ValoracionUseCase? useCase = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:invoke">
+        await ((dynamic)useCase!).EliminarValoracionAsync(default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:assert">
         EnsureContractOutput(operationName, operationType);
         // </haria-protected>
     }
@@ -172,6 +302,32 @@ public sealed class ManualOperationTests
     }
 
     [Fact]
+    public async Task Contenido_NewCustomized_Customized_Manual_Contract()
+    {
+        // <haria-protected id="test:customized:Contenido:newCustomized:arrange">
+        // Create a test unit of work and assign service before enabling the generated invocation.
+        // </haria-protected>
+
+        var operationName = "newCustomized";
+        var operationType = "New";
+        var executeManualInvocation = false;
+        ContenidoService? service = null;
+        object? invocationResult = null;
+
+        if (executeManualInvocation)
+        {
+        // <haria-protected id="test:customized:Contenido:newCustomized:invoke">
+        invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Contenido Texto", new DateTime(2026, 1, 1), default(int));
+        // </haria-protected>
+        }
+        _ = invocationResult;
+
+        // <haria-protected id="test:customized:Contenido:newCustomized:assert">
+        EnsureContractOutput(operationName, operationType);
+        // </haria-protected>
+    }
+
+    [Fact]
     public async Task Contenido_DarMeGusta_Custom_Manual_Contract()
     {
         // <haria-protected id="test:custom:Contenido:darMeGusta:arrange">
@@ -187,7 +343,7 @@ public sealed class ManualOperationTests
         if (executeManualInvocation)
         {
         // <haria-protected id="test:custom:Contenido:darMeGusta:invoke">
-        await ((dynamic)service!).DarMeGustaAsync(default(int));
+        await ((dynamic)service!).DarMeGustaAsync(default(int), default(int));
         // </haria-protected>
         }
         _ = invocationResult;
@@ -213,7 +369,7 @@ public sealed class ManualOperationTests
         if (executeManualInvocation)
         {
         // <haria-protected id="test:custom:Contenido:retirarMeGusta:invoke">
-        await ((dynamic)service!).RetirarMeGustaAsync(default(int));
+        await ((dynamic)service!).RetirarMeGustaAsync(default(int), default(int));
         // </haria-protected>
         }
         _ = invocationResult;
