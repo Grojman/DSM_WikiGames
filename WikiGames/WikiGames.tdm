@@ -254,7 +254,6 @@ ConceptualModel WikiGames {
         
         operations
         {
-            public newUsuarioValido::New customized (p_fecha : Date, p_motivo : String, p_videojuego_oid : OID -> Videojuego, p_gestor_oid : OID -> Usuario) : Object->Rechazo;
             public new::New (p_fecha : Date, p_motivo : String, p_videojuego_oid : OID -> Videojuego, p_gestor_oid : OID -> Usuario) : Object->Rechazo;
             public destroy::Destroy (p_oid : OID -> Rechazo) : Void;
             public modify::Modifier (p_oid : OID -> Rechazo, p_fecha : Date, p_motivo : String, p_videojuego_oid : OID -> Videojuego, p_gestor_oid : OID -> Usuario) : Void;

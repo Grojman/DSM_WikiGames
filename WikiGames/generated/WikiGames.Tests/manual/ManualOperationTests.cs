@@ -276,32 +276,6 @@ public sealed class ManualOperationTests
     }
 
     [Fact]
-    public async Task Rechazo_NewUsuarioValido_Customized_Manual_Contract()
-    {
-        // <haria-protected id="test:customized:Rechazo:newUsuarioValido:arrange">
-        // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
-
-        var operationName = "newUsuarioValido";
-        var operationType = "New";
-        var executeManualInvocation = false;
-        RechazoService? service = null;
-        object? invocationResult = null;
-
-        if (executeManualInvocation)
-        {
-        // <haria-protected id="test:customized:Rechazo:newUsuarioValido:invoke">
-        invocationResult = await ((dynamic)service!).NewUsuarioValidoAsync(new DateTime(2026, 1, 1), "Sample Rechazo Motivo", default(int), default(int));
-        // </haria-protected>
-        }
-        _ = invocationResult;
-
-        // <haria-protected id="test:customized:Rechazo:newUsuarioValido:assert">
-        EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
-    }
-
-    [Fact]
     public async Task Contenido_NewCustomized_Customized_Manual_Contract()
     {
         // <haria-protected id="test:customized:Contenido:newCustomized:arrange">
