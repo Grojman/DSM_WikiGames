@@ -70,5 +70,51 @@ public sealed class ValoracionRepository : RepositoryBase<Valoracion>, IValoraci
             $"Error deleting {EntityName} entity.");
     }
 
+    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Valoracion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Valoracion.findByPuntuacion.");
+            throw new DataException("Error executing ReadFilter Valoracion.findByPuntuacion.", ex);
+        }
+    }
 
+    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Valoracion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Valoracion.findPeores.");
+            throw new DataException("Error executing ReadFilter Valoracion.findPeores.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Valoracion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Valoracion.findMejores.");
+            throw new DataException("Error executing ReadFilter Valoracion.findMejores.", ex);
+        }
+    }
 }

@@ -70,5 +70,19 @@ public sealed class NotificacionRepository : RepositoryBase<Notificacion>, INoti
             $"Error deleting {EntityName} entity.");
     }
 
-
+    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Notificacion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Notificacion.findByFecha.");
+            throw new DataException("Error executing ReadFilter Notificacion.findByFecha.", ex);
+        }
+    }
 }

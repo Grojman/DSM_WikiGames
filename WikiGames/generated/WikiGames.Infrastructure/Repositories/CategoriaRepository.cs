@@ -70,5 +70,19 @@ public sealed class CategoriaRepository : RepositoryBase<Categoria>, ICategoriaR
             $"Error deleting {EntityName} entity.");
     }
 
-
+    public async Task<IReadOnlyList<Categoria>> FindByNameLinQAsync(string p_name)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Categoria>()
+                .Where(entity => entity.Name == p_name)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Categoria.findByNameLinQ.");
+            throw new DataException("Error executing ReadFilter Categoria.findByNameLinQ.", ex);
+        }
+    }
 }

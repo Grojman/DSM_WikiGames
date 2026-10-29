@@ -87,4 +87,19 @@ public sealed partial class ContenidoService : ServiceEntity<Contenido>
         await _repository.SaveAsync(entity);
     }
 
+    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync(string p_texto)
+    {
+        return await _repository.FindOrderByFechaAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync(string p_texto)
+    {
+        return await _repository.FindOrderMeGustaAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(string p_texto)
+    {
+        return await _repository.FindBYUserLikedAsync(p_texto);
+    }
+
 }

@@ -70,5 +70,19 @@ public sealed class AccionSistemaRepository : RepositoryBase<AccionSistema>, IAc
             $"Error deleting {EntityName} entity.");
     }
 
-
+    public async Task<IReadOnlyList<AccionSistema>> FindByFechaLinQAsync(DateTime p_fecha)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<AccionSistema>()
+                .Where(entity => entity.Fecha == p_fecha)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter AccionSistema.findByFechaLinQ.");
+            throw new DataException("Error executing ReadFilter AccionSistema.findByFechaLinQ.", ex);
+        }
+    }
 }

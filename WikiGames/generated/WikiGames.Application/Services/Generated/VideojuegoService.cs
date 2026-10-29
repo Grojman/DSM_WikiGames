@@ -72,4 +72,29 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         return await _repository.ReadAllAsync();
     }
 
+    public async Task<IReadOnlyList<Videojuego>> FindByNombreAsync(string p_texto)
+    {
+        return await _repository.FindByNombreAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindByCategoriaAsync(string p_texto)
+    {
+        return await _repository.FindByCategoriaAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync(string p_texto)
+    {
+        return await _repository.FindRecientesAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync(string p_texto)
+    {
+        return await _repository.FindAntiguosAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync(string p_texto)
+    {
+        return await _repository.FindPopularesAsync(p_texto);
+    }
+
 }

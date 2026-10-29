@@ -91,4 +91,19 @@ public sealed partial class ValoracionService : ServiceEntity<Valoracion>
         return await _repository.ReadAllAsync();
     }
 
+    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(string p_texto)
+    {
+        return await _repository.FindByPuntuacionAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync(string p_texto)
+    {
+        return await _repository.FindPeoresAsync(p_texto);
+    }
+
+    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync(string p_texto)
+    {
+        return await _repository.FindMejoresAsync(p_texto);
+    }
+
 }

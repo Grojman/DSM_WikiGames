@@ -79,4 +79,9 @@ public sealed partial class NotificacionService : ServiceEntity<Notificacion>
         return await _repository.ReadAllAsync();
     }
 
+    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(string p_texto)
+    {
+        return await _repository.FindByFechaAsync(p_texto);
+    }
+
 }

@@ -70,5 +70,51 @@ public sealed class ContenidoRepository : RepositoryBase<Contenido>, IContenidoR
             $"Error deleting {EntityName} entity.");
     }
 
+    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Contenido>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Contenido.findOrderByFecha.");
+            throw new DataException("Error executing ReadFilter Contenido.findOrderByFecha.", ex);
+        }
+    }
 
+    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Contenido>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Contenido.findOrderMeGusta.");
+            throw new DataException("Error executing ReadFilter Contenido.findOrderMeGusta.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Contenido>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Contenido.findBYUserLiked.");
+            throw new DataException("Error executing ReadFilter Contenido.findBYUserLiked.", ex);
+        }
+    }
 }

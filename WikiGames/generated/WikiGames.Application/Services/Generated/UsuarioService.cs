@@ -116,4 +116,14 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
         await _repository.SaveAsync(entity);
     }
 
+    public async Task<IReadOnlyList<Usuario>> FindByNameLinQAsync(string p_name)
+    {
+        return await _repository.FindByNameLinQAsync(p_name);
+    }
+
+    public async Task<IReadOnlyList<Usuario>> FindByTipoUsuarioAsync(Rol p_rol)
+    {
+        return await _repository.FindByTipoUsuarioAsync(p_rol);
+    }
+
 }

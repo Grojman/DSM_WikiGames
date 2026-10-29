@@ -70,5 +70,83 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
             $"Error deleting {EntityName} entity.");
     }
 
+    public async Task<IReadOnlyList<Videojuego>> FindByNombreAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findByNombre.");
+            throw new DataException("Error executing ReadFilter Videojuego.findByNombre.", ex);
+        }
+    }
 
+    public async Task<IReadOnlyList<Videojuego>> FindByCategoriaAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findByCategoria.");
+            throw new DataException("Error executing ReadFilter Videojuego.findByCategoria.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findRecientes.");
+            throw new DataException("Error executing ReadFilter Videojuego.findRecientes.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findAntiguos.");
+            throw new DataException("Error executing ReadFilter Videojuego.findAntiguos.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findPopulares.");
+            throw new DataException("Error executing ReadFilter Videojuego.findPopulares.", ex);
+        }
+    }
 }

@@ -70,5 +70,35 @@ public sealed class TemaConversacionRepository : RepositoryBase<TemaConversacion
             $"Error deleting {EntityName} entity.");
     }
 
+    public async Task<IReadOnlyList<TemaConversacion>> FindByTituloAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<TemaConversacion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter TemaConversacion.findByTitulo.");
+            throw new DataException("Error executing ReadFilter TemaConversacion.findByTitulo.", ex);
+        }
+    }
 
+    public async Task<IReadOnlyList<TemaConversacion>> FindByRecientesAsync(string p_texto)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<TemaConversacion>()
+                .Where(entity => entity.Texto == p_texto)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter TemaConversacion.findByRecientes.");
+            throw new DataException("Error executing ReadFilter TemaConversacion.findByRecientes.", ex);
+        }
+    }
 }

@@ -70,5 +70,35 @@ public sealed class UsuarioRepository : RepositoryBase<Usuario>, IUsuarioReposit
             $"Error deleting {EntityName} entity.");
     }
 
+    public async Task<IReadOnlyList<Usuario>> FindByNameLinQAsync(string p_name)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Usuario>()
+                .Where(usuarios => usuarios.Where(u => u.Name.Contains(p_name)).ToListAsync())
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Usuario.findByNameLinQ.");
+            throw new DataException("Error executing ReadFilter Usuario.findByNameLinQ.", ex);
+        }
+    }
 
+    public async Task<IReadOnlyList<Usuario>> FindByTipoUsuarioAsync(Rol p_rol)
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Usuario>()
+                .Where(usuarios => usuarios.Where(u => u.Rol == p_rol).ToListAsync())
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Usuario.findByTipoUsuario.");
+            throw new DataException("Error executing ReadFilter Usuario.findByTipoUsuario.", ex);
+        }
+    }
 }

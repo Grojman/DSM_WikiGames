@@ -87,4 +87,9 @@ public sealed partial class AccionSistemaService : ServiceEntity<AccionSistema>
         return await _repository.ReadAllAsync();
     }
 
+    public async Task<IReadOnlyList<AccionSistema>> FindByFechaLinQAsync(DateTime p_fecha)
+    {
+        return await _repository.FindByFechaLinQAsync(p_fecha);
+    }
+
 }

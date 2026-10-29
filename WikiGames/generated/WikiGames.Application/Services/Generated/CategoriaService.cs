@@ -101,4 +101,9 @@ public sealed partial class CategoriaService : ServiceEntity<Categoria>
         await _repository.SaveAsync(entity);
     }
 
+    public async Task<IReadOnlyList<Categoria>> FindByNameLinQAsync(string p_name)
+    {
+        return await _repository.FindByNameLinQAsync(p_name);
+    }
+
 }

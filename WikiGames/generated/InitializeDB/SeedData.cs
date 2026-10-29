@@ -28,6 +28,10 @@ public static class SeedData
             Ensure(sampleUsuarioReadBack is not null, "Usuario read by OID returns the generated entity.");
             var sampleUsuarioReadAll = await usuarioService.ReadAllAsync();
             Ensure(sampleUsuarioReadAll.Count > 0, "Usuario read all returns generated data.");
+            var sampleUsuarioFindByNameLinQResult = await usuarioService.FindByNameLinQAsync("Sample Usuario Name");
+            Ensure(sampleUsuarioFindByNameLinQResult is not null, "Usuario.findByNameLinQ filter executes.");
+            var sampleUsuarioFindByTipoUsuarioResult = await usuarioService.FindByTipoUsuarioAsync(Rol.Registrado);
+            Ensure(sampleUsuarioFindByTipoUsuarioResult is not null, "Usuario.findByTipoUsuario filter executes.");
             await usuarioService.ModifyAsync(sampleUsuario.Id, "Sample Usuario Name", "Password123!", Rol.Registrado);
             Ensure(await usuarioService.ReadOIDAsync(sampleUsuario.Id) is not null, "Usuario modify keeps the entity readable.");
 
@@ -58,6 +62,8 @@ public static class SeedData
             Ensure(sampleNotificacionReadBack is not null, "Notificacion read by OID returns the generated entity.");
             var sampleNotificacionReadAll = await notificacionService.ReadAllAsync();
             Ensure(sampleNotificacionReadAll.Count > 0, "Notificacion read all returns generated data.");
+            var sampleNotificacionFindByFechaResult = await notificacionService.FindByFechaAsync("Sample Notificacion Texto");
+            Ensure(sampleNotificacionFindByFechaResult is not null, "Notificacion.findByFecha filter executes.");
             await notificacionService.ModifyAsync(sampleNotificacion.Id, "Sample Notificacion Texto", new DateTime(2026, 1, 11));
             Ensure(await notificacionService.ReadOIDAsync(sampleNotificacion.Id) is not null, "Notificacion modify keeps the entity readable.");
 
