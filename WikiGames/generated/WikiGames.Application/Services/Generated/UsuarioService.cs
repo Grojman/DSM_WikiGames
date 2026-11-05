@@ -99,6 +99,29 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
         await _repository.SaveAsync(entity);
     }
 
+    public async Task AddContenidoFavoritoAsync(int p_oid, IReadOnlyList<int> p_contenido_oids)
+    {
+        Usuario entity = await _repository.ReadAsync(p_oid)
+            ?? throw new ModelException("Usuario not found.");
+        entity.ContenidoFavorito ??= new List<Contenido>();
+        foreach (var relatedId in p_contenido_oids)
+        {
+            Contenido relatedEntity = await _unitOfWork.ContenidoRepository.ReadAsync(relatedId)
+                ?? throw new ModelException("Contenido not found for Usuario.ContenidoFavorito.");
+            if (!entity.ContenidoFavorito.Contains(relatedEntity))
+            {
+                entity.ContenidoFavorito.Add(relatedEntity);
+            }
+            relatedEntity.UsuarioFavorito ??= new List<Usuario>();
+            if (!relatedEntity.UsuarioFavorito.Contains(entity))
+            {
+                relatedEntity.UsuarioFavorito.Add(entity);
+            }
+            await _unitOfWork.ContenidoRepository.SaveAsync(relatedEntity);
+        }
+        await _repository.SaveAsync(entity);
+    }
+
     public async Task<IReadOnlyList<Usuario>> FindByNameLinQAsync(string p_name)
     {
         return await _repository.FindByNameLinQAsync(p_name);

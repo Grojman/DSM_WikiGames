@@ -19,6 +19,7 @@ ConceptualModel WikiGames {
             public readOID::ReadOID (p_oid : OID -> Usuario) : Object->Usuario;
             public readAll::ReadAll () : List<Object->Usuario>;
             public addDenunciasRecibida::Relationer -> UsuarioDenuncia.denunciasRecibidas (p_oid : OID -> Usuario, p_denuncia_oids : List<OID -> Denuncia>) : Void;
+            public addContenidoFavorito::Relationer -> UsuarioFavoritos.contenidoFavorito (p_oid : OID -> Usuario, p_contenido_oids : List<OID -> Contenido>) : Void;
             
             public findByNameLinQ::ReadFilter (p_name : String) : List<Object->Usuario>
             {
@@ -290,6 +291,7 @@ ConceptualModel WikiGames {
             public addDenuncia::Relationer -> DenunciaContenido.denuncias (p_oid : OID -> Contenido, p_denuncia_oids : List<OID -> Denuncia>) : Void;
             public darMeGusta::CustomTransaction (p_oid : OID -> Contenido, p_user : OID -> Usuario) : Void;
             public retirarMeGusta::Custom (p_oid : OID -> Contenido, p_user : OID -> Usuario) : Void;
+            public addUsuarioFavorito::Relationer -> UsuarioFavoritos.usuarioFavorito (p_oid : OID -> Contenido, p_usuario_oids : List<OID -> Usuario>) : Void;
 
             public findByTextoLinQ::ReadFilter (p_texto : String) : List<Object->Contenido>
             {
