@@ -13,10 +13,8 @@ public sealed partial class ContenidoService
 {
     public async Task DarMeGustaAsync(int p_oid, int p_user)
     {
-        /*PROTECTED REGION ID(WikiGames.Application.Services_Contenido_darMeGusta) ENABLED START*/
-        // Write here your custom code...
-
-        throw new ModelException("Application service generation for Contenido.darMeGusta is pending.", new NotImplementedException("Method DarMeGustaAsync() not yet implemented."));
-        /*PROTECTED REGION END*/
+        Usuario userEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_user)
+        ?? throw new ModelException("Usuario not found for Contenido.Usuario.");
+        
     }
 }
