@@ -1,5 +1,11 @@
 ﻿using WikiGames.Application.Services;
+using WikiGames.Application.UseCases.Comentario;
+using WikiGames.Application.UseCases.Contenido;
+using WikiGames.Application.UseCases.Denuncia;
+using WikiGames.Application.UseCases.Notificacion;
+using WikiGames.Application.UseCases.Usuario;
 using WikiGames.Application.UseCases.Valoracion;
+using WikiGames.Application.UseCases.Videojuego;
 using WikiGames.Domain.Entities;
 
 using WikiGames.Domain.Enums;
@@ -22,18 +28,7 @@ public static class SeedData
         {
             using var unitOfWorkFactory = new UnitOfWorkFactory(cfg, loggerFactory);
 
-            var usuarioService = new UsuarioService(unitOfWorkFactory);
-            var sampleUsuario = await usuarioService.NewAsync("Sample Usuario Name", "Password123!", Rol.Registrado);
-            var sampleUsuarioReadBack = await usuarioService.ReadOIDAsync(sampleUsuario.Id);
-            Ensure(sampleUsuarioReadBack is not null, "Usuario read by OID returns the generated entity.");
-            var sampleUsuarioReadAll = await usuarioService.ReadAllAsync();
-            Ensure(sampleUsuarioReadAll.Count > 0, "Usuario read all returns generated data.");
-            var sampleUsuarioFindByNameLinQResult = await usuarioService.FindByNameLinQAsync("Sample Usuario Name");
-            Ensure(sampleUsuarioFindByNameLinQResult is not null, "Usuario.findByNameLinQ filter executes.");
-            var sampleUsuarioFindByTipoUsuarioResult = await usuarioService.FindByTipoUsuarioAsync(Rol.Registrado);
-            Ensure(sampleUsuarioFindByTipoUsuarioResult is not null, "Usuario.findByTipoUsuario filter executes.");
-            await usuarioService.ModifyAsync(sampleUsuario.Id, "Sample Usuario Name", "Password123!", Rol.Registrado);
-            Ensure(await usuarioService.ReadOIDAsync(sampleUsuario.Id) is not null, "Usuario modify keeps the entity readable.");
+            // TODO: No seed generated for Usuario; define a non-customized New operation in the service to initialize it.
 
             // TODO: No seed generated for Videojuego; define a non-customized New operation in the service to initialize it.
 
@@ -45,35 +40,24 @@ public static class SeedData
             // TODO: Set required relationship Comentario.Tema manually; it could not be ordered automatically.
             // TODO: No seed generated for Comentario; one or more New arguments reference classes that were not seeded yet.
 
+            // TODO: Set required relationship Denuncia.Denunciante manually; it could not be ordered automatically.
             // TODO: No seed generated for Denuncia; define a non-customized New operation in the service to initialize it.
 
             // TODO: Set required relationship Valoracion.Videojuego manually; it could not be ordered automatically.
-            // TODO: No seed generated for Valoracion; one or more New arguments reference classes that were not seeded yet.
+            // TODO: No seed generated for Valoracion; define a non-customized New operation in the service to initialize it.
 
             // TODO: Set required relationship Rechazo.Videojuego manually; it could not be ordered automatically.
+            // TODO: Set required relationship Rechazo.Gestor manually; it could not be ordered automatically.
             // TODO: No seed generated for Rechazo; one or more New arguments reference classes that were not seeded yet.
 
+            // TODO: Set required relationship Contenido.UsuarioCreador manually; it could not be ordered automatically.
             // TODO: No seed generated for Contenido; define a non-customized New operation in the service to initialize it.
 
-            var notificacionService = new NotificacionService(unitOfWorkFactory);
-            var sampleNotificacion = await notificacionService.NewAsync("Sample Notificacion Texto", new DateTime(2026, 1, 11));
-            var sampleNotificacionReadBack = await notificacionService.ReadOIDAsync(sampleNotificacion.Id);
-            Ensure(sampleNotificacionReadBack is not null, "Notificacion read by OID returns the generated entity.");
-            var sampleNotificacionReadAll = await notificacionService.ReadAllAsync();
-            Ensure(sampleNotificacionReadAll.Count > 0, "Notificacion read all returns generated data.");
-            var sampleNotificacionFindByFechaResult = await notificacionService.FindByFechaAsync("Sample Notificacion Texto");
-            Ensure(sampleNotificacionFindByFechaResult is not null, "Notificacion.findByFecha filter executes.");
-            await notificacionService.ModifyAsync(sampleNotificacion.Id, "Sample Notificacion Texto", new DateTime(2026, 1, 11));
-            Ensure(await notificacionService.ReadOIDAsync(sampleNotificacion.Id) is not null, "Notificacion modify keeps the entity readable.");
+            // TODO: No seed generated for Notificacion; define a non-customized New operation in the service to initialize it.
 
+            // TODO: Set required relationship AccionSistema.Causante manually; it could not be ordered automatically.
             // TODO: Set required relationship AccionSistema.ContenidoAfectado manually; it could not be ordered automatically.
             // TODO: No seed generated for AccionSistema; one or more New arguments reference classes that were not seeded yet.
-
-            await notificacionService.DestroyAsync(sampleNotificacion.Id);
-            await usuarioService.DestroyAsync(sampleUsuario.Id);
-
-            Ensure((await usuarioService.ReadAllAsync()).Count == 0, "Usuario seed cleanup completed.");
-            Ensure((await notificacionService.ReadAllAsync()).Count == 0, "Notificacion seed cleanup completed.");
         }
         catch (Exception ex)
         {

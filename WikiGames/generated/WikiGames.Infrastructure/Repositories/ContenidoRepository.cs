@@ -70,13 +70,29 @@ public sealed class ContenidoRepository : RepositoryBase<Contenido>, IContenidoR
             $"Error deleting {EntityName} entity.");
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindByTextoLinQAsync(string p_texto)
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Contenido>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Texto.Contains(p_texto))
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Contenido.findByTextoLinQ.");
+            throw new DataException("Error executing ReadFilter Contenido.findByTextoLinQ.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync()
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Contenido>()
+                .OrderByDescending(c => c.FechaCreacion)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -86,13 +102,13 @@ public sealed class ContenidoRepository : RepositoryBase<Contenido>, IContenidoR
         }
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Contenido>()
-                .Where(entity => entity.Texto == p_texto)
+                .OrderByDescending(c => c.NumeroMeGusta)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -102,13 +118,13 @@ public sealed class ContenidoRepository : RepositoryBase<Contenido>, IContenidoR
         }
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(int p_user)
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Contenido>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user.Id))
                 .ToListAsync();
         }
         catch (Exception ex)

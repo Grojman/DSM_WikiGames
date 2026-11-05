@@ -39,8 +39,14 @@ WikiGames.Application/Services/Generated/TemaConversacionService.cs
 WikiGames.Application/Services/Generated/UsuarioService.cs
 WikiGames.Application/Services/Generated/ValoracionService.cs
 WikiGames.Application/Services/Generated/VideojuegoService.cs
+WikiGames.Application/UseCases/Generated/Comentario/ComentarioUseCase.cs
+WikiGames.Application/UseCases/Generated/Contenido/ContenidoUseCase.cs
+WikiGames.Application/UseCases/Generated/Denuncia/DenunciaUseCase.cs
+WikiGames.Application/UseCases/Generated/Notificacion/NotificacionUseCase.cs
 WikiGames.Application/UseCases/Generated/UseCaseDeclarations.cs
+WikiGames.Application/UseCases/Generated/Usuario/UsuarioUseCase.cs
 WikiGames.Application/UseCases/Generated/Valoracion/ValoracionUseCase.cs
+WikiGames.Application/UseCases/Generated/Videojuego/VideojuegoUseCase.cs
 WikiGames.Application/WikiGames.Application.csproj
 WikiGames.Domain/Entities/AccionSistema.cs
 WikiGames.Domain/Entities/Categoria.cs

@@ -41,18 +41,6 @@ public sealed partial class NotificacionService : ServiceEntity<Notificacion>
     public Task<Notificacion> ModifierNotificacionDefaultAsync(Notificacion entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Notificacion> NewAsync(string p_texto, DateTime p_fecha)
-    {
-        Notificacion entity = new Notificacion
-        {
-            Texto = p_texto,
-            Fecha = p_fecha,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Notificacion entity = await _repository.ReadAsync(p_oid)
@@ -79,9 +67,9 @@ public sealed partial class NotificacionService : ServiceEntity<Notificacion>
         return await _repository.ReadAllAsync();
     }
 
-    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(string p_texto)
+    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(DateTime p_fecha)
     {
-        return await _repository.FindByFechaAsync(p_texto);
+        return await _repository.FindByFechaAsync(p_fecha);
     }
 
 }

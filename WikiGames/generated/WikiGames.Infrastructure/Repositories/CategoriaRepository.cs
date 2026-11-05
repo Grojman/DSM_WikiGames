@@ -76,7 +76,7 @@ public sealed class CategoriaRepository : RepositoryBase<Categoria>, ICategoriaR
         {
             using var context = OpenSession();
             return await context.Session.Query<Categoria>()
-                .Where(entity => entity.Name == p_name)
+                .Where(entity => entity.Name.Contains(p_name))
                 .ToListAsync();
         }
         catch (Exception ex)

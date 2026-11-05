@@ -76,7 +76,7 @@ public sealed class TemaConversacionRepository : RepositoryBase<TemaConversacion
         {
             using var context = OpenSession();
             return await context.Session.Query<TemaConversacion>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Titulo.Contains(p_texto))
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -86,13 +86,13 @@ public sealed class TemaConversacionRepository : RepositoryBase<TemaConversacion
         }
     }
 
-    public async Task<IReadOnlyList<TemaConversacion>> FindByRecientesAsync(string p_texto)
+    public async Task<IReadOnlyList<TemaConversacion>> FindByRecientesAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<TemaConversacion>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(t => t.FechaCreacion > DateTime.Now.AddDays(-7)).OrderByDescending(t => t.FechaCreacion)
                 .ToListAsync();
         }
         catch (Exception ex)

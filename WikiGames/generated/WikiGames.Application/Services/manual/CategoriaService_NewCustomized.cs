@@ -13,13 +13,7 @@ public sealed partial class CategoriaService
 {
     public async Task<Categoria> NewCustomizedAsync(string p_name)
     {
-        var c = await _repository.FindByNameLinQAsync(p_name);
-
-        if (c is not null)
-        {
-            throw new ModelException($"Category with name {p_name} already exists.");
-        }
-
+        /*PROTECTED REGION ID(WikiGames.Application.Services_Categoria_newCustomized) ENABLED START*/
         Categoria entity = new Categoria
         {
             Name = p_name,

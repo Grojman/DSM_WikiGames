@@ -8,6 +8,7 @@ public partial class Usuario
 {
     public virtual int Id { get; set; }
     public virtual string Name { get; set; } = string.Empty;
+    public virtual string Email { get; set; } = string.Empty;
     public virtual string Password { get; set; } = string.Empty;
     public virtual Rol RolUsuario { get; set; }
     public virtual IList<Contenido> ContenidoGenerado { get; set; } = new List<Contenido>();

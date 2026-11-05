@@ -82,19 +82,24 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         return await _repository.FindByCategoriaAsync(p_texto);
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync()
     {
-        return await _repository.FindRecientesAsync(p_texto);
+        return await _repository.FindRecientesAsync();
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync()
     {
-        return await _repository.FindAntiguosAsync(p_texto);
+        return await _repository.FindAntiguosAsync();
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindByMeGustaAsync()
     {
-        return await _repository.FindPopularesAsync(p_texto);
+        return await _repository.FindByMeGustaAsync();
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync()
+    {
+        return await _repository.FindPopularesAsync();
     }
 
 }

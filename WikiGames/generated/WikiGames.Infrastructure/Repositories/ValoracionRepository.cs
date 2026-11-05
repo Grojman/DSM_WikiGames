@@ -70,13 +70,13 @@ public sealed class ValoracionRepository : RepositoryBase<Valoracion>, IValoraci
             $"Error deleting {EntityName} entity.");
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(float puntuacion)
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Valoracion>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Puntuacion == puntuacion)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -86,13 +86,13 @@ public sealed class ValoracionRepository : RepositoryBase<Valoracion>, IValoraci
         }
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Valoracion>()
-                .Where(entity => entity.Texto == p_texto)
+                .OrderBy(v => v.Puntuacion)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -102,13 +102,13 @@ public sealed class ValoracionRepository : RepositoryBase<Valoracion>, IValoraci
         }
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Valoracion>()
-                .Where(entity => entity.Texto == p_texto)
+                .OrderByDescending(v => v.Puntuacion)
                 .ToListAsync();
         }
         catch (Exception ex)

@@ -70,13 +70,13 @@ public sealed class NotificacionRepository : RepositoryBase<Notificacion>, INoti
             $"Error deleting {EntityName} entity.");
     }
 
-    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(string p_texto)
+    public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(DateTime p_fecha)
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Notificacion>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Fecha == p_fecha)
                 .ToListAsync();
         }
         catch (Exception ex)

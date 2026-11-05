@@ -9,6 +9,9 @@
     <property name="Name" type="String">
       <column name="name" unique="true" not-null="true"/>
     </property>
+    <property name="Email" type="String">
+      <column name="email" unique="true" not-null="true"/>
+    </property>
     <property name="Password" type="String">
       <column name="password" not-null="true"/>
     </property>

@@ -10,6 +10,7 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUsuarioRepository _repository;
     private readonly IHariaPasswordHasher _passwordHasher;
+    private readonly IHariaTokenGenerator _tokenGenerator;
 
     public UsuarioService(IUnitOfWork unitOfWork)
         : this(unitOfWork, ownsUnitOfWork: false)
@@ -26,6 +27,7 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
         _unitOfWork = unitOfWork;
         _repository = unitOfWork.UsuarioRepository;
         _passwordHasher = unitOfWork.PasswordHasher;
+        _tokenGenerator = unitOfWork.TokenGenerator;
     }
 
     public Task<Usuario> AddUsuarioDefaultAsync(Usuario entity)
@@ -57,31 +59,12 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
         }
     }
 
-    public async Task<Usuario> NewAsync(string p_name, string p_password, Rol p_rolUsuario)
-    {
-        Usuario entity = new Usuario
-        {
-            Name = p_name,
-            Password = _passwordHasher.HashPasswordIfNeeded(p_password),
-            RolUsuario = p_rolUsuario,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
-    public async Task DestroyAsync(int p_oid)
-    {
-        Usuario entity = await _repository.ReadAsync(p_oid)
-            ?? throw new ModelException("Usuario not found.");
-        await _repository.DeleteAsync(entity);
-    }
-
-    public async Task ModifyAsync(int p_oid, string p_name, string p_password, Rol p_rolUsuario)
+    public async Task ModifyAsync(int p_oid, string p_name, string p_email, string p_password, Rol p_rolUsuario)
     {
         Usuario entity = await _repository.ReadAsync(p_oid)
             ?? throw new ModelException("Usuario not found.");
         entity.Name = p_name;
+        entity.Email = p_email;
         entity.Password = _passwordHasher.HashPasswordIfNeeded(p_password);
         entity.RolUsuario = p_rolUsuario;
         await _repository.SaveAsync(entity);
@@ -124,6 +107,34 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
     public async Task<IReadOnlyList<Usuario>> FindByTipoUsuarioAsync(Rol p_rol)
     {
         return await _repository.FindByTipoUsuarioAsync(p_rol);
+    }
+
+    public async Task<string?> LoginAsync(int p_oid, string p_password)
+    {
+        try
+        {
+            Usuario? entity = await _repository.ReadAsync(p_oid);
+            if (entity is null)
+            {
+                return null;
+            }
+
+            if (!_passwordHasher.VerifyPassword(entity.Password, p_password))
+            {
+                return null;
+            }
+
+            var tokenSubject = Convert.ToString(entity.Id, System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+            var tokenClaims = new Dictionary<string, string?>(StringComparer.Ordinal)
+            {
+                ["id"] = Convert.ToString(entity.Id, System.Globalization.CultureInfo.InvariantCulture),
+            };
+            return _tokenGenerator.CreateToken(tokenSubject, tokenClaims);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
 }

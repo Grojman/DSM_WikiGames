@@ -96,9 +96,9 @@ public sealed partial class TemaConversacionService : ServiceEntity<TemaConversa
         return await _repository.FindByTituloAsync(p_texto);
     }
 
-    public async Task<IReadOnlyList<TemaConversacion>> FindByRecientesAsync(string p_texto)
+    public async Task<IReadOnlyList<TemaConversacion>> FindByRecientesAsync()
     {
-        return await _repository.FindByRecientesAsync(p_texto);
+        return await _repository.FindByRecientesAsync();
     }
 
 }

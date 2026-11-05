@@ -76,7 +76,7 @@ public sealed class UsuarioRepository : RepositoryBase<Usuario>, IUsuarioReposit
         {
             using var context = OpenSession();
             return await context.Session.Query<Usuario>()
-                .Where(usuarios => usuarios.Where(u => u.Name.Contains(p_name)).ToListAsync())
+                .Where(entity => entity.Name.Contains(p_name))
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -92,7 +92,7 @@ public sealed class UsuarioRepository : RepositoryBase<Usuario>, IUsuarioReposit
         {
             using var context = OpenSession();
             return await context.Session.Query<Usuario>()
-                .Where(usuarios => usuarios.Where(u => u.Rol == p_rol).ToListAsync())
+                .Where(entity => entity.Rol == p_rol)
                 .ToListAsync();
         }
         catch (Exception ex)

@@ -41,13 +41,6 @@ public sealed partial class ContenidoService : ServiceEntity<Contenido>
     public Task<Contenido> ModifierContenidoDefaultAsync(Contenido entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task DestroyAsync(int p_oid)
-    {
-        Contenido entity = await _repository.ReadAsync(p_oid)
-            ?? throw new ModelException("Contenido not found.");
-        await _repository.DeleteAsync(entity);
-    }
-
     public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, int p_usuarioCreador_oid)
     {
         Contenido entity = await _repository.ReadAsync(p_oid)
@@ -87,19 +80,24 @@ public sealed partial class ContenidoService : ServiceEntity<Contenido>
         await _repository.SaveAsync(entity);
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindByTextoLinQAsync(string p_texto)
     {
-        return await _repository.FindOrderByFechaAsync(p_texto);
+        return await _repository.FindByTextoLinQAsync(p_texto);
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync()
     {
-        return await _repository.FindOrderMeGustaAsync(p_texto);
+        return await _repository.FindOrderByFechaAsync();
     }
 
-    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(string p_texto)
+    public async Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync()
     {
-        return await _repository.FindBYUserLikedAsync(p_texto);
+        return await _repository.FindOrderMeGustaAsync();
+    }
+
+    public async Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(int p_user)
+    {
+        return await _repository.FindBYUserLikedAsync(p_user);
     }
 
 }

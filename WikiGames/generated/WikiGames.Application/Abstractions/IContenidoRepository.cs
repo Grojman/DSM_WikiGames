@@ -4,7 +4,8 @@ namespace WikiGames.Application.Abstractions;
 
 public interface IContenidoRepository : IRepository<Contenido>
 {
-    Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync(string p_texto);
-    Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync(string p_texto);
-    Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(string p_texto);
+    Task<IReadOnlyList<Contenido>> FindByTextoLinQAsync(string p_texto);
+    Task<IReadOnlyList<Contenido>> FindOrderByFechaAsync();
+    Task<IReadOnlyList<Contenido>> FindOrderMeGustaAsync();
+    Task<IReadOnlyList<Contenido>> FindBYUserLikedAsync(int p_user);
 }

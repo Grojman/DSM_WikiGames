@@ -13,20 +13,10 @@ public sealed partial class DenunciaService
 {
     public async Task RechazarDenunciaAsync(int p_oid)
     {
-        var denuncia = await _repository.ReadAsync(p_oid);
+        /*PROTECTED REGION ID(WikiGames.Application.Services_Denuncia_rechazarDenuncia) ENABLED START*/
+        // Write here your custom code...
 
-        if (denuncia is null)
-        {
-            throw new ModelException($"Denuncia with id {p_oid} not found.");
-        }
-
-        if (denuncia.Estado != EstadoContenido.Pendiente)
-        {
-            throw new ModelException($"Denuncia with id {p_oid} is not in a pending state.");
-        }
-
-        denuncia.Estado = EstadoContenido.Rechazado;
-
-        await _repository.SaveAsync(denuncia);
+        throw new ModelException("Application service generation for Denuncia.rechazarDenuncia is pending.", new NotImplementedException("Method RechazarDenunciaAsync() not yet implemented."));
+        /*PROTECTED REGION END*/
     }
 }

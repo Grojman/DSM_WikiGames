@@ -76,7 +76,7 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Titulo.Contains(p_texto))
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -92,7 +92,7 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(entity => entity.Categorias.Any(c => c.Name == p_texto))
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -102,13 +102,13 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         }
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindRecientesAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(entity => entity.Texto == p_texto)
+                .Where(v => v.FechaCreacion > DateTime.Now.AddDays(-7)).OrderByDescending(v => v.FechaCreacion)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -118,13 +118,13 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         }
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindAntiguosAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(entity => entity.Texto == p_texto)
+                .OrderBy(v => v.FechaCreacion)
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -134,13 +134,29 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         }
     }
 
-    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync(string p_texto)
+    public async Task<IReadOnlyList<Videojuego>> FindByMeGustaAsync()
     {
         try
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(entity => entity.Texto == p_texto)
+                .OrderByDescending(v => v.NumeroMeGusta)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error executing ReadFilter Videojuego.findByMeGusta.");
+            throw new DataException("Error executing ReadFilter Videojuego.findByMeGusta.", ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<Videojuego>> FindPopularesAsync()
+    {
+        try
+        {
+            using var context = OpenSession();
+            return await context.Session.Query<Videojuego>()
+                .Where(videojuegos => videojuegos.OrderByDescending(v => v.temas.Where(n => n.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count + v.valoraciones.Where(w => w.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count))
                 .ToListAsync();
         }
         catch (Exception ex)

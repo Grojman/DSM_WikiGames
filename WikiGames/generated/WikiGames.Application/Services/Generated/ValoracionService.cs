@@ -41,28 +41,6 @@ public sealed partial class ValoracionService : ServiceEntity<Valoracion>
     public Task<Valoracion> ModifierValoracionDefaultAsync(Valoracion entity) =>
         ModifierDefaultAsync(entity);
 
-    public async Task<Valoracion> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_usuarioCreador_oid, int p_videojuego_oid)
-    {
-        Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
-            ?? throw new ModelException("Usuario not found for Valoracion.UsuarioCreador.");
-
-        Videojuego videojuegoEntity = await _unitOfWork.VideojuegoRepository.ReadAsync(p_videojuego_oid)
-            ?? throw new ModelException("Videojuego not found for Valoracion.Videojuego.");
-
-        Valoracion entity = new Valoracion
-        {
-            Texto = p_texto,
-            FechaCreacion = p_fechaCreacion,
-            NumeroMeGusta = p_numeroMeGusta,
-            Puntuacion = p_puntuacion,
-            UsuarioCreador = usuarioCreadorEntity,
-            Videojuego = videojuegoEntity,
-        };
-
-        await _repository.SaveAsync(entity);
-        return entity;
-    }
-
     public async Task DestroyAsync(int p_oid)
     {
         Valoracion entity = await _repository.ReadAsync(p_oid)
@@ -91,19 +69,19 @@ public sealed partial class ValoracionService : ServiceEntity<Valoracion>
         return await _repository.ReadAllAsync();
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindByPuntuacionAsync(float puntuacion)
     {
-        return await _repository.FindByPuntuacionAsync(p_texto);
+        return await _repository.FindByPuntuacionAsync(puntuacion);
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindPeoresAsync()
     {
-        return await _repository.FindPeoresAsync(p_texto);
+        return await _repository.FindPeoresAsync();
     }
 
-    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync(string p_texto)
+    public async Task<IReadOnlyList<Valoracion>> FindMejoresAsync()
     {
-        return await _repository.FindMejoresAsync(p_texto);
+        return await _repository.FindMejoresAsync();
     }
 
 }
