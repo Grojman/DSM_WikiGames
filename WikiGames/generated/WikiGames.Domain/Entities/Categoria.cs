@@ -9,7 +9,7 @@ public partial class Categoria
     public virtual string Name { get; set; } = string.Empty;
     public virtual IList<Categoria> Hijos { get; set; } = new List<Categoria>();
     public virtual Categoria? Padre { get; set; }
-    public virtual Videojuego Videojuego { get; set; } = null!;
+    public virtual IList<Videojuego> Videojuegos { get; set; } = new List<Videojuego>();
 
     private bool HasDefaultIdentity() => EqualityComparer<int>.Default.Equals(Id, default);
 

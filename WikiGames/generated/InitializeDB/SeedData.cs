@@ -37,7 +37,6 @@ public static class SeedData
 
             // TODO: No seed generated for Videojuego; define a non-customized New operation in the service to initialize it.
 
-            // TODO: Set required relationship Categoria.Videojuego manually; it could not be ordered automatically.
             // TODO: No seed generated for Categoria; define a non-customized New operation in the service to initialize it.
 
             // TODO: Set required relationship TemaConversacion.Videojuego manually; it could not be ordered automatically.

@@ -18,9 +18,9 @@ public sealed class ManualOperationTests
     [Fact]
     public async Task Videojuego_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:customized:Videojuego:newCustomized:arrange">
+        /*PROTECTED REGION ID(test:customized:Videojuego:newCustomized:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "newCustomized";
         var operationType = "New";
@@ -30,23 +30,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:Videojuego:newCustomized:invoke">
+        /*PROTECTED REGION ID(test:customized:Videojuego:newCustomized:invoke) ENABLED START*/
         invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Videojuego Texto", new DateTime(2026, 1, 1), "Sample Videojuego Titulo", "Sample Videojuego Enlace", "Sample Videojuego Imagen", default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:Videojuego:newCustomized:assert">
+        /*PROTECTED REGION ID(test:customized:Videojuego:newCustomized:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Videojuego_AprobarVideojuego_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:arrange">
+        /*PROTECTED REGION ID(test:custom:Videojuego:aprobarVideojuego:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "aprobarVideojuego";
         var operationType = "Custom";
@@ -56,23 +56,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:invoke">
+        /*PROTECTED REGION ID(test:custom:Videojuego:aprobarVideojuego:invoke) ENABLED START*/
         await ((dynamic)service!).AprobarVideojuegoAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Videojuego:aprobarVideojuego:assert">
+        /*PROTECTED REGION ID(test:custom:Videojuego:aprobarVideojuego:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Videojuego_RechazarVideojuego_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:arrange">
+        /*PROTECTED REGION ID(test:custom:Videojuego:rechazarVideojuego:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "rechazarVideojuego";
         var operationType = "Custom";
@@ -82,23 +82,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:invoke">
+        /*PROTECTED REGION ID(test:custom:Videojuego:rechazarVideojuego:invoke) ENABLED START*/
         await ((dynamic)service!).RechazarVideojuegoAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Videojuego:rechazarVideojuego:assert">
+        /*PROTECTED REGION ID(test:custom:Videojuego:rechazarVideojuego:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Categoria_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:customized:Categoria:newCustomized:arrange">
+        /*PROTECTED REGION ID(test:customized:Categoria:newCustomized:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "newCustomized";
         var operationType = "New";
@@ -108,23 +108,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:Categoria:newCustomized:invoke">
+        /*PROTECTED REGION ID(test:customized:Categoria:newCustomized:invoke) ENABLED START*/
         invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Categoria Name", default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:Categoria:newCustomized:assert">
+        /*PROTECTED REGION ID(test:customized:Categoria:newCustomized:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Denuncia_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:customized:Denuncia:newCustomized:arrange">
+        /*PROTECTED REGION ID(test:customized:Denuncia:newCustomized:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "newCustomized";
         var operationType = "New";
@@ -134,23 +134,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:Denuncia:newCustomized:invoke">
+        /*PROTECTED REGION ID(test:customized:Denuncia:newCustomized:invoke) ENABLED START*/
         invocationResult = await ((dynamic)service!).NewCustomizedAsync(new DateTime(2026, 1, 1), default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:Denuncia:newCustomized:assert">
+        /*PROTECTED REGION ID(test:customized:Denuncia:newCustomized:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Denuncia_AprobarDenuncia_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:arrange">
+        /*PROTECTED REGION ID(test:custom:Denuncia:aprobarDenuncia:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "aprobarDenuncia";
         var operationType = "Custom";
@@ -160,23 +160,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:invoke">
+        /*PROTECTED REGION ID(test:custom:Denuncia:aprobarDenuncia:invoke) ENABLED START*/
         await ((dynamic)service!).AprobarDenunciaAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Denuncia:aprobarDenuncia:assert">
+        /*PROTECTED REGION ID(test:custom:Denuncia:aprobarDenuncia:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Denuncia_RechazarDenuncia_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:arrange">
+        /*PROTECTED REGION ID(test:custom:Denuncia:rechazarDenuncia:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "rechazarDenuncia";
         var operationType = "Custom";
@@ -186,23 +186,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:invoke">
+        /*PROTECTED REGION ID(test:custom:Denuncia:rechazarDenuncia:invoke) ENABLED START*/
         await ((dynamic)service!).RechazarDenunciaAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Denuncia:rechazarDenuncia:assert">
+        /*PROTECTED REGION ID(test:custom:Denuncia:rechazarDenuncia:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Valoracion_ActualizarValoracion_CustomTransaction_Manual_Contract()
     {
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:arrange">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:actualizarValoracion:arrange) ENABLED START*/
         // Create a test unit of work and assign useCase before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "actualizarValoracion";
         var operationType = "CustomTransaction";
@@ -212,23 +212,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:invoke">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:actualizarValoracion:invoke) ENABLED START*/
         await ((dynamic)useCase!).ActualizarValoracionAsync(default(int), 1.5f);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customTransaction:Valoracion:actualizarValoracion:assert">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:actualizarValoracion:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Valoracion_NuevaValoracion_CustomTransaction_Manual_Contract()
     {
-        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:arrange">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:nuevaValoracion:arrange) ENABLED START*/
         // Create a test unit of work and assign useCase before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "nuevaValoracion";
         var operationType = "CustomTransaction";
@@ -238,23 +238,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:invoke">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:nuevaValoracion:invoke) ENABLED START*/
         await ((dynamic)useCase!).NuevaValoracionAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customTransaction:Valoracion:nuevaValoracion:assert">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:nuevaValoracion:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Valoracion_EliminarValoracion_CustomTransaction_Manual_Contract()
     {
-        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:arrange">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:eliminarValoracion:arrange) ENABLED START*/
         // Create a test unit of work and assign useCase before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "eliminarValoracion";
         var operationType = "CustomTransaction";
@@ -264,23 +264,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:invoke">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:eliminarValoracion:invoke) ENABLED START*/
         await ((dynamic)useCase!).EliminarValoracionAsync(default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customTransaction:Valoracion:eliminarValoracion:assert">
+        /*PROTECTED REGION ID(test:customTransaction:Valoracion:eliminarValoracion:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Contenido_NewCustomized_Customized_Manual_Contract()
     {
-        // <haria-protected id="test:customized:Contenido:newCustomized:arrange">
+        /*PROTECTED REGION ID(test:customized:Contenido:newCustomized:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "newCustomized";
         var operationType = "New";
@@ -290,23 +290,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:customized:Contenido:newCustomized:invoke">
+        /*PROTECTED REGION ID(test:customized:Contenido:newCustomized:invoke) ENABLED START*/
         invocationResult = await ((dynamic)service!).NewCustomizedAsync("Sample Contenido Texto", new DateTime(2026, 1, 1), default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:customized:Contenido:newCustomized:assert">
+        /*PROTECTED REGION ID(test:customized:Contenido:newCustomized:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Contenido_DarMeGusta_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Contenido:darMeGusta:arrange">
+        /*PROTECTED REGION ID(test:custom:Contenido:darMeGusta:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "darMeGusta";
         var operationType = "Custom";
@@ -316,23 +316,23 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Contenido:darMeGusta:invoke">
+        /*PROTECTED REGION ID(test:custom:Contenido:darMeGusta:invoke) ENABLED START*/
         await ((dynamic)service!).DarMeGustaAsync(default(int), default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Contenido:darMeGusta:assert">
+        /*PROTECTED REGION ID(test:custom:Contenido:darMeGusta:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     [Fact]
     public async Task Contenido_RetirarMeGusta_Custom_Manual_Contract()
     {
-        // <haria-protected id="test:custom:Contenido:retirarMeGusta:arrange">
+        /*PROTECTED REGION ID(test:custom:Contenido:retirarMeGusta:arrange) ENABLED START*/
         // Create a test unit of work and assign service before enabling the generated invocation.
-        // </haria-protected>
+        /*PROTECTED REGION END*/
 
         var operationName = "retirarMeGusta";
         var operationType = "Custom";
@@ -342,15 +342,15 @@ public sealed class ManualOperationTests
 
         if (executeManualInvocation)
         {
-        // <haria-protected id="test:custom:Contenido:retirarMeGusta:invoke">
+        /*PROTECTED REGION ID(test:custom:Contenido:retirarMeGusta:invoke) ENABLED START*/
         await ((dynamic)service!).RetirarMeGustaAsync(default(int), default(int));
-        // </haria-protected>
+        /*PROTECTED REGION END*/
         }
         _ = invocationResult;
 
-        // <haria-protected id="test:custom:Contenido:retirarMeGusta:assert">
+        /*PROTECTED REGION ID(test:custom:Contenido:retirarMeGusta:assert) ENABLED START*/
         EnsureContractOutput(operationName, operationType);
-        // </haria-protected>
+        /*PROTECTED REGION END*/
     }
 
     private const string SuccessColor = "\u001b[32m";

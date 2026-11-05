@@ -31,9 +31,9 @@
     <many-to-one name="Rechazo" class="Rechazo">
       <column name="FK_Rechazo_rechazo"/>
     </many-to-one>
-    <bag name="Categorias" inverse="true">
+    <bag name="Categorias">
       <key>
-        <column name="FK_Videojuego_videojuego"/>
+        <column name="FK_Videojuego_categorias"/>
       </key>
       <one-to-many class="Categoria"/>
     </bag>

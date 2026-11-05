@@ -18,9 +18,12 @@
     <many-to-one name="Padre" class="Categoria">
       <column name="FK_Categoria_padre"/>
     </many-to-one>
-    <many-to-one name="Videojuego" class="Videojuego">
-      <column name="FK_Videojuego_videojuego" not-null="true"/>
-    </many-to-one>
+    <bag name="Videojuegos">
+      <key>
+        <column name="FK_Categoria_videojuegos"/>
+      </key>
+      <one-to-many class="Videojuego"/>
+    </bag>
   </class>
   <query name="CategoriaReadAllHQL">from Categoria</query>
 </hibernate-mapping>
