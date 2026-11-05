@@ -17,6 +17,13 @@ public sealed partial class ContenidoService
         Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
             ?? throw new ModelException("Usuario not found for Contenido.UsuarioCreador.");
 
+            p_fechaCreacion = DateTime.now();
+
+            if (p_texto == null || p_texto == " ")
+            {
+             throw new ModelException($"Falta el titulo");                   
+            }
+
         Contenido entity = new Contenido
         {
             Texto = p_texto,

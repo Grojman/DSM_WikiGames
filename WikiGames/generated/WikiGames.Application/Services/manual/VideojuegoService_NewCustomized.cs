@@ -17,6 +17,13 @@ public sealed partial class VideojuegoService
         Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
             ?? throw new ModelException("Usuario not found for Videojuego.UsuarioCreador.");
 
+            p_fechaCreacion = DateTime.now();
+
+            if (p_texto == null || p_texto == " " || p_enlace == null || p_enlace == " " || p_imagen == null || p_imagen == " ")
+            {
+             throw new ModelException($"Falta contenido");   
+            }
+
         Videojuego entity = new Videojuego
         {
             Texto = p_texto,

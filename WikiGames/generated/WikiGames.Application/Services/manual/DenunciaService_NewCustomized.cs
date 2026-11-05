@@ -16,7 +16,9 @@ public sealed partial class DenunciaService
         /*PROTECTED REGION ID(WikiGames.Application.Services_Denuncia_newCustomized) ENABLED START*/
         Usuario denuncianteEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_denunciante_oid)
             ?? throw new ModelException("Usuario not found for Denuncia.Denunciante.");
-
+        
+        p_fecha = DateTime.now();
+        
         Denuncia entity = new Denuncia
         {
             Fecha = p_fecha,
