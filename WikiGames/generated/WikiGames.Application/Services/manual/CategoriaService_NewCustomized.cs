@@ -11,16 +11,18 @@ namespace WikiGames.Application.Services;
 
 public sealed partial class CategoriaService
 {
-    public async Task<Categoria> NewCustomizedAsync(string p_name, int p_videojuego_oid)
+    public async Task<Categoria> NewCustomizedAsync(string p_name)
     {
-        /*PROTECTED REGION ID(WikiGames.Application.Services_Categoria_newCustomized) ENABLED START*/
-        Videojuego videojuegoEntity = await _unitOfWork.VideojuegoRepository.ReadAsync(p_videojuego_oid)
-            ?? throw new ModelException("Videojuego not found for Categoria.Videojuego.");
+        var c = await _repository.FindByNameLinQAsync(p_name);
+
+        if (c is not null)
+        {
+            throw new ModelException($"Category with name {p_name} already exists.");
+        }
 
         Categoria entity = new Categoria
         {
             Name = p_name,
-            Videojuego = videojuegoEntity,
         };
 
         await _repository.SaveAsync(entity);

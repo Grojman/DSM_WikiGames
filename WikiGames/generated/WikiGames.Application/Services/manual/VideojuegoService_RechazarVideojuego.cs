@@ -13,10 +13,20 @@ public sealed partial class VideojuegoService
 {
     public async Task RechazarVideojuegoAsync(int p_oid)
     {
-        /*PROTECTED REGION ID(WikiGames.Application.Services_Videojuego_rechazarVideojuego) ENABLED START*/
-        // Write here your custom code...
+        var videojuego = await _repository.ReadAsync(p_oid);
 
-        throw new ModelException("Application service generation for Videojuego.rechazarVideojuego is pending.", new NotImplementedException("Method RechazarVideojuegoAsync() not yet implemented."));
-        /*PROTECTED REGION END*/
+        if (videojuego is null)
+        {
+            throw new ModelException($"Videojuego with id {p_oid} not found.");
+        }
+
+        if (videojuego.Estado != EstadoContenido.Pendiente)
+        {
+            throw new ModelException($"Videogame with id {p_oid} is not in a pending state.");
+        }
+
+        videojuego.Estado = EstadoContenido.Aprobado;
+
+        await _repository.SaveAsync(videojuego);
     }
 }

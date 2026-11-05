@@ -28,6 +28,7 @@ ConceptualModel WikiGames {
             {
                 filterLinQ = "usuarios => usuarios.Where(u => u.Rol == p_rol).ToListAsync()"
             };
+            public login::Login (p_oid : OID -> Usuario, p_password : Password) : String;
         }
     };
 
@@ -64,27 +65,32 @@ ConceptualModel WikiGames {
 
             public findByNombre::ReadFilter (p_texto : String) : List<Object->Videojuego>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "videojuegos => videojuegos.Where(v => v.Titulo == p_texto).ToListAsync()"
             };
 
             public findByCategoria::ReadFilter (p_texto : String) : List<Object->Videojuego>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "videojuegos => videojuegos.Where(v => v.Categorias.Any(c => c.Name == p_texto)).ToListAsync()"
             };
 
-            public findRecientes::ReadFilter (p_texto : String) : List<Object->Videojuego>
+            public findRecientes::ReadFilter () : List<Object->Videojuego>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "videojuegos => videojuegos.Where(v => v.FechaCreacion > DateTime.Now.AddDays(-7)).OrderByDescending(v => v.FechaCreacion).ToListAsync()"
             };
 
-            public findAntiguos::ReadFilter (p_texto : String) : List<Object->Videojuego>
+            public findAntiguos::ReadFilter () : List<Object->Videojuego>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "videojuegos => videojuegos.OrderBy(v => v.FechaCreacion).ToListAsync()"
             };
 
-            public findPopulares::ReadFilter (p_texto : String) : List<Object->Videojuego>
+            public findByMeGusta::ReadFilter () : List<Object->Videojuego>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "videojuegos => videojuegos.Where(v => v.NumeroMeGusta == p_numeroMeGusta).ToListAsync()"
+            };
+
+            public findPopulares::ReadFilter () : List<Object->Videojuego>
+            {
+                filterLinQ = "videojuegos => videojuegos.OrderByDescending(v => v.temas.Where(n => n.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count + v.valoraciones.Where(w => w.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count).ToListAsync()"
             };
         }
     };
@@ -99,7 +105,7 @@ ConceptualModel WikiGames {
 
         operations
         {
-            public newCustomized::New customized (p_name : String, p_videojuego_oid : OID -> Videojuego) : Object->Categoria;
+            public newCustomized::New customized (p_name : String) : Object->Categoria;
             public destroy::Destroy (p_oid : OID -> Categoria) : Void;
             public modify::Modifier (p_oid : OID -> Categoria, p_name : String, p_videojuego_oid : OID -> Videojuego) : Void;
             public readOID::ReadOID (p_oid : OID -> Categoria) : Object->Categoria;
@@ -109,7 +115,7 @@ ConceptualModel WikiGames {
             
             public findByNameLinQ::ReadFilter (p_name : String) : List<Object->Categoria>
             {
-                filterLinQ = "entity => entity.Name == p_name"
+                filterLinQ = "categorias => categorias.Where(c => c.Name.Contains(p_name)).ToListAsync()"
             };
         }
     };
@@ -131,12 +137,12 @@ ConceptualModel WikiGames {
 
             public findByTitulo::ReadFilter (p_texto : String) : List<Object->TemaConversacion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "temas => temas.Where(t => t.Titulo == p_texto).ToListAsync()"
             };
 
-            public findByRecientes::ReadFilter (p_texto : String) : List<Object->TemaConversacion>
+            public findByRecientes::ReadFilter () : List<Object->TemaConversacion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "temas => temas.Where(t => t.FechaCreacion > DateTime.Now.AddDays(-7)).OrderByDescending(t => t.FechaCreacion).ToListAsync()"
             };
         }
     };
@@ -200,19 +206,19 @@ ConceptualModel WikiGames {
             public nuevaValoracion::CustomTransaction (p_oid : OID -> Valoracion) : Void;
             public eliminarValoracion::CustomTransaction (p_oid : OID -> Valoracion) : Void;
 
-            public findByPuntuacion::ReadFilter (p_texto : String) : List<Object->Valoracion>
+            public findByPuntuacion::ReadFilter (puntuacion: Float) : List<Object->Valoracion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "valoraciones => valoraciones.Where(v => v.Puntuacion == puntuacion).ToListAsync()"
             };
 
-            public findPeores::ReadFilter (p_texto : String) : List<Object->Valoracion>
+            public findPeores::ReadFilter () : List<Object->Valoracion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "valoraciones => valoraciones.OrderBy(v => v.Puntuacion).ToListAsync()"
             };
 
-            public findMejores::ReadFilter (p_texto : String) : List<Object->Valoracion>
+            public findMejores::ReadFilter () : List<Object->Valoracion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "valoraciones => valoraciones.OrderByDescending(v => v.Puntuacion).ToListAsync()"
             };
 
 
@@ -238,7 +244,7 @@ ConceptualModel WikiGames {
 
             public findByFechaLinQ::ReadFilter (p_fecha : Date) : List<Object->AccionSistema>
             {
-                filterLinQ = "entity => entity.Fecha == p_fecha"
+                filterLinQ = "acciones => acciones.Where(a => a.Fecha == p_fecha).ToListAsync()"
             };
         }
     };
@@ -283,19 +289,19 @@ ConceptualModel WikiGames {
             public darMeGusta::Custom (p_oid : OID -> Contenido, p_user : OID -> Usuario) : Void;
             public retirarMeGusta::Custom (p_oid : OID -> Contenido, p_user : OID -> Usuario) : Void;
 
-            public findOrderByFecha::ReadFilter (p_texto : String) : List<Object->Contenido>
+            public findOrderByFecha::ReadFilter () : List<Object->Contenido>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "contenidos => contenidos.OrderByDescending(c => c.FechaCreacion).ToListAsync()"
             };
 
-            public findOrderMeGusta::ReadFilter (p_texto : String) : List<Object->Contenido>
+            public findOrderMeGusta::ReadFilter () : List<Object->Contenido>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "contenidos => contenidos.OrderByDescending(c => c.NumeroMeGusta).ToListAsync()"
             };
 
-            public findBYUserLiked::ReadFilter (p_texto : String) : List<Object->Contenido>
+            public findBYUserLiked::ReadFilter (p_user : OID -> Usuario) : List<Object->Contenido>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "contenidos => contenidos.Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user.Id)).ToListAsync()"
             };
         }
     };
@@ -317,9 +323,9 @@ ConceptualModel WikiGames {
             public readOID::ReadOID (p_oid : OID -> Notificacion) : Object->Notificacion;
             public readAll::ReadAll () : List<Object->Notificacion>;
 
-            public findByFecha::ReadFilter (p_texto : String) : List<Object->Notificacion>
+            public findByFecha::ReadFilter (p_fecha : Date) : List<Object->Notificacion>
             {
-                filterLinQ = "entity => entity.Texto == p_texto"
+                filterLinQ = "notificaciones => notificaciones.Where(n => n.Fecha == p_fecha).ToListAsync()"
             };
         }
     };
@@ -367,10 +373,10 @@ ConceptualModel WikiGames {
         <= navigable padre (0, 1);
     };
 
-    Association VideojuegoCategoria (Videojuego - Categoria)
+    Association VideojuegsoCategorias (Videojuego - Categoria)
     {
         => navigable categorias (0, *);
-        <= navigable videojuego (1, 1);
+        <= navigable videojuegos (0, *);
     };
     
     Association DenunciaNotificacion (Denuncia - Notificacion)
