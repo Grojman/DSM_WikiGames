@@ -26,6 +26,19 @@ public sealed partial class DenunciaService
         };
 
         await _repository.SaveAsync(entity);
+
+        Notificacion notificacion = new Notificacion
+    {
+        Texto = "Tu denuncia se ha registrado correctamente.",
+        Fecha = p_fecha
+    };
+
+    entity.Notificacion = notificacion;
+
+    notificacion.Notificados.Add(denuncianteEntity);
+
+    await _unitOfWork.NotificacionRepository.SaveAsync(notificacion);
+
         return entity;
         /*PROTECTED REGION END*/
     }

@@ -35,6 +35,18 @@ public sealed partial class VideojuegoService
         };
 
         await _repository.SaveAsync(entity);
+         
+         Notificacion notificacion = new Notificacion
+    {
+        Texto = "Tu juego esta dado de alta y falta aprobarlo.",
+        Fecha = p_fecha
+    };
+
+    entity.Notificacion = notificacion;
+
+    notificacion.Notificados.Add(usuarioCreadorEntity);
+
+    await _unitOfWork.NotificacionRepository.SaveAsync(notificacion);
         return entity;
         /*PROTECTED REGION END*/
     }
