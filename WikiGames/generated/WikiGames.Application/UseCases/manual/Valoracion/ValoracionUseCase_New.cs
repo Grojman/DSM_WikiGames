@@ -12,7 +12,7 @@ namespace WikiGames.Application.UseCases.Valoracion;
 
 public sealed partial class ValoracionUseCase
 {
-    public async Task<global::WikiGames.Domain.Entities.Valoracion> NewAsync(string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, float p_puntuacion, int p_usuarioCreador_oid, int p_videojuego_oid)
+    public async Task<global::WikiGames.Domain.Entities.Valoracion> NewAsync(string p_texto, float p_puntuacion, int p_usuarioCreador_oid, int p_videojuego_oid)
     {
         /*PROTECTED REGION ID(WikiGames.Application.UseCases_Valoracion_new) ENABLED START*/
         // Resolve external infrastructure services with _utils!.GetRequiredService<TService>() when this use case receives IUnitOfWorkUtils.
@@ -23,7 +23,6 @@ public sealed partial class ValoracionUseCase
         {
             await _unitOfWork.BeginTransactionAsync("ValoracionUseCase.NewAsync");
             valoracionService = new ValoracionService(_unitOfWork);
-
             global::WikiGames.Domain.Entities.Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
                 ?? throw new ModelException("Usuario not found for Valoracion.UsuarioCreador.");
 
@@ -33,15 +32,31 @@ public sealed partial class ValoracionUseCase
             global::WikiGames.Domain.Entities.Valoracion entity = new global::WikiGames.Domain.Entities.Valoracion
             {
                 Texto = p_texto,
-                FechaCreacion = p_fechaCreacion,
-                NumeroMeGusta = p_numeroMeGusta,
+                FechaCreacion = DateTime.Now,
+                NumeroMeGusta = 0,
                 Puntuacion = p_puntuacion,
                 UsuarioCreador = usuarioCreadorEntity,
                 Videojuego = videojuegoEntity,
             };
 
             await _unitOfWork.ValoracionRepository.SaveAsync(entity);
+            if (!videojuegoEntity.Valoraciones.Contains(entity))
+            {
+                videojuegoEntity.Valoraciones.Add(entity);
+            }
+
+            //He copiado esta función tres veces en los casos de uso. Si tan solo se pudiera utilizar clases estáticas para  no tener que repetir código...
+            videojuegoEntity.PuntuacionMedia = videojuegoEntity.Valoraciones.Count == 0 ? 0f : videojuegoEntity.Valoraciones.Average(x => x.Puntuacion);
+            await _unitOfWork.VideojuegoRepository.SaveAsync(videojuegoEntity);
             result = entity;
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"Tu videojuego \"{videojuegoEntity.Titulo}\" ha recibido una nueva valoración de {usuarioCreadorEntity.Name}: {p_puntuacion}.",
+                DateTime.Now,
+                new[] { videojuegoEntity.UsuarioCreador.Id });
 
             await _unitOfWork.CommitAsync();
         }

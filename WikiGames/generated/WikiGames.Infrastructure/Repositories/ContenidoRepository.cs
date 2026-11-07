@@ -124,7 +124,7 @@ public sealed class ContenidoRepository : RepositoryBase<Contenido>, IContenidoR
         {
             using var context = OpenSession();
             return await context.Session.Query<Contenido>()
-                .Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user.Id))
+                .Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user))
                 .ToListAsync();
         }
         catch (Exception ex)

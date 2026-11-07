@@ -92,7 +92,7 @@ public sealed class UsuarioRepository : RepositoryBase<Usuario>, IUsuarioReposit
         {
             using var context = OpenSession();
             return await context.Session.Query<Usuario>()
-                .Where(entity => entity.Rol == p_rol)
+                .Where(entity => entity.RolUsuario == p_rol)
                 .ToListAsync();
         }
         catch (Exception ex)

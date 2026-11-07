@@ -13,20 +13,17 @@ public sealed partial class DenunciaService
 {
     public async Task RechazarDenunciaAsync(int p_oid)
     {
-        var denuncia = await _repository.ReadAsync(p_oid);
-
-        if (denuncia is null)
-        {
-            throw new ModelException($"Denuncia with id {p_oid} not found.");
-        }
+        /*PROTECTED REGION ID(WikiGames.Application.Services_Denuncia_rechazarDenuncia) ENABLED START*/
+        Denuncia denuncia = await _repository.ReadAsync(p_oid)
+            ?? throw new ModelException($"No existe la denuncia {p_oid}.");
 
         if (denuncia.Estado != EstadoContenido.Pendiente)
         {
-            throw new ModelException($"Denuncia with id {p_oid} is not in a pending state.");
+            throw new ModelException($"La denuncia {p_oid} no está pendiente.");
         }
 
         denuncia.Estado = EstadoContenido.Rechazado;
-
         await _repository.SaveAsync(denuncia);
+        /*PROTECTED REGION END*/
     }
 }

@@ -23,8 +23,24 @@ public sealed partial class VideojuegoUseCase
             await _unitOfWork.BeginTransactionAsync("VideojuegoUseCase.AprobarVideojuegoAsync");
             videojuegoService = new VideojuegoService(_unitOfWork);
 
-            // Write here your custom transaction code...
-            // Use videojuegoService, _unitOfWork.VideojuegoRepository or _utils!.GetRequiredService<TService>() as the generated CP equivalent.
+            global::WikiGames.Domain.Entities.Videojuego videojuego = await _unitOfWork.VideojuegoRepository.ReadAsync(p_oid)
+                ?? throw new ModelException($"No existe el videojuego {p_oid}.");
+
+            if (videojuego.Estado != EstadoContenido.Pendiente)
+            {
+                throw new ModelException($"El videojuego {p_oid} no está pendiente de aprobación.");
+            }
+
+            videojuego.Estado = EstadoContenido.Aprobado;
+            await _unitOfWork.VideojuegoRepository.SaveAsync(videojuego);
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"¡Enhorabuena! Tu videojuego \"{videojuego.Titulo}\" ha sido aprobado. Ahora es público y otros usuarios pueden verlo.",
+                DateTime.Now,
+                new[] { videojuego.UsuarioCreador.Id });
 
             await _unitOfWork.CommitAsync();
         }

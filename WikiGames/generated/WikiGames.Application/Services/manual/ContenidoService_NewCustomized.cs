@@ -11,23 +11,22 @@ namespace WikiGames.Application.Services;
 
 public sealed partial class ContenidoService
 {
-    public async Task<Contenido> NewCustomizedAsync(string p_texto, DateTime p_fechaCreacion, int p_usuarioCreador_oid)
+    public async Task<Contenido> NewCustomizedAsync(string p_texto, int p_usuarioCreador_oid)
     {
         /*PROTECTED REGION ID(WikiGames.Application.Services_Contenido_newCustomized) ENABLED START*/
+        if (string.IsNullOrWhiteSpace(p_texto))
+        {
+            throw new ModelException("El contenido debe tener texto.");
+        }
+
         Usuario usuarioCreadorEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_usuarioCreador_oid)
             ?? throw new ModelException("Usuario not found for Contenido.UsuarioCreador.");
-
-            p_fechaCreacion = DateTime.now();
-
-            if (p_texto == null || p_texto == " ")
-            {
-             throw new ModelException($"Falta el titulo");                   
-            }
 
         Contenido entity = new Contenido
         {
             Texto = p_texto,
-            FechaCreacion = p_fechaCreacion,
+            FechaCreacion = DateTime.Now,
+            NumeroMeGusta = 0,
             UsuarioCreador = usuarioCreadorEntity,
         };
 

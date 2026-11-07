@@ -60,7 +60,7 @@ public sealed class ModelGeneratedTests
         // </haria-protected>
 
         var operationName = "findByTipoUsuario";
-        var filterExpression = "entity => entity.Rol == p_rol";
+        var filterExpression = "entity => entity.RolUsuario == p_rol";
 
         // <haria-protected id="test:filter:Usuario:findByTipoUsuario:assert">
         Ensure(!string.IsNullOrWhiteSpace(operationName), "Usuario.findByTipoUsuario declares the generated operation name.");
@@ -156,7 +156,7 @@ public sealed class ModelGeneratedTests
         // </haria-protected>
 
         var operationName = "findPopulares";
-        var filterExpression = "videojuegos => videojuegos.OrderByDescending(v => v.temas.Where(n => n.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count + v.valoraciones.Where(w => w.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count)";
+        var filterExpression = "query => query.OrderByDescending(v => v.Temas.Count(t => t.FechaCreacion > DateTime.Now.AddDays(-7)) + v.Valoraciones.Count(w => w.FechaCreacion > DateTime.Now.AddDays(-7)))";
 
         // <haria-protected id="test:filter:Videojuego:findPopulares:assert">
         Ensure(!string.IsNullOrWhiteSpace(operationName), "Videojuego.findPopulares declares the generated operation name.");
@@ -332,7 +332,7 @@ public sealed class ModelGeneratedTests
         // </haria-protected>
 
         var operationName = "findBYUserLiked";
-        var filterExpression = "query => query.Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user.Id))";
+        var filterExpression = "query => query.Where(c => c.UsuariosMeGusta.Any(u => u.Id == p_user))";
 
         // <haria-protected id="test:filter:Contenido:findBYUserLiked:assert">
         Ensure(!string.IsNullOrWhiteSpace(operationName), "Contenido.findBYUserLiked declares the generated operation name.");
@@ -369,7 +369,16 @@ public sealed class ModelGeneratedTests
 
             // TODO: No seed generated for Videojuego; define a non-customized New operation in the service to initialize it.
 
-            // TODO: No seed generated for Categoria; define a non-customized New operation in the service to initialize it.
+            var categoriaService = new CategoriaService(unitOfWorkFactory);
+            var sampleCategoria = await categoriaService.NewAsync("Sample Categoria Name");
+            var sampleCategoriaReadBack = await categoriaService.ReadOIDAsync(sampleCategoria.Id);
+            Ensure(sampleCategoriaReadBack is not null, "Categoria read by OID returns the generated entity.");
+            var sampleCategoriaReadAll = await categoriaService.ReadAllAsync();
+            Ensure(sampleCategoriaReadAll.Count > 0, "Categoria read all returns generated data.");
+            var sampleCategoriaFindByNameLinQResult = await categoriaService.FindByNameLinQAsync("Sample Categoria Name");
+            Ensure(sampleCategoriaFindByNameLinQResult is not null, "Categoria.findByNameLinQ filter executes.");
+            await categoriaService.ModifyAsync(sampleCategoria.Id, "Sample Categoria Name", default!);
+            Ensure(await categoriaService.ReadOIDAsync(sampleCategoria.Id) is not null, "Categoria modify keeps the entity readable.");
 
             // TODO: Set required relationship TemaConversacion.Videojuego manually; it could not be ordered automatically.
             // TODO: No seed generated for TemaConversacion; one or more New arguments reference classes that were not seeded yet.
@@ -390,11 +399,21 @@ public sealed class ModelGeneratedTests
             // TODO: Set required relationship Contenido.UsuarioCreador manually; it could not be ordered automatically.
             // TODO: No seed generated for Contenido; define a non-customized New operation in the service to initialize it.
 
+            // TODO: Set required relationship Notificacion.Notificados manually; it could not be ordered automatically.
             // TODO: No seed generated for Notificacion; define a non-customized New operation in the service to initialize it.
 
             // TODO: Set required relationship AccionSistema.Causante manually; it could not be ordered automatically.
             // TODO: Set required relationship AccionSistema.ContenidoAfectado manually; it could not be ordered automatically.
             // TODO: No seed generated for AccionSistema; one or more New arguments reference classes that were not seeded yet.
+
+            await categoriaService.AddHijoAsync(sampleCategoria.Id, new[] { sampleCategoria.Id });
+            Ensure(sampleCategoria.Hijos.Contains(sampleCategoria), "Categoria.addHijo relates Categoria and Categoria.");
+            await categoriaService.AddPadreAsync(sampleCategoria.Id, sampleCategoria.Id);
+            Ensure(sampleCategoria.Padre?.Equals(sampleCategoria) == true, "Categoria.addPadre relates Categoria and Categoria.");
+
+            await categoriaService.DestroyAsync(sampleCategoria.Id);
+
+            Ensure((await categoriaService.ReadAllAsync()).Count == 0, "Categoria seed cleanup completed.");
     }
 
     private static Configuration CreateNHibernateConfiguration()

@@ -23,8 +23,24 @@ public sealed partial class DenunciaUseCase
             await _unitOfWork.BeginTransactionAsync("DenunciaUseCase.AprobarDenunciaAsync");
             denunciaService = new DenunciaService(_unitOfWork);
 
-            // Write here your custom transaction code...
-            // Use denunciaService, _unitOfWork.DenunciaRepository or _utils!.GetRequiredService<TService>() as the generated CP equivalent.
+            global::WikiGames.Domain.Entities.Denuncia denuncia = await _unitOfWork.DenunciaRepository.ReadAsync(p_oid)
+                ?? throw new ModelException($"No existe la denuncia {p_oid}.");
+
+            if (denuncia.Estado != EstadoContenido.Pendiente)
+            {
+                throw new ModelException($"La denuncia {p_oid} no está pendiente.");
+            }
+
+            denuncia.Estado = EstadoContenido.Aprobado;
+            await _unitOfWork.DenunciaRepository.SaveAsync(denuncia);
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"Tu denuncia del {denuncia.Fecha:dd/MM/yyyy} ha sido aceptada. Gracias por ayudar a mantener el foro.",
+                DateTime.Now,
+                new[] { denuncia.Denunciante.Id });
 
             await _unitOfWork.CommitAsync();
         }

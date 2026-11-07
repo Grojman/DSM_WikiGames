@@ -156,7 +156,7 @@ public sealed class VideojuegoRepository : RepositoryBase<Videojuego>, IVideojue
         {
             using var context = OpenSession();
             return await context.Session.Query<Videojuego>()
-                .Where(videojuegos => videojuegos.OrderByDescending(v => v.temas.Where(n => n.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count + v.valoraciones.Where(w => w.FechaCreacion > DateTime.Now.AddDays(-7)).ToList().Count))
+                .OrderByDescending(v => v.Temas.Count(t => t.FechaCreacion > DateTime.Now.AddDays(-7)) + v.Valoraciones.Count(w => w.FechaCreacion > DateTime.Now.AddDays(-7)))
                 .ToListAsync();
         }
         catch (Exception ex)

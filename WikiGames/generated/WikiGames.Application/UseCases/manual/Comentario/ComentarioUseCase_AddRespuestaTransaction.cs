@@ -23,8 +23,30 @@ public sealed partial class ComentarioUseCase
             await _unitOfWork.BeginTransactionAsync("ComentarioUseCase.AddRespuestaTransactionAsync");
             comentarioService = new ComentarioService(_unitOfWork);
 
-            // Write here your custom transaction code...
-            // Use comentarioService, _unitOfWork.ComentarioRepository or _utils!.GetRequiredService<TService>() as the generated CP equivalent.
+            global::WikiGames.Domain.Entities.Comentario comentario = await _unitOfWork.ComentarioRepository.ReadAsync(p_oid)
+                ?? throw new ModelException($"No existe el comentario {p_oid}.");
+
+            if (p_comentario2_oids is null || p_comentario2_oids.Count == 0)
+            {
+                throw new ModelException("Hay que indicar al menos una respuesta.");
+            }
+
+            if (p_comentario2_oids.Contains(p_oid))
+            {
+                throw new ModelException("Un comentario no puede responderse a sí mismo.");
+            }
+
+            // Relationer Comentario.addRespuesta.
+            await comentarioService.AddRespuestaAsync(p_oid, p_comentario2_oids);
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            string texto =  "Alguien ha respondido a tu comentario.";
+            await notificacionUseCase.NewAsync(
+                $"{texto} Comentario: \"{comentario.Texto}\"",
+                DateTime.Now,
+                new[] { comentario.UsuarioCreador.Id });
 
             await _unitOfWork.CommitAsync();
         }

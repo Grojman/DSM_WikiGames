@@ -67,6 +67,18 @@ public sealed partial class NotificacionService : ServiceEntity<Notificacion>
         return await _repository.ReadAllAsync();
     }
 
+    public async Task AddDenunciaAsync(int p_oid, int p_denuncia_oid)
+    {
+        Notificacion entity = await _repository.ReadAsync(p_oid)
+            ?? throw new ModelException("Notificacion not found.");
+        Denuncia relatedEntity = await _unitOfWork.DenunciaRepository.ReadAsync(p_denuncia_oid)
+            ?? throw new ModelException("Denuncia not found for Notificacion.Denuncia.");
+        entity.Denuncia = relatedEntity;
+        relatedEntity.Notificacion = entity;
+        await _unitOfWork.DenunciaRepository.SaveAsync(relatedEntity);
+        await _repository.SaveAsync(entity);
+    }
+
     public async Task<IReadOnlyList<Notificacion>> FindByFechaAsync(DateTime p_fecha)
     {
         return await _repository.FindByFechaAsync(p_fecha);

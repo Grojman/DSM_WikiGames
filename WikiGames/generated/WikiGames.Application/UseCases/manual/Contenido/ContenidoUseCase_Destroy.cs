@@ -25,7 +25,19 @@ public sealed partial class ContenidoUseCase
 
             global::WikiGames.Domain.Entities.Contenido entity = await _unitOfWork.ContenidoRepository.ReadAsync(p_oid)
                 ?? throw new ModelException("Contenido not found.");
+
+            int duenoOid = entity.UsuarioCreador.Id;
+            string texto = entity.Texto;
+
             await _unitOfWork.ContenidoRepository.DeleteAsync(entity);
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"Tu contenido \"{texto}\" ha sido eliminado por un moderador/administrador de WikiGames.",
+                DateTime.Now,
+                new[] { duenoOid });
 
             await _unitOfWork.CommitAsync();
         }

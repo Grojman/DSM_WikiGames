@@ -13,6 +13,7 @@ public partial class Contenido
     public virtual IList<AccionSistema> Acciones { get; set; } = new List<AccionSistema>();
     public virtual IList<Denuncia> Denuncias { get; set; } = new List<Denuncia>();
     public virtual IList<Usuario> UsuarioFavorito { get; set; } = new List<Usuario>();
+    public virtual IList<Usuario> UsuariosMeGusta { get; set; } = new List<Usuario>();
 
     private bool HasDefaultIdentity() => EqualityComparer<int>.Default.Equals(Id, default);
 

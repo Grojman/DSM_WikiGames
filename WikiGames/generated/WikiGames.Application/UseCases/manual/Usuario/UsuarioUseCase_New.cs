@@ -24,6 +24,11 @@ public sealed partial class UsuarioUseCase
             await _unitOfWork.BeginTransactionAsync("UsuarioUseCase.NewAsync");
             usuarioService = new UsuarioService(_unitOfWork);
 
+            if (string.IsNullOrWhiteSpace(p_name) || string.IsNullOrWhiteSpace(p_email) || string.IsNullOrWhiteSpace(p_password))
+            {
+                throw new ModelException("El nombre, el email y la contraseña son obligatorios.");
+            }
+
             global::WikiGames.Domain.Entities.Usuario entity = new global::WikiGames.Domain.Entities.Usuario
             {
                 Name = p_name,
@@ -34,6 +39,15 @@ public sealed partial class UsuarioUseCase
 
             await _unitOfWork.UsuarioRepository.SaveAsync(entity);
             result = entity;
+
+            // Notificación de bienvenida (al final de la transacción).
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"¡Bienvenido/a a WikiGames, {entity.Name}! Ya formas parte del foro.",
+                DateTime.Now,
+                new[] { entity.Id });
 
             await _unitOfWork.CommitAsync();
         }
