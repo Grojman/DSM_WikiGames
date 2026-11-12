@@ -17,7 +17,7 @@ public sealed partial class DenunciaService
         Usuario denuncianteEntity = await _unitOfWork.UsuarioRepository.ReadAsync(p_denunciante_oid)
             ?? throw new ModelException("Usuario not found for Denuncia.Denunciante.");
         
-        DateTime p_fecha = DateTime.now();
+        DateTime p_fecha = DateTime.Now;
         
         Denuncia entity = new Denuncia
         {

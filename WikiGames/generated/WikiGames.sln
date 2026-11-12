@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InitializeDB", "InitializeD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikiGames.Tests", "WikiGames.Tests\WikiGames.Tests.csproj", "{55555555-5555-5555-5555-555555555555}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikiGames.WebEjemplo", "WikiGames.WebEjemplo\WikiGames.WebEjemplo.csproj", "{F95D79EE-A135-4909-A861-55001BE3A864}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{55555555-5555-5555-5555-555555555555}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55555555-5555-5555-5555-555555555555}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55555555-5555-5555-5555-555555555555}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F95D79EE-A135-4909-A861-55001BE3A864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F95D79EE-A135-4909-A861-55001BE3A864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F95D79EE-A135-4909-A861-55001BE3A864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F95D79EE-A135-4909-A861-55001BE3A864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

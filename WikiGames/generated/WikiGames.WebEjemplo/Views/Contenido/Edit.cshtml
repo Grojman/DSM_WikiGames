@@ -1,0 +1,55 @@
+@* HARIA-WEB GENERATED sha256:f8f92918630087768a22dc3d915b2e3b13b683d01feb31d2a2678a75dfc75133 *@
+@model WikiGames.WebEjemplo.ViewModels.ContenidoViewModel
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-body p-4">
+                <span class="badge text-bg-primary-subtle text-primary-emphasis mb-3">Editar</span>
+                <h1 class="h3 mb-1">Contenido</h1>
+                <p class="text-body-secondary mb-0">Completa los campos y guarda los cambios.</p>
+            </div>
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div class="card-body p-4">
+                    <div asp-validation-summary="All" class="alert alert-danger py-2" role="alert"></div>
+                    <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="Texto" class="form-label"></label>
+            <input asp-for="Texto" class="form-control" />
+            <span asp-validation-for="Texto" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="FechaCreacion" class="form-label"></label>
+            <input asp-for="FechaCreacion" type="date" class="form-control" />
+            <span asp-validation-for="FechaCreacion" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NumeroMeGusta" class="form-label"></label>
+            <input asp-for="NumeroMeGusta" class="form-control" />
+            <span asp-validation-for="NumeroMeGusta" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="UsuarioCreadorId" class="form-label"></label>
+            <select asp-for="UsuarioCreadorId" asp-items="Model.UsuarioCreadorOptions" class="form-select"><option value="">Selecciona...</option></select>
+            <span asp-validation-for="UsuarioCreadorId" class="text-danger"></span>
+        </div>
+                </div>
+                <div class="card-footer bg-body p-4 d-flex flex-column flex-sm-row gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+
+}
