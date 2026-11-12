@@ -26,8 +26,6 @@ public sealed partial class UsuarioUseCase
             global::WikiGames.Domain.Entities.Usuario entity = await _unitOfWork.UsuarioRepository.ReadAsync(p_oid)
                 ?? throw new ModelException("Usuario not found.");
 
-            // La notificación se crea ANTES de borrar el usuario (requisito): sirve para enviarle el correo.
-            // Al borrarse el usuario la notificación queda huérfana (aceptado).
             var notificacionUseCase = _utils is null
                 ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
                 : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
@@ -35,6 +33,14 @@ public sealed partial class UsuarioUseCase
                 $"Hola {entity.Name}, tu cuenta de WikiGames ha sido eliminada.",
                 DateTime.Now,
                 new[] { entity.Id });
+
+            //Eliminamos las relaciones con el usuario para que las notificaciones sigan existiendo aun con el usuario eliminado
+            foreach (global::WikiGames.Domain.Entities.Notificacion notificacion in entity.Notificaciones.ToList())
+            {
+                notificacion.Notificados.Remove(entity);
+                await _unitOfWork.NotificacionRepository.SaveAsync(notificacion);
+            }
+            entity.Notificaciones.Clear();
 
             await _unitOfWork.UsuarioRepository.DeleteAsync(entity);
 

@@ -36,11 +36,13 @@
       </key>
       <one-to-many class="AccionSistema"/>
     </bag>
-    <bag name="Notificaciones">
+    <bag name="Notificaciones" table="REL_NotificacionUsuario" inverse="true">
       <key>
         <column name="FK_Usuario_notificaciones"/>
       </key>
-      <one-to-many class="Notificacion"/>
+      <many-to-many class="Notificacion">
+        <column name="FK_Notificacion_notificados"/>
+      </many-to-many>
     </bag>
     <bag name="DenunciasGeneradas" inverse="true">
       <key>
@@ -54,17 +56,21 @@
       </key>
       <one-to-many class="Denuncia"/>
     </bag>
-    <bag name="ContenidoFavorito">
+    <bag name="ContenidoFavorito" table="REL_UsuarioFavoritos">
       <key>
         <column name="FK_Usuario_contenidoFavorito"/>
       </key>
-      <one-to-many class="Contenido"/>
+      <many-to-many class="Contenido">
+        <column name="FK_Contenido_usuarioFavorito"/>
+      </many-to-many>
     </bag>
-    <bag name="ContenidosMeGusta">
+    <bag name="ContenidosMeGusta" table="REL_UsuarioMeGusta">
       <key>
         <column name="FK_Usuario_contenidosMeGusta"/>
       </key>
-      <one-to-many class="Contenido"/>
+      <many-to-many class="Contenido">
+        <column name="FK_Contenido_usuariosMeGusta"/>
+      </many-to-many>
     </bag>
   </class>
   <query name="UsuarioReadAllHQL">from Usuario</query>

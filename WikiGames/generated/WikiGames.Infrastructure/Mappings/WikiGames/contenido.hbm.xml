@@ -30,17 +30,21 @@
       </key>
       <one-to-many class="Denuncia"/>
     </bag>
-    <bag name="UsuarioFavorito">
+    <bag name="UsuarioFavorito" table="REL_UsuarioFavoritos" inverse="true">
       <key>
         <column name="FK_Contenido_usuarioFavorito"/>
       </key>
-      <one-to-many class="Usuario"/>
+      <many-to-many class="Usuario">
+        <column name="FK_Usuario_contenidoFavorito"/>
+      </many-to-many>
     </bag>
-    <bag name="UsuariosMeGusta">
+    <bag name="UsuariosMeGusta" table="REL_UsuarioMeGusta" inverse="true">
       <key>
         <column name="FK_Contenido_usuariosMeGusta"/>
       </key>
-      <one-to-many class="Usuario"/>
+      <many-to-many class="Usuario">
+        <column name="FK_Usuario_contenidosMeGusta"/>
+      </many-to-many>
     </bag>
   </class>
   <query name="ContenidoReadAllHQL">from Contenido</query>

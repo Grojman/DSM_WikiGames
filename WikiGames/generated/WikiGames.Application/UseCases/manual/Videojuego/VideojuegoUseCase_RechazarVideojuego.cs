@@ -25,6 +25,11 @@ public sealed partial class VideojuegoUseCase
             videojuegoService = new VideojuegoService(_unitOfWork);
             rechazoService = new RechazoService(_unitOfWork);
 
+            if (string.IsNullOrWhiteSpace(p_motivo))
+            {
+                throw new ModelException("El motivo del rechazo es obligatorio.");
+            }
+
             global::WikiGames.Domain.Entities.Videojuego videojuego = await _unitOfWork.VideojuegoRepository.ReadAsync(p_oid)
                 ?? throw new ModelException($"No existe el videojuego {p_oid}.");
 

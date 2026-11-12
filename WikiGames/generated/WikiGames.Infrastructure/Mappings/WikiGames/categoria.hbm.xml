@@ -18,11 +18,13 @@
     <many-to-one name="Padre" class="Categoria">
       <column name="FK_Categoria_padre"/>
     </many-to-one>
-    <bag name="Videojuegos">
+    <bag name="Videojuegos" table="REL_VideojuegsoCategorias" inverse="true">
       <key>
         <column name="FK_Categoria_videojuegos"/>
       </key>
-      <one-to-many class="Videojuego"/>
+      <many-to-many class="Videojuego">
+        <column name="FK_Videojuego_categorias"/>
+      </many-to-many>
     </bag>
   </class>
   <query name="CategoriaReadAllHQL">from Categoria</query>

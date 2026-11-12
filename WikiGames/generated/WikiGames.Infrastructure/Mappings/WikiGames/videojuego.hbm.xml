@@ -34,11 +34,13 @@
     <many-to-one name="Rechazo" class="Rechazo">
       <column name="FK_Rechazo_rechazo"/>
     </many-to-one>
-    <bag name="Categorias">
+    <bag name="Categorias" table="REL_VideojuegsoCategorias">
       <key>
         <column name="FK_Videojuego_categorias"/>
       </key>
-      <one-to-many class="Categoria"/>
+      <many-to-many class="Categoria">
+        <column name="FK_Categoria_videojuegos"/>
+      </many-to-many>
     </bag>
   </joined-subclass>
   <query name="VideojuegoReadAllHQL">from Videojuego</query>

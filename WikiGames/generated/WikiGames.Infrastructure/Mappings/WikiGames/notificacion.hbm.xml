@@ -15,11 +15,13 @@
     <many-to-one name="Denuncia" class="Denuncia">
       <column name="FK_Denuncia_denuncia"/>
     </many-to-one>
-    <bag name="Notificados">
+    <bag name="Notificados" table="REL_NotificacionUsuario">
       <key>
         <column name="FK_Notificacion_notificados"/>
       </key>
-      <one-to-many class="Usuario"/>
+      <many-to-many class="Usuario">
+        <column name="FK_Usuario_notificaciones"/>
+      </many-to-many>
     </bag>
   </class>
   <query name="NotificacionReadAllHQL">from Notificacion</query>
