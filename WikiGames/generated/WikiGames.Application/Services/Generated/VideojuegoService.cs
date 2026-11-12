@@ -48,7 +48,7 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         await _repository.DeleteAsync(entity);
     }
 
-    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, string p_titulo, string p_enlace, string p_imagen, EstadoContenido p_estado, int p_usuarioCreador_oid)
+    public async Task ModifyAsync(int p_oid, string p_texto, DateTime p_fechaCreacion, int p_numeroMeGusta, string p_titulo, string p_enlace, string p_imagen, EstadoContenido p_estado, float p_puntuacionMedia, int p_usuarioCreador_oid)
     {
         Videojuego entity = await _repository.ReadAsync(p_oid)
             ?? throw new ModelException("Videojuego not found.");
@@ -59,6 +59,7 @@ public sealed partial class VideojuegoService : ServiceEntity<Videojuego>
         entity.Enlace = p_enlace;
         entity.Imagen = p_imagen;
         entity.Estado = p_estado;
+        entity.PuntuacionMedia = p_puntuacionMedia;
         await _repository.SaveAsync(entity);
     }
 

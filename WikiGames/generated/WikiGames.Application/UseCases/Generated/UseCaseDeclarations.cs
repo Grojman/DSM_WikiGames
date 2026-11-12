@@ -6,6 +6,7 @@ public static class UseCaseDeclarations
     {
         typeof(global::WikiGames.Application.UseCases.Usuario.UsuarioUseCase),
         typeof(global::WikiGames.Application.UseCases.Videojuego.VideojuegoUseCase),
+        typeof(global::WikiGames.Application.UseCases.Categoria.CategoriaUseCase),
         typeof(global::WikiGames.Application.UseCases.Comentario.ComentarioUseCase),
         typeof(global::WikiGames.Application.UseCases.Denuncia.DenunciaUseCase),
         typeof(global::WikiGames.Application.UseCases.Valoracion.ValoracionUseCase),

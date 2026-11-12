@@ -18,6 +18,7 @@ public partial class Usuario
     public virtual IList<Denuncia> DenunciasGeneradas { get; set; } = new List<Denuncia>();
     public virtual IList<Denuncia> DenunciasRecibidas { get; set; } = new List<Denuncia>();
     public virtual IList<Contenido> ContenidoFavorito { get; set; } = new List<Contenido>();
+    public virtual IList<Contenido> ContenidosMeGusta { get; set; } = new List<Contenido>();
 
     private bool HasDefaultIdentity() => EqualityComparer<int>.Default.Equals(Id, default);
 

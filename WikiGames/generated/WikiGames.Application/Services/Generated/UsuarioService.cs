@@ -122,6 +122,29 @@ public sealed partial class UsuarioService : ServiceEntity<Usuario>
         await _repository.SaveAsync(entity);
     }
 
+    public async Task AddNotificacioneAsync(int p_oid, IReadOnlyList<int> p_notificacion_oids)
+    {
+        Usuario entity = await _repository.ReadAsync(p_oid)
+            ?? throw new ModelException("Usuario not found.");
+        entity.Notificaciones ??= new List<Notificacion>();
+        foreach (var relatedId in p_notificacion_oids)
+        {
+            Notificacion relatedEntity = await _unitOfWork.NotificacionRepository.ReadAsync(relatedId)
+                ?? throw new ModelException("Notificacion not found for Usuario.Notificaciones.");
+            if (!entity.Notificaciones.Contains(relatedEntity))
+            {
+                entity.Notificaciones.Add(relatedEntity);
+            }
+            relatedEntity.Notificados ??= new List<Usuario>();
+            if (!relatedEntity.Notificados.Contains(entity))
+            {
+                relatedEntity.Notificados.Add(entity);
+            }
+            await _unitOfWork.NotificacionRepository.SaveAsync(relatedEntity);
+        }
+        await _repository.SaveAsync(entity);
+    }
+
     public async Task<IReadOnlyList<Usuario>> FindByNameLinQAsync(string p_name)
     {
         return await _repository.FindByNameLinQAsync(p_name);

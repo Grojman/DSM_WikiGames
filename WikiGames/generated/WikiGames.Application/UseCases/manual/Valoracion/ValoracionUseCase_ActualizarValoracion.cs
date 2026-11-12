@@ -22,9 +22,17 @@ public sealed partial class ValoracionUseCase
         {
             await _unitOfWork.BeginTransactionAsync("ValoracionUseCase.ActualizarValoracionAsync");
             valoracionService = new ValoracionService(_unitOfWork);
+            // Recalcula la puntuación media almacenada en el videojuego.
+           
+            global::WikiGames.Domain.Entities.Valoracion valoracion = await _unitOfWork.ValoracionRepository.ReadAsync(p_oid)
+                ?? throw new ModelException($"No existe la valoración {p_oid}.");
 
-            // Write here your custom transaction code...
-            // Use valoracionService, _unitOfWork.ValoracionRepository or _utils!.GetRequiredService<TService>() as the generated CP equivalent.
+            valoracion.Puntuacion = nuevo_valor;
+            await _unitOfWork.ValoracionRepository.SaveAsync(valoracion);
+
+            global::WikiGames.Domain.Entities.Videojuego videojuego = valoracion.Videojuego;
+            videojuego.PuntuacionMedia = videojuego.Valoraciones.Count == 0 ? 0f : videojuego.Valoraciones.Average(x => x.Puntuacion);
+            await _unitOfWork.VideojuegoRepository.SaveAsync(videojuego);
 
             await _unitOfWork.CommitAsync();
         }

@@ -12,19 +12,39 @@ namespace WikiGames.Application.UseCases.Videojuego;
 
 public sealed partial class VideojuegoUseCase
 {
-    public async Task RechazarVideojuegoAsync(int p_oid)
+    public async Task RechazarVideojuegoAsync(int p_oid, string p_motivo, int p_gestor_oid)
     {
         /*PROTECTED REGION ID(WikiGames.Application.UseCases_Videojuego_rechazarVideojuego) ENABLED START*/
         // Resolve external infrastructure services with _utils!.GetRequiredService<TService>() when this use case receives IUnitOfWorkUtils.
         VideojuegoService videojuegoService = null!;
+        RechazoService rechazoService = null!;
 
         try
         {
             await _unitOfWork.BeginTransactionAsync("VideojuegoUseCase.RechazarVideojuegoAsync");
             videojuegoService = new VideojuegoService(_unitOfWork);
+            rechazoService = new RechazoService(_unitOfWork);
 
-            // Write here your custom transaction code...
-            // Use videojuegoService, _unitOfWork.VideojuegoRepository or _utils!.GetRequiredService<TService>() as the generated CP equivalent.
+            global::WikiGames.Domain.Entities.Videojuego videojuego = await _unitOfWork.VideojuegoRepository.ReadAsync(p_oid)
+                ?? throw new ModelException($"No existe el videojuego {p_oid}.");
+
+            if (videojuego.Estado != EstadoContenido.Pendiente)
+            {
+                throw new ModelException($"El videojuego {p_oid} no está pendiente de aprobación.");
+            }
+
+            global::WikiGames.Domain.Entities.Rechazo rechazo = await rechazoService.NewAsync(DateTime.Now, p_motivo, p_oid, p_gestor_oid);
+            videojuego.Rechazo = rechazo;
+            videojuego.Estado = EstadoContenido.Rechazado;
+            await _unitOfWork.VideojuegoRepository.SaveAsync(videojuego);
+
+            var notificacionUseCase = _utils is null
+                ? new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork)
+                : new global::WikiGames.Application.UseCases.Notificacion.NotificacionUseCase(_unitOfWork, _utils);
+            await notificacionUseCase.NewAsync(
+                $"Tu videojuego \"{videojuego.Titulo}\" ha sido rechazado. Motivo: {p_motivo}",
+                DateTime.Now,
+                new[] { videojuego.UsuarioCreador.Id });
 
             await _unitOfWork.CommitAsync();
         }

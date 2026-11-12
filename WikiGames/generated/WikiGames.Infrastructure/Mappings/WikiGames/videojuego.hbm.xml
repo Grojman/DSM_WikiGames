@@ -16,6 +16,9 @@
     <property name="Estado" type="WikiGames.Domain.Enums.EstadoContenido, WikiGames.Domain">
       <column name="estado" not-null="true"/>
     </property>
+    <property name="PuntuacionMedia" type="Single">
+      <column name="puntuacionMedia" not-null="true"/>
+    </property>
     <bag name="Temas" inverse="true">
       <key>
         <column name="FK_Videojuego_videojuego"/>

@@ -36,6 +36,12 @@
       </key>
       <one-to-many class="Usuario"/>
     </bag>
+    <bag name="UsuariosMeGusta">
+      <key>
+        <column name="FK_Contenido_usuariosMeGusta"/>
+      </key>
+      <one-to-many class="Usuario"/>
+    </bag>
   </class>
   <query name="ContenidoReadAllHQL">from Contenido</query>
 </hibernate-mapping>

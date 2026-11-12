@@ -41,6 +41,17 @@ public sealed partial class CategoriaService : ServiceEntity<Categoria>
     public Task<Categoria> ModifierCategoriaDefaultAsync(Categoria entity) =>
         ModifierDefaultAsync(entity);
 
+    public async Task<Categoria> NewAsync(string p_name)
+    {
+        Categoria entity = new Categoria
+        {
+            Name = p_name,
+        };
+
+        await _repository.SaveAsync(entity);
+        return entity;
+    }
+
     public async Task DestroyAsync(int p_oid)
     {
         Categoria entity = await _repository.ReadAsync(p_oid)
