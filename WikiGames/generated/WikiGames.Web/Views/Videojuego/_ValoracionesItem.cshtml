@@ -1,0 +1,30 @@
+@* HARIA-WEB GENERATED sha256:790486a5a8bda853c7cbe07883be9973f2ca4bde9545381e02b6966d26d1d694 *@
+@model WikiGames.Web.ViewModels.ValoracionViewModel
+        <div class="mb-3">
+            <label asp-for="Puntuacion" class="form-label"></label>
+            <input asp-for="Puntuacion" type="text" inputmode="decimal" asp-format="{0:G}" data-haria-number="true" data-haria-decimal="@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator" class="form-control" />
+            <span asp-validation-for="Puntuacion" class="text-danger"></span>
+        </div>
+    <input asp-for="Id" type="hidden" />
+    <span asp-validation-for="Id" class="text-danger"></span>
+        <div class="mb-3">
+            <label asp-for="Texto" class="form-label"></label>
+            <input asp-for="Texto" class="form-control" />
+            <span asp-validation-for="Texto" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="FechaCreacion" class="form-label"></label>
+            <input asp-for="FechaCreacion" type="date" class="form-control" />
+            <span asp-validation-for="FechaCreacion" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NumeroMeGusta" class="form-label"></label>
+            <input asp-for="NumeroMeGusta" class="form-control" />
+            <span asp-validation-for="NumeroMeGusta" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="UsuarioCreadorId" class="form-label"></label>
+            <select asp-for="UsuarioCreadorId" asp-items="Model.UsuarioCreadorOptions" class="form-select"><option value="">Selecciona...</option></select>
+            <span asp-validation-for="UsuarioCreadorId" class="text-danger"></span>
+        </div>
+

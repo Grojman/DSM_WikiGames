@@ -1,0 +1,26 @@
+@* HARIA-WEB GENERATED sha256:bd0d5f8ccab2b54d510ee226fe4ed1db91fa72c24fd9d56c58de26bf9e732986 *@
+@model WikiGames.Web.ViewModels.VideojuegoViewModel
+@{
+    var templateData = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData);
+    templateData.TemplateInfo.HtmlFieldPrefix = "Valoraciones[__index__]";
+}
+<fieldset class="mb-4" data-haria-composition data-prefix="Valoraciones">
+    <legend>Valoraciones</legend>
+    <span asp-validation-for="Valoraciones" class="text-danger"></span>
+    <div data-haria-rows>
+    @for (var index = 0; index < Model.Valoraciones.Count; index++)
+    {
+        <div class="border rounded p-3 mb-2" data-haria-row>
+            <partial name="_ValoracionesItem" for="Valoraciones[index]" />
+            <button type="button" class="btn btn-sm btn-outline-danger" data-haria-remove>Eliminar línea</button>
+        </div>
+    }
+    </div>
+    <template>
+        <div class="border rounded p-3 mb-2" data-haria-row>
+            <partial name="_ValoracionesItem" model="Model.ValoracionesTemplate" view-data="templateData" />
+            <button type="button" class="btn btn-sm btn-outline-danger" data-haria-remove>Eliminar línea</button>
+        </div>
+    </template>
+    <button type="button" class="btn btn-outline-primary" data-haria-add>Añadir línea</button>
+</fieldset>

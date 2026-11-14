@@ -1,0 +1,56 @@
+@* HARIA-WEB GENERATED sha256:b663e9be5ec686a9cf33fb17d714ccd6dde70cccee72837f7fab042b5da23fd7 *@
+@model WikiGames.Web.ViewModels.VideojuegoViewModel
+
+@{
+    ViewData["Title"] = "Eliminar";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xl-9">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-body p-4">
+                <span class="badge text-bg-danger mb-3">Eliminar</span>
+                <h1 class="h3 mb-1">Videojuego</h1>
+                <p class="text-body-secondary mb-0">Review the record before deleting it. This action cannot be undone.</p>
+            </div>
+            <div class="card-body p-4">
+                <dl class="row mb-0 gy-2">
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Titulo)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Titulo)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Enlace)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Enlace)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Imagen)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Imagen)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Estado)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Estado)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.PuntuacionMedia)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.PuntuacionMedia)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Id)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Id)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Texto)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Texto)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.FechaCreacion)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.NumeroMeGusta)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.NumeroMeGusta)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.RechazoLabel)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.RechazoLabel)</dd>
+            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.UsuarioCreadorLabel)</dt>
+            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.UsuarioCreadorLabel)</dd>
+                </dl>
+                <h2 class="h5 mt-4">Valoraciones</h2>
+                <table class="table"><thead><tr><th>Puntuacion</th><th>Texto</th><th>FechaCreacion</th><th>NumeroMeGusta</th><th>UsuarioCreadorLabel</th></tr></thead>
+                <tbody>@foreach (var row in Model.Valoraciones) { <tr><td>@Html.DisplayFor(_ => row.Puntuacion)</td><td>@Html.DisplayFor(_ => row.Texto)</td><td>@Html.DisplayFor(_ => row.FechaCreacion)</td><td>@Html.DisplayFor(_ => row.NumeroMeGusta)</td><td>@Html.DisplayFor(_ => row.UsuarioCreadorLabel)</td></tr> }</tbody></table>
+
+            </div>
+            <div class="card-footer bg-body p-4">
+                <form asp-action="Delete" method="post" class="d-flex flex-column flex-sm-row gap-2">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Eliminar definitivamente</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
