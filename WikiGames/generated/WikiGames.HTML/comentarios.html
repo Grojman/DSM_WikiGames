@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Comentarios</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="comentarios">
+  <header data-navbar></header>
+
+  <main class="container narrow">
+    <section data-game-header></section>
+
+    <h2 class="page-title">Comentarios</h2>
+
+    <form id="review-form" class="card review-form" novalidate>
+      <label for="texto" class="sr-only">Tu comentario</label>
+      <textarea id="texto" class="field" placeholder="¿Qué te ha parecido la demo? Cuéntaselo a los desarrolladores…" maxlength="1000"></textarea>
+      <div class="review-form-footer">
+        <div class="rating-label">
+          <span class="muted" id="rating-text">Tu puntuación</span>
+          <div id="star-input" class="star-input" role="radiogroup" aria-labelledby="rating-text"></div>
+        </div>
+        <button id="submit" class="btn btn-primary" type="submit" disabled>Publicar comentario</button>
+      </div>
+    </form>
+
+    <section id="list" class="review-list" aria-label="Lista de comentarios"></section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      UI.renderGameHeader("comentarios");
+      const game = UI.currentGame();
+      const $list = document.getElementById("list");
+      const $texto = document.getElementById("texto");
+      const $submit = document.getElementById("submit");
+      const $stars = document.getElementById("star-input");
+      let rating = 0;
+
+      // Selector de 5 estrellas (cada estrella = 2 puntos en Valoracion.puntuacion, escala 0–10).
+      for (let i = 1; i <= 5; i++) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = UI.STAR;
+        b.setAttribute("role", "radio");
+        b.setAttribute("aria-label", `${i} ${i === 1 ? "estrella" : "estrellas"}`);
+        b.addEventListener("click", () => { rating = i; paint(); validate(); });
+        $stars.appendChild(b);
+      }
+      function paint() {
+        [...$stars.children].forEach((b, idx) => {
+          b.classList.toggle("on", idx < rating);
+          b.setAttribute("aria-checked", String(idx + 1 === rating));
+        });
+      }
+
+      const validate = () => ($submit.disabled = !(rating > 0 && $texto.value.trim()));
+      $texto.addEventListener("input", validate);
+
+      function render() {
+        const items = WG.valoraciones
+          .filter((v) => v.videojuego === game.id)
+          .sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
+        $list.innerHTML = items.length
+          ? items.map((v) => {
+              const u = UI.user(v.usuarioCreador);
+              return `
+              <article class="card review-card">
+                <header class="review-head">
+                  <div class="review-author">${UI.avatar(u)}<span>${UI.esc(u.name)}</span></div>
+                  ${UI.starsHtml(v.puntuacion)}
+                </header>
+                <p class="review-text">${UI.esc(v.texto)}</p>
+                <time class="review-date" datetime="${new Date(v.fechaCreacion).toISOString()}">${UI.fmtDate(v.fechaCreacion)}</time>
+              </article>`;
+            }).join("")
+          : `<div class="empty">Todavía no hay comentarios. ¡Sé el primero en valorar este juego!</div>`;
+      }
+
+      document.getElementById("review-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        if ($submit.disabled) return;
+        WG.valoraciones.push({
+          id: Date.now(),
+          videojuego: game.id,
+          usuarioCreador: 3, // usuario de prueba con sesión iniciada ("ana")
+          puntuacion: rating * 2,
+          texto: $texto.value.trim(),
+          fechaCreacion: new Date(),
+        });
+        $texto.value = "";
+        rating = 0;
+        paint();
+        validate();
+        render();
+        UI.toast("Comentario publicado");
+      });
+
+      render();
+    });
+  </script>
+</body>
+</html>

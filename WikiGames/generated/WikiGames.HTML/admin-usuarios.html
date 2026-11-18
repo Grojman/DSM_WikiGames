@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Usuarios</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="admin-usuarios">
+  <header data-navbar></header>
+
+  <main class="container">
+    <div class="center"><span class="admin-badge">Solo administradores</span></div>
+    <h1 class="page-title">Usuarios</h1>
+
+    <div class="toolbar">
+      <div class="search">
+        <span data-icon="search"></span>
+        <input id="q" class="field" type="search" placeholder="Buscar usuarios por nombre…" aria-label="Buscar usuarios" autocomplete="off">
+      </div>
+    </div>
+
+    <p id="count" class="result-count" aria-live="polite"></p>
+    <section id="list" class="admin-list" aria-label="Lista de usuarios"></section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ADMIN_ID = 1; // administrador con la sesión iniciada (mock)
+      const $q = document.getElementById("q");
+      const $list = document.getElementById("list");
+      const $count = document.getElementById("count");
+      $q.value = UI.params.get("q") || "";
+
+      const juegos = (id) => WG.videojuegos.filter((v) => v.usuarioCreador === id).length;
+      // Usuario.denunciasRecibidas (Denuncia.denunciado)
+      const denuncias = (id) => WG.denuncias.filter((d) => d.denunciado === id).length;
+
+      function render() {
+        const q = $q.value.trim().toLowerCase();
+        const list = WG.usuarios.filter((u) => !q || u.name.toLowerCase().includes(q))
+                                .sort((a, b) => a.name.localeCompare(b.name, "es"));
+        $count.textContent = `${list.length} ${list.length === 1 ? "usuario" : "usuarios"}`;
+        $list.innerHTML = list.length ? list.map((u) => {
+          const nj = juegos(u.id), nd = denuncias(u.id);
+          const isAdmin = u.rolUsuario === "Administrador";
+          const role = isAdmin
+            ? `<span class="role-fixed">Administrador</span>`
+            : `<select class="field" data-role="${u.id}" aria-label="Rol de ${UI.esc(u.name)}">
+                 <option value="Registrado" ${u.rolUsuario === "Registrado" ? "selected" : ""}>Normal</option>
+                 <option value="Moderador" ${u.rolUsuario === "Moderador" ? "selected" : ""}>Moderador</option>
+               </select>`;
+          return `
+          <article class="card user-card">
+            ${UI.avatar(u, "lg")}
+            <div class="name" title="${UI.esc(u.name)}">${UI.esc(u.name)}<div class="muted">#${u.id}</div></div>
+            <div class="stat s-games"><b>${nj}</b><small>${nj === 1 ? "juego" : "juegos"}</small></div>
+            <div class="stat s-reports ${nd ? "alert" : ""}" title="Denuncias en las que es el usuario denunciado"><b>${nd}</b><small>${nd === 1 ? "denuncia" : "denuncias"}</small></div>
+            ${role}
+            <button class="icon-btn btn-danger" data-del="${u.id}" ${isAdmin ? "disabled" : ""} title="Eliminar usuario" aria-label="Eliminar a ${UI.esc(u.name)}">${UI.ICONS.trash}</button>
+          </article>`;
+        }).join("") : `<div class="empty">Ningún usuario coincide con la búsqueda.</div>`;
+      }
+
+      // Usuario.actualizarRol(p_oid, p_oid_admin, nuevo_rol)
+      $list.addEventListener("change", (e) => {
+        const id = Number(e.target.dataset.role);
+        if (!id) return;
+        const u = WG.usuarios.find((x) => x.id === id);
+        u.rolUsuario = e.target.value;
+        UI.toast(`${u.name} ahora es ${u.rolUsuario === "Moderador" ? "moderador" : "usuario normal"}`);
+      });
+
+      // Usuario.destroy(p_oid)
+      $list.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-del]");
+        if (!btn) return;
+        const id = Number(btn.dataset.del);
+        const u = WG.usuarios.find((x) => x.id === id);
+        if (!confirm(`¿Eliminar al usuario «${u.name}»? Esta acción no se puede deshacer.`)) return;
+        WG.usuarios.splice(WG.usuarios.indexOf(u), 1);
+        render();
+        UI.toast(`Usuario «${u.name}» eliminado`);
+      });
+
+      $q.addEventListener("input", render);
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Denuncias</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="denuncias">
+  <header data-navbar></header>
+
+  <main class="container">
+    <div class="center"><span class="admin-badge">Administradores y moderadores</span></div>
+    <h1 class="page-title">Denuncias</h1>
+
+    <div class="center"><div id="seg" class="seg" role="tablist" aria-label="Filtrar por estado">
+      <button class="active" data-f="">Todas</button>
+      <button data-f="Pendiente">Pendientes</button>
+      <button data-f="Aprobado">Aprobadas</button>
+      <button data-f="Rechazado">Rechazadas</button>
+    </div></div>
+
+    <section id="list" class="admin-list" aria-label="Lista de denuncias"></section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const $list = document.getElementById("list");
+      let filter = "";
+      const ESTADOS = ["Pendiente", "Aprobado", "Rechazado"];
+
+      /** Tipo de contenido (subclase de Contenido) y URL donde verlo. */
+      function locate(d) {
+        const id = d.contenidoDenunciado;
+        if (id == null) {
+          const u = UI.user(d.denunciado);
+          return { label: `Usuario #${d.denunciado}`, tipo: "Usuario", href: `admin-usuarios.html?q=${encodeURIComponent(u.name)}` };
+        }
+        let v;
+        if ((v = WG.videojuegos.find((x) => x.id === id))) return { label: `Contenido #${id}`, tipo: "Videojuego", href: `conversaciones.html?juego=${v.id}` };
+        if ((v = WG.valoraciones.find((x) => x.id === id))) return { label: `Contenido #${id}`, tipo: "Valoración", href: `comentarios.html?juego=${v.videojuego}` };
+        if ((v = WG.temas.find((x) => x.id === id))) return { label: `Contenido #${id}`, tipo: "Conversación", href: `conversaciones.html?juego=${v.videojuego}#tema-${v.id}` };
+        if ((v = WG.comentarios.find((x) => x.id === id))) {
+          const t = WG.temas.find((x) => x.id === v.tema);
+          return { label: `Contenido #${id}`, tipo: "Comentario", href: `conversaciones.html?juego=${t?.videojuego ?? ""}#tema-${v.tema}` };
+        }
+        return { label: `Contenido #${id}`, tipo: "Contenido", href: "#" };
+      }
+
+      function render() {
+        const list = WG.denuncias
+          .filter((d) => !filter || d.estado === filter)
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        $list.innerHTML = list.length ? list.map((d) => {
+          const u = UI.user(d.denunciante);
+          const t = locate(d);
+          return `
+          <article class="card report-card" data-href="${t.href}" tabindex="0" aria-label="Denuncia #${d.id}: ver ${t.tipo.toLowerCase()} denunciado">
+            <div class="report-main">
+              ${UI.avatar(u)}
+              <div>
+                <div class="line">${UI.esc(u.name)} <span class="muted">ha denunciado</span> <span class="target">${UI.ICONS.flag}${t.label}</span></div>
+                <div class="sub">${t.tipo} · Denuncia #${d.id} · ${UI.fmtDateTime(d.fecha)}</div>
+              </div>
+            </div>
+            <select class="field status-${d.estado}" data-estado="${d.id}" aria-label="Estado de la denuncia #${d.id}">
+              ${ESTADOS.map((e) => `<option value="${e}" ${e === d.estado ? "selected" : ""}>${e}</option>`).join("")}
+            </select>
+            <div class="report-actions">
+              <button class="btn btn-sm btn-success" data-act="Aprobado" data-id="${d.id}" ${d.estado === "Aprobado" ? "disabled" : ""}>${UI.ICONS.check}Aceptar</button>
+              <button class="btn btn-sm btn-danger" data-act="Rechazado" data-id="${d.id}" ${d.estado === "Rechazado" ? "disabled" : ""}>${UI.ICONS.x}Rechazar</button>
+            </div>
+          </article>`;
+        }).join("") : `<div class="empty">No hay denuncias con este estado.</div>`;
+      }
+
+      function setEstado(id, estado) {
+        const d = WG.denuncias.find((x) => x.id === id);
+        d.estado = estado;
+        render();
+        UI.toast(`Denuncia #${id}: ${estado.toLowerCase()}`);
+      }
+
+      $list.addEventListener("change", (e) => {
+        if (e.target.dataset.estado) setEstado(Number(e.target.dataset.estado), e.target.value);
+      });
+      $list.addEventListener("click", (e) => {
+        if (e.target.closest("select")) return;
+        const btn = e.target.closest("[data-act]");
+        if (btn) return setEstado(Number(btn.dataset.id), btn.dataset.act);
+        const card = e.target.closest(".report-card");
+        if (card) location.href = card.dataset.href;
+      });
+      $list.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.classList.contains("report-card")) location.href = e.target.dataset.href;
+      });
+
+      document.getElementById("seg").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        filter = b.dataset.f;
+        [...e.currentTarget.children].forEach((x) => x.classList.toggle("active", x === b));
+        render();
+      });
+
+      render();
+    });
+  </script>
+</body>
+</html>

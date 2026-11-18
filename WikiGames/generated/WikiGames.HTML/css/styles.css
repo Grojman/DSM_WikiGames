@@ -1,0 +1,194 @@
+/* ============ WikiGames · estructura de las maquetas ============
+ * Solo maquetación (posición, tamaños, espaciado, rejillas).
+ * Sin colores, fuentes, redondeados, sombras ni efectos hover.
+ * Los elementos superpuestos (barra superior fija, barra inferior, desplegable, aviso)
+ * usan el fondo por defecto del sistema (Canvas) para no ser transparentes.
+ */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3 { margin: 0; }
+img { max-width: 100%; display: block; }
+.icon { width: 20px; height: 20px; flex: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.center { text-align: center; }
+
+/* ---------- Layout ---------- */
+.container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 24px 16px 120px; }
+.container.narrow { max-width: 760px; }
+.page-title { text-align: center; margin: 8px 0 24px; }
+.page-sub { text-align: center; margin: -16px 0 24px; }
+
+/* ---------- Barra superior ---------- */
+.navbar {
+  position: sticky; top: 0; z-index: 20;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 0 max(16px, calc((100% - 1120px) / 2 + 16px));
+  background: Canvas;
+  border-bottom: 1px solid;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo { width: 34px; height: 34px; }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding: 0 16px; border: 1px solid; white-space: nowrap; cursor: pointer;
+}
+.btn-sm { height: 34px; padding: 0 12px; }
+.icon-btn { width: 40px; height: 40px; display: inline-grid; place-items: center; border: 1px solid; cursor: pointer; }
+
+/* ---------- Formularios ---------- */
+.field { width: 100%; height: 44px; padding: 0 14px; border: 1px solid; }
+textarea.field { height: auto; min-height: 120px; padding: 12px 14px; resize: vertical; }
+.search { position: relative; }
+.search .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.search .field { padding-left: 44px; }
+.label { display: block; margin-bottom: 6px; }
+.hint { margin-top: 6px; }
+.form-group { margin-bottom: 22px; }
+.error-msg { margin-top: 6px; display: none; }
+.field.invalid + .error-msg { display: block; }
+
+/* ---------- Tarjetas ---------- */
+.card { border: 1px solid; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.avatar { width: 36px; height: 36px; flex: none; display: inline-grid; place-items: center; border: 1px solid; }
+.avatar.lg { width: 48px; height: 48px; }
+.empty { text-align: center; padding: 48px 16px; border: 1px dashed; }
+
+/* ---------- Estrellas (llena = seleccionada, contorno = vacía) ---------- */
+.stars { display: inline-flex; gap: 2px; }
+.star svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.star.on svg { fill: currentColor; }
+.star-input { display: inline-flex; gap: 4px; }
+.star-input button { background: none; border: 0; padding: 2px; cursor: pointer; }
+.star-input button svg { width: 30px; height: 30px; display: block; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.star-input button.on svg { fill: currentColor; }
+
+/* ---------- Inicio ---------- */
+.toolbar { display: grid; gap: 12px; margin-bottom: 24px; }
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.filters label { display: flex; flex-direction: column; gap: 4px; }
+.game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.game-card { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid; }
+.game-card img, .game-card .cover-ph { width: 100%; height: 100%; object-fit: cover; }
+.cover-ph { display: grid; place-items: center; padding: 16px; text-align: center; }
+.result-count { margin-bottom: 12px; }
+
+/* ---------- Barra inferior ---------- */
+.bottombar {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 30;
+  display: flex; align-items: center; gap: 6px; padding: 6px;
+  background: Canvas; border: 1px solid;
+}
+.bb-item { display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; }
+.bb-item.active { text-decoration: underline; }
+
+/* ---------- Cabecera del foro de un videojuego ---------- */
+.game-header { display: grid; grid-template-columns: 120px 1fr; gap: 20px; align-items: center; margin-bottom: 28px; }
+.game-header-cover { aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid; }
+.game-header-cover .cover-ph { width: 100%; height: 100%; }
+.game-header-info h1 { margin: 4px 0 6px; }
+.game-header-info p { margin: 0 0 10px; }
+.back-link { display: inline-flex; align-items: center; gap: 2px; }
+.back-link .icon { width: 16px; height: 16px; }
+.tabs { grid-column: 1 / -1; display: flex; gap: 4px; border-bottom: 1px solid; }
+.tabs a { padding: 10px 16px; }
+.tabs a.active { text-decoration: underline; }
+
+/* ---------- Comentarios (valoraciones) ---------- */
+.review-form { padding: 20px; margin-bottom: 28px; }
+.review-form-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.review-form-footer .rating-label { display: flex; align-items: center; gap: 10px; }
+.review-list { display: grid; gap: 14px; }
+.review-card { width: 100%; min-height: 140px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.review-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.review-author { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.review-author span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.review-text { width: 100%; margin: 0; flex: 1; overflow-wrap: anywhere; }
+.review-date { align-self: flex-end; }
+
+/* ---------- Conversaciones ---------- */
+.thread-list { display: grid; gap: 12px; }
+.thread-card { display: block; padding: 18px 20px; }
+.thread-title { font-size: 1.5em; margin-bottom: 6px; } /* requisito: nombre en letra grande */
+.thread-desc { margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.thread-meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.thread-meta .avatar { width: 22px; height: 22px; }
+
+/* ---------- Crear videojuego ---------- */
+.form-card { padding: 28px; }
+.dropzone { display: grid; place-items: center; gap: 8px; text-align: center; min-height: 180px; padding: 20px; border: 1px dashed; cursor: pointer; }
+.dropzone .icon { width: 32px; height: 32px; }
+.dropzone img { max-height: 260px; }
+.dropzone input { display: none; }
+.cat-picker { position: relative; }
+.cat-results {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 10;
+  max-height: 240px; overflow-y: auto; padding: 6px; background: Canvas; border: 1px solid;
+}
+.cat-results[hidden] { display: none; }
+.cat-option { display: flex; justify-content: space-between; width: 100%; padding: 9px 12px; border: 0; background: none; cursor: pointer; text-align: left; }
+.cat-option.focus { outline: 1px solid; } /* opción activa con las flechas del teclado */
+.cat-selected { min-height: 64px; margin-top: 10px; padding: 12px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; border: 1px solid; }
+.cat-selected:empty::before { content: "Ninguna categoría seleccionada"; }
+.cat-selected .chip { cursor: pointer; padding: 6px 10px 6px 12px; }
+.cat-selected .chip .icon { width: 14px; height: 14px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+
+/* ---------- Administración ---------- */
+.admin-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid; margin: 0 auto 12px; }
+.admin-list { display: grid; gap: 12px; }
+.user-card { display: grid; grid-template-columns: auto 1fr auto auto auto auto; align-items: center; gap: 18px; padding: 14px 18px; }
+.user-card .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-card .stat { text-align: center; min-width: 80px; }
+.user-card .stat b { display: block; }
+.user-card select.field { width: 150px; height: 38px; }
+.role-fixed { width: 150px; text-align: center; }
+
+.report-card { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px; padding: 16px 18px; cursor: pointer; }
+.report-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.target { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border: 1px solid; }
+.report-card select.field { width: 150px; height: 38px; }
+.report-actions { display: flex; gap: 8px; }
+.seg { display: inline-flex; flex-wrap: wrap; justify-content: center; max-width: 100%; gap: 4px; padding: 4px; margin: 0 auto 18px; }
+.seg button { padding: 6px 14px; cursor: pointer; }
+.seg button.active { text-decoration: underline; }
+
+/* ---------- Aviso ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); z-index: 50;
+  padding: 10px 18px; background: Canvas; border: 1px solid; display: none;
+}
+.toast.show { display: block; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  .user-card { grid-template-columns: auto 1fr 1fr auto; grid-template-areas: "av name name del" "s1 s1 s2 s2" "role role role role"; gap: 12px; }
+  .user-card > .avatar { grid-area: av; }
+  .user-card .name { grid-area: name; }
+  .user-card .s-games { grid-area: s1; }
+  .user-card .s-reports { grid-area: s2; }
+  .user-card .stat { min-width: 0; padding: 6px; border: 1px solid; }
+  .user-card [data-del] { grid-area: del; }
+  .user-card select.field, .user-card .role-fixed { grid-area: role; width: 100%; }
+  .report-card { grid-template-columns: 1fr; }
+  .report-card select.field { width: 100%; }
+  .report-actions .btn { flex: 1; }
+  .seg button { padding: 6px 10px; }
+}
+@media (max-width: 560px) {
+  .brand span { display: none; }
+  .nav-actions .btn span { display: none; }
+  .nav-actions .btn { width: 40px; padding: 0; }
+  .filters { grid-template-columns: 1fr; }
+  .game-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .bb-item span { display: none; }
+  .bb-item { padding: 0 16px; }
+  .game-header { grid-template-columns: 80px 1fr; gap: 14px; }
+  .form-card { padding: 18px; }
+}
