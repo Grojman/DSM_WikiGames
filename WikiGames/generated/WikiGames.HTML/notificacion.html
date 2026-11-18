@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Detalle de notificación</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="notificacion">
+  <header data-navbar></header>
+
+  <main class="container narrow">
+    <a class="back-link" href="notificaciones.html"><span data-icon="back"></span>Volver a notificaciones</a>
+
+    <h1 class="page-title">Notificación</h1>
+
+    <article class="card form-card" aria-label="Contenido de la notificación">
+      <div class="review-head">
+        <div class="review-author">
+          <span class="avatar lg"><span data-icon="flag"></span></span>
+          <div>
+            <strong>Aviso del sistema</strong>
+            <div class="muted">Recibida el <time datetime="2026-11-18T20:15:00">18 de noviembre de 2026 a las 20:15</time></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 16px;">
+        <label class="label">Mensaje</label>
+        <p class="review-text">Tu videojuego <strong>"Pixel Jump"</strong> ha sido revisado y aprobado por el equipo de moderación. A partir de este momento la ficha es pública en el catálogo general y otros usuarios pueden probarlo, valorarlo y abrir conversaciones en el foro.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Elemento relacionado</label>
+        <p class="hint">Esta notificación está asociada a tu publicación en el catálogo:</p>
+        <a class="chip" href="videojuego.html?id=13">
+          <span data-icon="gamepad"></span>
+          <span>Pixel Jump</span>
+        </a>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn" href="notificaciones.html">Volver</a>
+        <button type="button" class="btn btn-ghost"><span data-icon="trash"></span>Eliminar notificación</button>
+      </div>
+    </article>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>

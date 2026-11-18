@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Ficha del videojuego</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="videojuego">
+  <header data-navbar></header>
+
+  <main class="container narrow">
+    <a class="back-link" href="index.html"><span data-icon="back"></span>Inicio</a>
+
+    <!-- Cabecera principal del videojuego -->
+    <section class="game-header" aria-label="Cabecera del videojuego">
+      <div class="game-header-cover">
+        <img src="https://example.com/img/starfall.png" alt="Starfall Odyssey" loading="lazy" onerror="this.style.display='none'">
+        <div class="cover-ph"><span>Starfall Odyssey</span></div>
+      </div>
+      <div class="game-header-info">
+        <h1>Starfall Odyssey</h1>
+        <p class="muted">Exploración espacial con combates por turnos y gestión de tripulación.</p>
+        <div class="chips">
+          <span class="chip">RPG</span>
+          <span class="chip">Aventura</span>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Secciones del juego">
+        <a href="videojuego.html" class="active">Ficha</a>
+        <a href="conversaciones.html?juego=10">Conversaciones</a>
+        <a href="comentarios.html?juego=10">Valoraciones</a>
+      </nav>
+    </section>
+
+    <!-- Detalles de la publicación y valoraciones -->
+    <section class="card form-card" aria-label="Detalles de la ficha">
+      <div class="review-head">
+        <div class="review-author">
+          <span class="avatar lg">A</span>
+          <div>
+            <strong>ana</strong>
+            <div class="muted">ana@wikigames.com · Publicado el 18 sep 2026</div>
+          </div>
+        </div>
+        <div class="rating-label">
+          <span class="stars" role="img" aria-label="4.5 de 5 estrellas">
+            <span class="star on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></span>
+            <span class="star on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></span>
+            <span class="star on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></span>
+            <span class="star on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></span>
+            <span class="star"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg></span>
+          </span>
+          <span><strong>8.75</strong> / 10</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Descripción completa</label>
+        <p class="review-text">Explora sectores inexplorados de la galaxia, recluta tripulantes y enfréntate a flotas enemigas en combates tácticos por turnos. Incluye demo con los primeros tres sistemas estelares.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Página oficial o tienda</label>
+        <p><a class="btn btn-sm" href="https://example.com/starfall" target="_blank" rel="noopener">Visitar enlace externo</a></p>
+      </div>
+
+      <!-- Acciones públicas para cualquier usuario registrado -->
+      <div class="form-actions" data-view="publico" aria-label="Acciones públicas">
+        <button type="button" class="btn" title="Me gusta"><span data-icon="heart"></span>3 Me gusta</button>
+        <button type="button" class="btn" title="Añadir a favoritos"><span data-icon="plus"></span>Favorito</button>
+        <button type="button" class="btn btn-ghost" title="Denunciar publicación"><span data-icon="flag"></span>Denunciar</button>
+      </div>
+
+      <!-- Opciones adicionales si quien visualiza la página es el DUEÑO / AUTOR -->
+      <div class="card form-card" data-view="dueno" aria-label="Opciones del autor" style="margin-top: 20px;">
+        <h3>Opciones de autor</h3>
+        <p class="hint">Eres el creador de esta publicación. Estado: <strong>Aprobado</strong></p>
+        <div class="form-actions">
+          <a class="btn" href="crear-videojuego.html?edit=10"><span data-icon="settings"></span>Editar videojuego</a>
+          <button type="button" class="btn btn-ghost"><span data-icon="trash"></span>Eliminar videojuego</button>
+        </div>
+      </div>
+
+      <!-- Opciones adicionales si quien visualiza es MODERADOR o ADMINISTRADOR -->
+      <div class="card form-card" data-view="moderador" aria-label="Herramientas de moderación" style="margin-top: 20px;">
+        <div class="center"><span class="admin-badge">Panel de moderación</span></div>
+        <h3>Gestión de la publicación</h3>
+        <p class="hint">Estado actual en la plataforma: <strong>Pendiente de revisión</strong></p>
+        <div class="form-group">
+          <label class="label" for="motivo-rechazo">Motivo de rechazo (requerido si se rechaza)</label>
+          <input id="motivo-rechazo" name="motivo" class="field" type="text" placeholder="Ejemplo: Ficha incompleta o enlace inválido…">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary"><span data-icon="check"></span>Aprobar videojuego</button>
+          <button type="button" class="btn"><span data-icon="x"></span>Rechazar con motivo</button>
+          <button type="button" class="btn btn-ghost"><span data-icon="trash"></span>Eliminar por infracción</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>

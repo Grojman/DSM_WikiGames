@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Videojuegos pendientes</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="pendientes">
+  <header data-navbar></header>
+
+  <main class="container">
+    <div class="center"><span class="admin-badge">Administradores y moderadores</span></div>
+    <h1 class="page-title">Videojuegos pendientes de aprobación</h1>
+
+    <div class="toolbar">
+      <div class="search">
+        <span data-icon="search"></span>
+        <input id="q" class="field" type="search" placeholder="Buscar propuestas por título o autor…" aria-label="Buscar propuestas" autocomplete="off">
+      </div>
+    </div>
+
+    <p id="count" class="result-count" aria-live="polite">1 videojuego pendiente</p>
+
+    <!-- Lista de videojuegos pendientes (muestra representativa única) -->
+    <section id="list" class="admin-list" aria-label="Lista de videojuegos pendientes">
+      <article class="card report-card">
+        <div class="report-main">
+          <span class="target"><span data-icon="gamepad"></span>Pendiente</span>
+          <div>
+            <h3 class="thread-title" style="font-size: 1.15em; margin: 0 0 4px;">
+              <a href="videojuego.html?id=13">Pixel Jump</a>
+            </h3>
+            <p class="muted" style="margin: 0 0 6px;">Plataformas 2D de precisión con niveles de salto milimétrico.</p>
+            <div class="thread-meta" style="margin-top: 0;">
+              <span class="avatar">A</span>
+              <span>ana (ana@wikigames.com)</span>
+              <span aria-hidden="true">·</span>
+              <time datetime="2026-11-16">Enviado hace 2 días</time>
+              <span aria-hidden="true">·</span>
+              <span class="chip">Plataformas</span>
+            </div>
+          </div>
+        </div>
+        <div class="report-actions">
+          <a class="btn btn-sm" href="videojuego.html?id=13">Revisar ficha</a>
+          <button type="button" class="btn btn-sm btn-primary" title="Aprobar"><span data-icon="check"></span>Aprobar</button>
+          <button type="button" class="btn btn-sm" title="Rechazar"><span data-icon="x"></span>Rechazar</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>
