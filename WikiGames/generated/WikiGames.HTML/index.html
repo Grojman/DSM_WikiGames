@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Inicio</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="home">
+  <header data-navbar></header>
+
+  <main class="container">
+    <section class="toolbar" aria-label="Buscar y filtrar">
+      <div class="search">
+        <span data-icon="search"></span>
+        <input id="q" class="field" type="search" placeholder="Buscar videojuegos…" aria-label="Buscar videojuegos" autocomplete="off">
+      </div>
+      <div class="filters">
+        <label>Ordenar por
+          <select id="orden" class="field">
+            <option value="popular">Más popular</option>
+            <option value="valorado">Mejor valorado</option>
+            <option value="recientes">Recientes</option>
+          </select>
+        </label>
+        <label>Categoría
+          <select id="categoria" class="field">
+            <option value="">Todas las categorías</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <p id="count" class="result-count" aria-live="polite"></p>
+    <section id="grid" class="game-grid" aria-label="Videojuegos disponibles"></section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const $q = document.getElementById("q");
+      const $orden = document.getElementById("orden");
+      const $cat = document.getElementById("categoria");
+      const $grid = document.getElementById("grid");
+      const $count = document.getElementById("count");
+
+      // Categorías desde la "base de datos"; las hijas se muestran indentadas bajo su padre.
+      const roots = WG.categorias.filter((c) => !c.padre).sort((a, b) => a.name.localeCompare(b.name, "es"));
+      for (const r of roots) {
+        $cat.add(new Option(r.name, r.id));
+        WG.categorias.filter((c) => c.padre === r.id).forEach((c) => $cat.add(new Option("   " + c.name, c.id)));
+      }
+
+      // Una categoría incluye también a sus subcategorías.
+      const withChildren = (id) => [id, ...WG.categorias.filter((c) => c.padre === id).flatMap((c) => withChildren(c.id))];
+
+      const sorters = {
+        popular: (a, b) => b.numeroMeGusta - a.numeroMeGusta,
+        valorado: (a, b) => b.puntuacionMedia - a.puntuacionMedia,
+        recientes: (a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion),
+      };
+
+      function render() {
+        const q = $q.value.trim().toLowerCase();
+        const cats = $cat.value ? withChildren(Number($cat.value)) : null;
+        const list = WG.videojuegos
+          .filter((v) => v.estado === "Aprobado")
+          .filter((v) => !q || v.titulo.toLowerCase().includes(q))
+          .filter((v) => !cats || v.categorias.some((c) => cats.includes(c)))
+          .sort(sorters[$orden.value]);
+
+        $count.textContent = `${list.length} ${list.length === 1 ? "videojuego" : "videojuegos"}`;
+        $grid.innerHTML = list.length
+          ? list.map((v) => `<a class="game-card" href="conversaciones.html?juego=${v.id}" title="${UI.esc(v.titulo)}" aria-label="${UI.esc(v.titulo)}">${UI.cover(v)}</a>`).join("")
+          : `<div class="empty" style="grid-column:1/-1">No hay videojuegos que coincidan con la búsqueda.</div>`;
+      }
+
+      [$q, $orden, $cat].forEach((el) => el.addEventListener("input", render));
+      render();
+    });
+  </script>
+</body>
+</html>

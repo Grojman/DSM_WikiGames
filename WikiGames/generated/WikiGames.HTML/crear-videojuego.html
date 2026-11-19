@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Crear un videojuego</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="crear">
+  <header data-navbar></header>
+
+  <main class="container narrow">
+    <h1 class="page-title">Crear un videojuego</h1>
+    <p class="page-sub muted">Tu publicación quedará pendiente hasta que un moderador la apruebe.</p>
+
+    <form id="form" class="card form-card" novalidate>
+      <div class="form-group">
+        <label class="label" for="titulo">Título <span class="req" aria-hidden="true">*</span></label>
+        <input id="titulo" name="titulo" class="field" type="text" maxlength="120" required aria-required="true" placeholder="Nombre de tu videojuego">
+        <p class="error-msg" id="titulo-error">El título es obligatorio.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="texto">Descripción</label>
+        <textarea id="texto" name="texto" class="field" rows="5" placeholder="Cuenta de qué trata, qué incluye la demo y qué tipo de feedback buscas…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <span class="label" id="imagen-label">Imagen</span>
+        <label id="dropzone" class="dropzone">
+          <input id="imagen" name="imagen" type="file" accept="image/png, image/jpeg" aria-labelledby="imagen-label">
+          <div id="dz-content">
+            <span data-icon="image"></span>
+            <div><strong>Haz clic</strong> o arrastra una imagen</div>
+            <div class="hint">PNG o JPEG</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="enlace">Enlace externo</label>
+        <input id="enlace" name="enlace" class="field" type="url" inputmode="url" placeholder="https://tu-estudio.com/juego">
+        <p class="hint">Opcional. Web del estudio, página de itch.io, Steam…</p>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="cat-q">Categorías</label>
+        <div class="cat-picker">
+          <div class="search">
+            <span data-icon="search"></span>
+            <input id="cat-q" class="field" type="search" placeholder="Buscar categorías…" autocomplete="off"
+                   role="combobox" aria-expanded="false" aria-controls="cat-results" aria-autocomplete="list">
+          </div>
+          <div id="cat-results" class="cat-results" role="listbox" hidden></div>
+        </div>
+        <div id="cat-selected" class="cat-selected" aria-label="Categorías seleccionadas" aria-live="polite"></div>
+        <p class="hint">Pulsa sobre una categoría añadida para quitarla.</p>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-ghost" href="index.html">Cancelar</a>
+        <button class="btn btn-primary" type="submit">Enviar solicitud</button>
+      </div>
+    </form>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const $form = document.getElementById("form");
+      const $titulo = document.getElementById("titulo");
+
+      // ---------- Imagen con vista previa ----------
+      const $file = document.getElementById("imagen");
+      const $dz = document.getElementById("dropzone");
+      const $dzContent = document.getElementById("dz-content");
+      const dzDefault = $dzContent.innerHTML;
+      function showPreview(file) {
+        if (!file || !/^image\/(png|jpeg)$/.test(file.type)) {
+          $dzContent.innerHTML = dzDefault;
+          if (file) UI.toast("Solo se admiten imágenes PNG o JPEG");
+          return;
+        }
+        const url = URL.createObjectURL(file);
+        $dzContent.innerHTML = `<img src="${url}" alt="Vista previa"><div class="hint">${UI.esc(file.name)} · haz clic para cambiarla</div>`;
+      }
+      $file.addEventListener("change", () => showPreview($file.files[0]));
+      ["dragenter", "dragover"].forEach((ev) => $dz.addEventListener(ev, (e) => { e.preventDefault(); $dz.classList.add("drag"); }));
+      ["dragleave", "drop"].forEach((ev) => $dz.addEventListener(ev, () => $dz.classList.remove("drag")));
+      $dz.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) { $file.files = e.dataTransfer.files; showPreview($file.files[0]); }
+      });
+
+      // ---------- Selector de categorías ----------
+      const $q = document.getElementById("cat-q");
+      const $results = document.getElementById("cat-results");
+      const $selected = document.getElementById("cat-selected");
+      const selected = new Set();
+      let focusIdx = -1;
+      const parentName = (c) => (c.padre ? WG.categorias.find((p) => p.id === c.padre)?.name : "");
+      const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+      function matches() {
+        const q = norm($q.value.trim());
+        return WG.categorias
+          .filter((c) => !selected.has(c.id) && (!q || norm(c.name).includes(q)))
+          .sort((a, b) => a.name.localeCompare(b.name, "es"));
+      }
+      function openResults() {
+        const list = matches();
+        focusIdx = -1;
+        $results.innerHTML = list.length
+          ? list.map((c) => `<button type="button" class="cat-option" role="option" data-id="${c.id}"><span>${UI.esc(c.name)}</span><small>${UI.esc(parentName(c))}</small></button>`).join("")
+          : `<div class="cat-option muted">Sin resultados</div>`;
+        $results.hidden = false;
+        $q.setAttribute("aria-expanded", "true");
+      }
+      function closeResults() { $results.hidden = true; $q.setAttribute("aria-expanded", "false"); }
+      function renderSelected() {
+        $selected.innerHTML = [...selected]
+          .map((id) => WG.categorias.find((c) => c.id === id))
+          .map((c) => `<button type="button" class="chip" data-id="${c.id}" title="Quitar ${UI.esc(c.name)}">${UI.esc(c.name)}${UI.ICONS.x}</button>`)
+          .join("");
+      }
+      function add(id) { selected.add(id); renderSelected(); $q.value = ""; openResults(); $q.focus(); }
+
+      $q.addEventListener("focus", openResults);
+      $q.addEventListener("input", openResults);
+      $q.addEventListener("keydown", (e) => {
+        const opts = [...$results.querySelectorAll("button.cat-option")];
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          if (!opts.length) return;
+          focusIdx = (focusIdx + (e.key === "ArrowDown" ? 1 : -1) + opts.length) % opts.length;
+          opts.forEach((o, i) => o.classList.toggle("focus", i === focusIdx));
+          opts[focusIdx].scrollIntoView({ block: "nearest" });
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          const o = opts[focusIdx] || (opts.length === 1 ? opts[0] : null);
+          if (o) add(Number(o.dataset.id));
+        } else if (e.key === "Escape") closeResults();
+      });
+      $results.addEventListener("mousedown", (e) => e.preventDefault()); // evita perder el foco antes del clic
+      $results.addEventListener("click", (e) => {
+        const o = e.target.closest("button.cat-option");
+        if (o) add(Number(o.dataset.id));
+      });
+      $q.addEventListener("blur", closeResults);
+      $selected.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if (!chip) return;
+        selected.delete(Number(chip.dataset.id));
+        renderSelected();
+      });
+
+      // ---------- Envío ----------
+      $titulo.addEventListener("input", () => $titulo.classList.remove("invalid"));
+      $form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!$titulo.value.trim()) {
+          $titulo.classList.add("invalid");
+          $titulo.setAttribute("aria-describedby", "titulo-error");
+          $titulo.focus();
+          return;
+        }
+        // Equivale a Videojuego.new(...) con estado = Pendiente.
+        const payload = {
+          titulo: $titulo.value.trim(),
+          texto: document.getElementById("texto").value.trim(),
+          enlace: document.getElementById("enlace").value.trim(),
+          imagen: $file.files[0]?.name || "",
+          estado: "Pendiente",
+          categorias: [...selected],
+        };
+        console.log("Solicitud de videojuego", payload);
+        UI.toast(`«${payload.titulo}» enviado para revisión`);
+        $form.reset();
+        selected.clear();
+        renderSelected();
+        $dzContent.innerHTML = dzDefault;
+        document.querySelectorAll("#dz-content [data-icon]").forEach((n) => (n.innerHTML = UI.ICONS[n.dataset.icon]));
+      });
+    });
+  </script>
+</body>
+</html>

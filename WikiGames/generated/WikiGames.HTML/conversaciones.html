@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WikiGames · Conversaciones</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="conversaciones">
+  <header data-navbar></header>
+
+  <main class="container narrow">
+    <section data-game-header></section>
+
+    <h2 class="page-title">Conversaciones</h2>
+
+    <section id="list" class="thread-list" aria-label="Temas de conversación"></section>
+  </main>
+
+  <nav data-bottombar></nav>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      UI.renderGameHeader("conversaciones");
+      const game = UI.currentGame();
+      const $list = document.getElementById("list");
+
+      // TemaConversacion del videojuego, ordenados por fecha descendente.
+      const temas = WG.temas
+        .filter((t) => t.videojuego === game.id)
+        .sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion));
+
+      $list.innerHTML = temas.length
+        ? temas.map((t) => {
+            const u = UI.user(t.usuarioCreador);
+            const n = WG.comentarios.filter((c) => c.tema === t.id).length;
+            return `
+            <a class="card thread-card" href="#tema-${t.id}">
+              <h3 class="thread-title">${UI.esc(t.titulo)}</h3>
+              <p class="thread-desc">${UI.esc(t.texto)}</p>
+              <div class="thread-meta">
+                ${UI.avatar(u)}<span>${UI.esc(u.name)}</span>
+                <span aria-hidden="true">·</span>
+                <time datetime="${new Date(t.fechaCreacion).toISOString()}">${UI.fmtDate(t.fechaCreacion)}</time>
+                <span aria-hidden="true">·</span>
+                <span>${n} ${n === 1 ? "respuesta" : "respuestas"}</span>
+              </div>
+            </a>`;
+          }).join("")
+        : `<div class="empty">Aún no hay conversaciones sobre este juego.</div>`;
+    });
+  </script>
+</body>
+</html>
