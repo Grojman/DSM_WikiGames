@@ -8,6 +8,7 @@ using WikiGames.Web.Assemblers;
 using WikiGames.Web.Utils.Security;
 
 using WikiGames.Domain.Enums;
+using WikiGames.Web.Models.Usuarios;
 /*PROTECTED REGION END*/
 
 namespace WikiGames.Web.Controllers;
@@ -21,7 +22,8 @@ namespace WikiGames.Web.Controllers;
 public partial class UsuarioController
 {
     [HttpGet]
-    /*PROTECTED REGION ID(UsuarioController_Create_GET_attributes) START*/
+    /*PROTECTED REGION ID(UsuarioController_Create_GET_attributes) ENABLED START*/
+    [Authorize(Roles = UserRoles.Administrador)]
     /*PROTECTED REGION END*/
     public IActionResult Create()
     {
@@ -33,7 +35,8 @@ public partial class UsuarioController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /*PROTECTED REGION ID(UsuarioController_Create_POST_attributes) START*/
+    /*PROTECTED REGION ID(UsuarioController_Create_POST_attributes) ENABLED START*/
+    [Authorize(Roles = UserRoles.Administrador)]
     /*PROTECTED REGION END*/
     public async Task<IActionResult> Create(WikiGames.Web.ViewModels.UsuarioViewModel model)
     {
@@ -47,7 +50,9 @@ public partial class UsuarioController
         var useCase = new global::WikiGames.Application.UseCases.Usuario.UsuarioUseCase(unitOfWork);
         try
         {
-            await useCase.NewAsync(model.Name, model.Email, model.Password!, model.RolUsuario);
+            // Web -> backend: the ViewModel becomes a typed UsuarioModel, which gives the Rol.
+            var usuario = UsuarioModelMapper.FromViewModel(model);
+            await useCase.NewAsync(usuario.Name, usuario.Email, model.Password!, UsuarioModelMapper.ToRol(usuario));
         }
         catch (Exception error) when (error is not OperationCanceledException)
         {
@@ -61,7 +66,8 @@ public partial class UsuarioController
     }
 
     [HttpGet]
-    /*PROTECTED REGION ID(UsuarioController_Delete_GET_attributes) START*/
+    /*PROTECTED REGION ID(UsuarioController_Delete_GET_attributes) ENABLED START*/
+    [Authorize(Roles = UserRoles.Administrador)]
     /*PROTECTED REGION END*/
     public async Task<IActionResult> Delete(int id)
     {
@@ -76,7 +82,8 @@ public partial class UsuarioController
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    /*PROTECTED REGION ID(UsuarioController_DeleteConfirmed_POST_attributes) START*/
+    /*PROTECTED REGION ID(UsuarioController_DeleteConfirmed_POST_attributes) ENABLED START*/
+    [Authorize(Roles = UserRoles.Administrador)]
     /*PROTECTED REGION END*/
     public async Task<IActionResult> DeleteConfirmed(int id)
     {

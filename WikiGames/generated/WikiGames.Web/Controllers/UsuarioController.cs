@@ -1,5 +1,5 @@
 // HARIA-WEB MVC managed controller
-/*PROTECTED REGION ID(UsuarioController_usings) START*/
+/*PROTECTED REGION ID(UsuarioController_usings) ENABLED START*/
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WikiGames.Domain.Entities;
@@ -8,6 +8,7 @@ using WikiGames.Web.Assemblers;
 using WikiGames.Web.Utils.Security;
 
 using WikiGames.Domain.Enums;
+using WikiGames.Web.Models.Usuarios;
 /*PROTECTED REGION END*/
 
 namespace WikiGames.Web.Controllers;
@@ -74,7 +75,7 @@ public partial class UsuarioController : Controller
     /*PROTECTED REGION END*/
     public async Task<IActionResult> Register(WikiGames.Web.ViewModels.UsuarioViewModel model)
     {
-    /*PROTECTED REGION ID(UsuarioController_Register_POST_body) START*/
+    /*PROTECTED REGION ID(UsuarioController_Register_POST_body) ENABLED START*/
 
 
         if (string.IsNullOrEmpty(model.Password)) ModelState.AddModelError(nameof(model.Password), "Debes indicar una contraseña.");
@@ -84,7 +85,9 @@ public partial class UsuarioController : Controller
         var useCase = new global::WikiGames.Application.UseCases.Usuario.UsuarioUseCase(unitOfWork);
         try
         {
-            createdUser = await useCase.NewAsync(model.Name, model.Email, model.Password!, model.RolUsuario);
+            // Web -> backend: self-registration always creates a RegistradoModel. The Rol
+            // posted by the form is ignored, so nobody can register as an admin.
+            createdUser = await useCase.NewAsync(model.Name, model.Email, model.Password!, UsuarioModelMapper.ToRol<RegistradoModel>());
         }
         catch (Exception error) when (error is not OperationCanceledException)
         {
@@ -126,15 +129,20 @@ public partial class UsuarioController : Controller
     /*PROTECTED REGION END*/
     public async Task<IActionResult> Edit(int id, WikiGames.Web.ViewModels.UsuarioViewModel model)
     {
-    /*PROTECTED REGION ID(UsuarioController_Edit_POST_body) START*/
+    /*PROTECTED REGION ID(UsuarioController_Edit_POST_body) ENABLED START*/
 
 
         if (!ModelState.IsValid) return View(model);
         var stored = await _usuarioService.ReadOIDAsync(id);
         if (stored is null) return NotFound();
+        // Only an AdministradorModel may change the class (role) of an account.
+        // Everyone else keeps the role stored in the backend.
+        var rol = User.IsUsuario<AdministradorModel>()
+            ? UsuarioModelMapper.ToRol(UsuarioModelMapper.FromViewModel(model))
+            : UsuarioModelMapper.FromEntity(stored).Rol;
         try
         {
-            await _usuarioService.ModifyAsync(id, model.Name, model.Email, (string.IsNullOrEmpty(model.Password) ? stored.Password : model.Password), model.RolUsuario);
+            await _usuarioService.ModifyAsync(id, model.Name, model.Email, (string.IsNullOrEmpty(model.Password) ? stored.Password : model.Password), rol);
         }
         catch (Exception error) when (error is not OperationCanceledException)
         {
