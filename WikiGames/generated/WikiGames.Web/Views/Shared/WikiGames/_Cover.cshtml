@@ -1,0 +1,10 @@
+@* MANUAL FILE. Portada del videojuego; sin imagen (o si falla) muestra un placeholder con su título. *@
+@model WikiGames.Web.ViewModels.VideojuegoViewModel
+@if (string.IsNullOrWhiteSpace(Model.Imagen))
+{
+    <div class="cover-ph"><span>@Model.Titulo</span></div>
+}
+else
+{
+    <img src="@Url.Content(Model.Imagen)" alt="@Model.Titulo" loading="lazy" onerror="this.outerHTML=this.nextElementSibling.innerHTML"><template><div class="cover-ph"><span>@Model.Titulo</span></div></template>
+}

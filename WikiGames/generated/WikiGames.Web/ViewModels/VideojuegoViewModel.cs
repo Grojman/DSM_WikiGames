@@ -66,6 +66,9 @@ public sealed class VideojuegoViewModel : IValidatableObject
 
     /*PROTECTED REGION ID(VideojuegoViewModel_manual) ENABLED START*/
     // Add custom properties and validation here.
+    // Página: categorías del videojuego (cabecera del foro). Solo lectura, nunca se enlaza desde formularios.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever, Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ValidateNever]
+    public List<CategoriaViewModel> Categorias { get; set; } = new();
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;

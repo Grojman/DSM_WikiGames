@@ -45,6 +45,9 @@ public sealed class TemaConversacionViewModel : IValidatableObject
 
     /*PROTECTED REGION ID(TemaConversacionViewModel_manual) ENABLED START*/
     // Add custom properties and validation here.
+    // Página Conversaciones: número de comentarios (respuestas) del tema. Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public int NumeroRespuestas { get; set; }
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;

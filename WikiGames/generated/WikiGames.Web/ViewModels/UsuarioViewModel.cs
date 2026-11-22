@@ -33,6 +33,11 @@ public sealed class UsuarioViewModel : IValidatableObject
 
     /*PROTECTED REGION ID(UsuarioViewModel_manual) ENABLED START*/
     // Add custom properties and validation here.
+    // Página Lista de usuarios: estadísticas calculadas en el servidor. Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public int NumeroVideojuegos { get; set; }
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public int NumeroDenunciasRecibidas { get; set; }
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;

@@ -9,6 +9,9 @@ using WikiGames.Web.Utils.Security;
 
 using WikiGames.Domain.Enums;
 using WikiGames.Web.Models.Usuarios;
+using WikiGames.Application.Exceptions;
+using WikiGames.Web.Utils.Paginas;
+using WikiGames.Web.ViewModels.Paginas;
 /*PROTECTED REGION END*/
 
 namespace WikiGames.Web.Controllers;
@@ -95,5 +98,107 @@ public partial class UsuarioController
         await useCase.DestroyAsync(id);
         return RedirectToAction(nameof(Index));
     /*PROTECTED REGION END*/
+    }
+
+    // =====================================================================
+    // Página WikiGames "Usuarios" (admin-usuarios.html). Solo administradores.
+    // Acciones enteramente manuales: HARIA las conserva al regenerar.
+    // =====================================================================
+
+    [HttpGet]
+    [Authorize(Roles = UserRoles.Administrador)]
+    public async Task<IActionResult> Lista(string? q)
+    {
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var usuarios = await unitOfWork.UsuarioRepository.ReadAllAsync();
+        var juegosPorUsuario = (await unitOfWork.VideojuegoRepository.ReadAllAsync())
+            .Where(v => v.UsuarioCreador is not null)
+            .GroupBy(v => v.UsuarioCreador.Id)
+            .ToDictionary(g => g.Key, g => g.Count());
+        // Usuario.denunciasRecibidas (Denuncia.denunciado)
+        var denunciasPorUsuario = (await unitOfWork.DenunciaRepository.ReadAllAsync())
+            .Where(d => d.Denunciado is not null)
+            .GroupBy(d => d.Denunciado!.Id)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var filtro = q?.Trim();
+        var es = StringComparer.Create(new System.Globalization.CultureInfo("es-ES"), true);
+        var model = new ListaUsuariosViewModel
+        {
+            Q = filtro,
+            AdministradorActualId = WikiGamesPaginas.UsuarioActualId(User) ?? 0,
+            Usuarios = usuarios
+                .Where(u => string.IsNullOrEmpty(filtro) || u.Name.Contains(filtro, StringComparison.CurrentCultureIgnoreCase))
+                .OrderBy(u => u.Name, es)
+                .Select(u =>
+                {
+                    var vm = UsuarioAssembler.ToViewModel(u);
+                    vm.NumeroVideojuegos = juegosPorUsuario.GetValueOrDefault(u.Id);
+                    vm.NumeroDenunciasRecibidas = denunciasPorUsuario.GetValueOrDefault(u.Id);
+                    return vm;
+                })
+                .ToList(),
+        };
+        return View(model);
+    }
+
+    /// <summary>Cambia el rol entre Registrado y Moderador (UsuarioUseCase.actualizarRol).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.Administrador)]
+    public async Task<IActionResult> CambiarRol(int id, Rol rol, string? q)
+    {
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.UsuarioRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        var nombre = entity.Name;
+
+        try
+        {
+            // Las reglas (no se modifica a un administrador; solo Registrado <-> Moderador) están en el caso de uso.
+            var useCase = new global::WikiGames.Application.UseCases.Usuario.UsuarioUseCase(unitOfWork);
+            await useCase.ActualizarRolAsync(id, rol);
+        }
+        catch (ModelException error)
+        {
+            _logger.LogWarning(error, "Could not change the role of Usuario {Id}.", id);
+            TempData["Toast"] = error.InnerException is ModelException regla ? regla.Message : $"No se ha podido cambiar el rol de {nombre}";
+            return RedirectToAction(nameof(Lista), new { q });
+        }
+
+        TempData["Toast"] = $"{nombre} ahora es {(rol == Rol.Moderador ? "moderador" : "usuario normal")}";
+        return RedirectToAction(nameof(Lista), new { q });
+    }
+
+    /// <summary>Elimina un usuario (UsuarioUseCase.destroy). Los administradores no se pueden eliminar aquí.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.Administrador)]
+    public async Task<IActionResult> Eliminar(int id, string? q)
+    {
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.UsuarioRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        var nombre = entity.Name;
+        if (entity.RolUsuario == Rol.Administrador || entity.Id == WikiGamesPaginas.UsuarioActualId(User))
+        {
+            TempData["Toast"] = "No se puede eliminar a un administrador";
+            return RedirectToAction(nameof(Lista), new { q });
+        }
+
+        try
+        {
+            var useCase = new global::WikiGames.Application.UseCases.Usuario.UsuarioUseCase(unitOfWork);
+            await useCase.DestroyAsync(id);
+        }
+        catch (ModelException error)
+        {
+            _logger.LogError(error, "Could not delete Usuario {Id}.", id);
+            TempData["Toast"] = $"No se ha podido eliminar a «{nombre}»";
+            return RedirectToAction(nameof(Lista), new { q });
+        }
+
+        TempData["Toast"] = $"Usuario «{nombre}» eliminado";
+        return RedirectToAction(nameof(Lista), new { q });
     }
 }

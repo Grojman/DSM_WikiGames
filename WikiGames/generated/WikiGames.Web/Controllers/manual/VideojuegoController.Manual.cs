@@ -7,6 +7,10 @@ using WikiGames.Application.Services;
 using WikiGames.Web.Assemblers;
 
 using WikiGames.Domain.Enums;
+using WikiGames.Application.Exceptions;
+using WikiGames.Web.Models.Usuarios;
+using WikiGames.Web.Utils.Paginas;
+using WikiGames.Web.ViewModels.Paginas;
 /*PROTECTED REGION END*/
 
 namespace WikiGames.Web.Controllers;
@@ -178,4 +182,171 @@ public partial class VideojuegoController
         return NoContent();
     /*PROTECTED REGION END*/
     }
+
+    // =====================================================================
+    // Páginas WikiGames (migradas desde WikiGames.HTML). Acciones enteramente
+    // manuales: HARIA las conserva al regenerar.
+    // =====================================================================
+
+    /// <summary>conversaciones.html · Temas de conversación de un videojuego. Público.</summary>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Conversaciones(int id)
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+
+        var model = new ConversacionesJuegoViewModel
+        {
+            Videojuego = VideojuegoAssembler.ToViewModelConCategorias(entity),
+            Temas = entity.Temas
+                .OrderByDescending(t => t.FechaCreacion)
+                .Select(t =>
+                {
+                    var tema = TemaConversacionAssembler.ToViewModel(t);
+                    tema.NumeroRespuestas = t.Comentarios.Count;
+                    return tema;
+                })
+                .ToList(),
+        };
+        return View(model);
+    }
+
+    /// <summary>comentarios.html · Valoraciones de un videojuego. Público; publicar requiere sesión.</summary>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Valoraciones(int id)
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+        return View(BuildValoraciones(entity, new NuevaValoracionViewModel()));
+    }
+
+    /// <summary>Publica una Valoracion (ValoracionUseCase.New). Estrellas 1–5 → puntuación 2–10.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Valorar(int id, [Bind(Prefix = "Nueva")] NuevaValoracionViewModel nueva)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+        if (string.IsNullOrWhiteSpace(nueva.Texto)) ModelState.AddModelError("Nueva.Texto", "Escribe tu comentario.");
+        if (!ModelState.IsValid) return View(nameof(Valoraciones), BuildValoraciones(entity, nueva));
+
+        try
+        {
+            var useCase = new WikiGames.Application.UseCases.Valoracion.ValoracionUseCase(unitOfWork);
+            await useCase.NewAsync(nueva.Texto.Trim(), nueva.Estrellas * 2f, usuarioId.Value, id);
+        }
+        catch (ModelException error)
+        {
+            _logger.LogError(error, "Could not create the Valoracion.");
+            ModelState.AddModelError(string.Empty, "No se ha podido publicar el comentario. Inténtalo de nuevo.");
+            return View(nameof(Valoraciones), BuildValoraciones(entity, nueva));
+        }
+
+        TempData["Toast"] = "Comentario publicado";
+        return RedirectToAction(nameof(Valoraciones), new { id });
+    }
+
+    /// <summary>crear-videojuego.html · Formulario de solicitud de un videojuego nuevo.</summary>
+    [HttpGet]
+    public async Task<IActionResult> Nuevo()
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var model = new NuevoVideojuegoViewModel
+        {
+            Categorias = WikiGamesPaginas.ArbolCategorias(await unitOfWork.CategoriaRepository.ReadAllAsync()),
+        };
+        return View(model);
+    }
+
+    /// <summary>
+    /// Crea el videojuego en estado Pendiente (VideojuegoUseCase.NewCustomized) y después, ya con Id,
+    /// guarda la imagen en wwwroot/uploads/Videojuego/Imagen/{id}/ y asocia las categorías.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Nuevo(NuevoVideojuegoViewModel model,
+        [FromServices] IWebHostEnvironment environment, [FromServices] IConfiguration configuration)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var categorias = await unitOfWork.CategoriaRepository.ReadAllAsync();
+        model.CategoriaIds = model.CategoriaIds.Distinct().ToList();
+        if (model.CategoriaIds.Any(cid => categorias.All(c => c.Id != cid)))
+            ModelState.AddModelError(nameof(model.CategoriaIds), "Selecciona categorías existentes.");
+        if (string.IsNullOrWhiteSpace(model.Titulo))
+            ModelState.AddModelError(nameof(model.Titulo), "El título es obligatorio.");
+        if (model.Imagen is not null && WikiGamesPaginas.ValidarImagen(model.Imagen, configuration) is string imageError)
+            ModelState.AddModelError(nameof(model.Imagen), imageError);
+        if (!ModelState.IsValid)
+        {
+            model.Categorias = WikiGamesPaginas.ArbolCategorias(categorias);
+            return View(model);
+        }
+
+        Videojuego entity;
+        try
+        {
+            var useCase = new WikiGames.Application.UseCases.Videojuego.VideojuegoUseCase(unitOfWork);
+            entity = await useCase.NewCustomizedAsync(model.Texto?.Trim() ?? string.Empty, model.Titulo.Trim(),
+                model.Enlace?.Trim() ?? string.Empty, string.Empty, usuarioId.Value);
+        }
+        catch (ModelException error)
+        {
+            _logger.LogError(error, "Could not create the Videojuego.");
+            ModelState.AddModelError(string.Empty, "No se ha podido enviar la solicitud. Inténtalo de nuevo.");
+            model.Categorias = WikiGamesPaginas.ArbolCategorias(categorias);
+            return View(model);
+        }
+
+        if (model.Imagen is not null || model.CategoriaIds.Count > 0)
+        {
+            try
+            {
+                var imagen = model.Imagen is null ? null
+                    : await WikiGamesPaginas.GuardarImagenAsync(model.Imagen, environment, configuration, "Videojuego", "Imagen", entity.Id, HttpContext.RequestAborted);
+                await unitOfWork.BeginTransactionAsync("MVC.Videojuego.Nuevo.ImagenCategorias");
+                if (imagen is not null) entity.Imagen = imagen;
+                foreach (var categoria in categorias.Where(c => model.CategoriaIds.Contains(c.Id)))
+                    if (!entity.Categorias.Contains(categoria)) entity.Categorias.Add(categoria);
+                await unitOfWork.VideojuegoRepository.SaveAsync(entity);
+                await unitOfWork.CommitAsync();
+            }
+            catch (Exception error) when (error is not OperationCanceledException)
+            {
+                await unitOfWork.RollbackAsync();
+                _logger.LogError(error, "Videojuego {Id} created, but its image or categories could not be saved.", entity.Id);
+                TempData["Toast"] = $"«{entity.Titulo}» enviado, pero no se han podido guardar la imagen o las categorías";
+                return RedirectToAction(nameof(Nuevo));
+            }
+        }
+
+        TempData["Toast"] = $"«{entity.Titulo}» enviado para revisión";
+        return RedirectToAction(nameof(Nuevo));
+    }
+
+    /// <summary>Un videojuego no aprobado solo lo ven su creador y los moderadores/administradores.</summary>
+    private bool PuedeVerVideojuego(Videojuego entity) =>
+        entity.Estado == EstadoContenido.Aprobado
+        || User.IsUsuario<ModeradorModel>()
+        || (WikiGamesPaginas.UsuarioActualId(User) is int usuarioId && entity.UsuarioCreador?.Id == usuarioId);
+
+    private static ValoracionesJuegoViewModel BuildValoraciones(Videojuego entity, NuevaValoracionViewModel nueva) => new()
+    {
+        Videojuego = VideojuegoAssembler.ToViewModelConCategorias(entity),
+        Valoraciones = entity.Valoraciones
+            .OrderByDescending(v => v.FechaCreacion)
+            .Select(ValoracionAssembler.ToViewModel)
+            .ToList(),
+        Nueva = nueva,
+    };
 }

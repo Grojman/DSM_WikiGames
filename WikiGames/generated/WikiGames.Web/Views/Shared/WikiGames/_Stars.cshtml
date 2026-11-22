@@ -1,0 +1,9 @@
+@* MANUAL FILE. Puntuación 0–10 del modelo → 0–5 estrellas llenas (redondeo a la estrella más cercana). *@
+@model float
+@{ var filled = (int)Math.Round(Model / 2, MidpointRounding.AwayFromZero); }
+<span class="stars" role="img" aria-label="@filled de 5 estrellas">
+    @for (var i = 1; i <= 5; i++)
+    {
+        <span class="star @(i <= filled ? "on" : "")" data-icon="star"></span>
+    }
+</span>

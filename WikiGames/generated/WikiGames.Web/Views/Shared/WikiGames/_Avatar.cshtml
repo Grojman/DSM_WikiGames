@@ -1,0 +1,4 @@
+@* MANUAL FILE. Avatar con la inicial del usuario. ViewData["Size"] = "lg" para el grande. *@
+@model string?
+@{ var name = string.IsNullOrWhiteSpace(Model) ? "?" : Model; }
+<span class="avatar @ViewData["Size"]">@name.Substring(0, 1).ToUpperInvariant()</span>

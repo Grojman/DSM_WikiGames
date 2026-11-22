@@ -1,0 +1,22 @@
+@* MANUAL FILE. Cabecera del foro de un videojuego, con pestañas Conversaciones / Comentarios. *@
+@* ViewData["Tab"] = "conversaciones" | "comentarios" *@
+@model WikiGames.Web.ViewModels.VideojuegoViewModel
+@{ var tab = ViewData["Tab"] as string; }
+<section class="game-header">
+    <div class="game-header-cover"><partial name="WikiGames/_Cover" model="Model" /></div>
+    <div class="game-header-info">
+        <a class="back-link" asp-controller="Home" asp-action="Index"><span data-icon="back"></span>Inicio</a>
+        <h1>@Model.Titulo</h1>
+        <p class="muted">@Model.Texto</p>
+        <div class="chips">
+            @foreach (var c in Model.Categorias)
+            {
+                <span class="chip">@c.Name</span>
+            }
+        </div>
+    </div>
+    <nav class="tabs" aria-label="Secciones del foro">
+        <a asp-controller="Videojuego" asp-action="Conversaciones" asp-route-id="@Model.Id" class="@(tab == "conversaciones" ? "active" : "")">Conversaciones</a>
+        <a asp-controller="Videojuego" asp-action="Valoraciones" asp-route-id="@Model.Id" class="@(tab == "comentarios" ? "active" : "")">Comentarios</a>
+    </nav>
+</section>

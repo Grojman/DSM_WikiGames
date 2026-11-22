@@ -7,6 +7,10 @@ using WikiGames.Application.Services;
 using WikiGames.Web.Assemblers;
 
 using WikiGames.Domain.Enums;
+using WikiGames.Application.Exceptions;
+using WikiGames.Web.Models.Usuarios;
+using WikiGames.Web.Utils.Security;
+using WikiGames.Web.ViewModels.Paginas;
 /*PROTECTED REGION END*/
 
 namespace WikiGames.Web.Controllers;
@@ -128,5 +132,112 @@ public partial class DenunciaController
         await _denunciaService.RechazarDenunciaAsync(p_oid);
         return NoContent();
     /*PROTECTED REGION END*/
+    }
+
+    // =====================================================================
+    // Página WikiGames "Denuncias" (denuncias.html). Moderadores y administradores
+    // (UserRoles.Moderador incluye a los administradores por herencia de roles).
+    // Acciones enteramente manuales: HARIA las conserva al regenerar.
+    // =====================================================================
+
+    [HttpGet]
+    [Authorize(Roles = UserRoles.Moderador)]
+    public async Task<IActionResult> Lista(EstadoContenido? estado)
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var denuncias = await unitOfWork.DenunciaRepository.ReadAllAsync();
+
+        // Contenido es una jerarquía (joined-subclass): el proxy perezoso de Denuncia.ContenidoDenunciado
+        // no revela la subclase, así que se localiza por Id en cada subclase.
+        var videojuegos = (await unitOfWork.VideojuegoRepository.ReadAllAsync()).ToDictionary(x => x.Id);
+        var valoraciones = (await unitOfWork.ValoracionRepository.ReadAllAsync()).ToDictionary(x => x.Id);
+        var temas = (await unitOfWork.TemaConversacionRepository.ReadAllAsync()).ToDictionary(x => x.Id);
+        var comentarios = (await unitOfWork.ComentarioRepository.ReadAllAsync()).ToDictionary(x => x.Id);
+        var esAdministrador = User.IsUsuario<AdministradorModel>();
+
+        var model = new ListaDenunciasViewModel
+        {
+            Estado = estado,
+            Denuncias = denuncias
+                .Where(d => estado is null || d.Estado == estado)
+                .OrderByDescending(d => d.Fecha)
+                .Select(d =>
+                {
+                    var vm = DenunciaAssembler.ToViewModel(d);
+                    var contenidoId = d.ContenidoDenunciado?.Id;
+                    if (contenidoId is not int cid)
+                    {
+                        vm.TipoContenido = "Usuario";
+                        vm.EtiquetaContenido = $"Usuario #{d.Denunciado?.Id}";
+                        vm.EnlaceContenido = esAdministrador && d.Denunciado is not null
+                            ? Url.Action("Lista", "Usuario", new { q = d.Denunciado.Name }) : null;
+                        return vm;
+                    }
+                    vm.EtiquetaContenido = $"Contenido #{cid}";
+                    if (videojuegos.TryGetValue(cid, out var v))
+                    {
+                        vm.TipoContenido = "Videojuego";
+                        vm.EnlaceContenido = Url.Action("Conversaciones", "Videojuego", new { id = v.Id });
+                    }
+                    else if (valoraciones.TryGetValue(cid, out var val))
+                    {
+                        vm.TipoContenido = "Valoración";
+                        vm.EnlaceContenido = Url.Action("Valoraciones", "Videojuego", new { id = val.Videojuego?.Id });
+                    }
+                    else if (temas.TryGetValue(cid, out var t))
+                    {
+                        vm.TipoContenido = "Conversación";
+                        vm.EnlaceContenido = Url.Action("Conversaciones", "Videojuego", new { id = t.Videojuego?.Id }, null, null, $"tema-{t.Id}");
+                    }
+                    else if (comentarios.TryGetValue(cid, out var c))
+                    {
+                        vm.TipoContenido = "Comentario";
+                        vm.EnlaceContenido = Url.Action("Conversaciones", "Videojuego", new { id = c.Tema?.Videojuego?.Id }, null, null, $"tema-{c.Tema?.Id}");
+                    }
+                    else
+                    {
+                        vm.TipoContenido = "Contenido";
+                    }
+                    return vm;
+                })
+                .ToList(),
+        };
+        return View(model);
+    }
+
+    /// <summary>Acepta (DenunciaUseCase.aprobarDenuncia) o rechaza (DenunciaService.rechazarDenuncia) una denuncia pendiente.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.Moderador)]
+    public async Task<IActionResult> Resolver(int id, EstadoContenido estado, EstadoContenido? filtro)
+    {
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        try
+        {
+            switch (estado)
+            {
+                case EstadoContenido.Aprobado:
+                    await new WikiGames.Application.UseCases.Denuncia.DenunciaUseCase(unitOfWork).AprobarDenunciaAsync(id);
+                    break;
+                case EstadoContenido.Rechazado:
+                    await unitOfWork.BeginTransactionAsync("MVC.Denuncia.Rechazar");
+                    await new DenunciaService(unitOfWork).RechazarDenunciaAsync(id);
+                    await unitOfWork.CommitAsync();
+                    break;
+                default:
+                    TempData["Toast"] = $"Denuncia #{id}: una denuncia resuelta no puede volver a pendiente";
+                    return RedirectToAction(nameof(Lista), new { estado = filtro });
+            }
+        }
+        catch (ModelException error)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogWarning(error, "Could not resolve Denuncia {Id}.", id);
+            TempData["Toast"] = $"Denuncia #{id}: solo se pueden resolver denuncias pendientes";
+            return RedirectToAction(nameof(Lista), new { estado = filtro });
+        }
+
+        TempData["Toast"] = $"Denuncia #{id}: {(estado == EstadoContenido.Aprobado ? "aprobada" : "rechazada")}";
+        return RedirectToAction(nameof(Lista), new { estado = filtro });
     }
 }

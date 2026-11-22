@@ -46,5 +46,16 @@ public static class VideojuegoAssembler
 
     /*PROTECTED REGION ID(VideojuegoAssembler_custom) ENABLED START*/
     // Add custom properties, validation helpers or actions here.
+
+    /// <summary>ToViewModel + categorías: lo que necesita la cabecera del foro de un videojuego.</summary>
+    public static WikiGames.Web.ViewModels.VideojuegoViewModel ToViewModelConCategorias(Videojuego entity)
+    {
+        var model = ToViewModel(entity);
+        model.Categorias = entity.Categorias
+            .OrderBy(c => c.Name, StringComparer.Create(new System.Globalization.CultureInfo("es-ES"), true))
+            .Select(CategoriaAssembler.ToViewModel)
+            .ToList();
+        return model;
+    }
     /*PROTECTED REGION END*/
 }

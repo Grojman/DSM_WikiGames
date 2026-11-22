@@ -57,6 +57,13 @@ public sealed class DenunciaViewModel : IValidatableObject
 
     /*PROTECTED REGION ID(DenunciaViewModel_manual) ENABLED START*/
     // Add custom properties and validation here.
+    // Página Lista de denuncias: qué se ha denunciado y dónde verlo. Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public string TipoContenido { get; set; } = string.Empty;
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public string EtiquetaContenido { get; set; } = string.Empty;
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public string? EnlaceContenido { get; set; }
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;
