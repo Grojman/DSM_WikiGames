@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversación</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header data-navbar></header>
+  <main class="container narrow">
+    <section id="list"></section>
+  </main>
+  <nav data-bottombar></nav>
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const game = UI.currentGame();
+      const $list = document.getElementById("list");
+
+      const tema = WG.temas
+        .filter(t => t.videojuego === game.id)
+        .sort((a, b) =>
+          new Date(b.fechaCreacion) - new Date(a.fechaCreacion)
+        )[0];
+
+      if (!tema) return;
+
+      const u = UI.user(tema.usuarioCreador);
+      const n = WG.comentarios.filter(c => c.tema === tema.id).length;
+
+      $list.innerHTML = `
+        <article class="card thread-card">
+          <h3 class="thread-title">
+            ${UI.esc(tema.titulo)}
+          </h3>
+
+          <p class="thread-desc">
+            ${UI.esc(tema.texto)}
+          </p>
+
+          <div class="thread-meta">
+            ${UI.avatar(u)}
+            <span>${UI.esc(u.name)}</span>
+            <span>·</span>
+            <time datetime="${new Date(tema.fechaCreacion).toISOString()}">
+              ${UI.fmtDate(tema.fechaCreacion)}
+            </time>
+            <span>·</span>
+            <span>${n} respuestas</span>
+          </div>
+        </article>
+      `;
+    });
+  </script>
+
+</body>
+</html>

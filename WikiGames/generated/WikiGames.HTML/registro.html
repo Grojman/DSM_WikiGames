@@ -4,20 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
+        <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <p>Registrarse</p>
-    <hr>
-    <section>
-        <h1>WikiGames</h1>
-        <br><a href=""></a><img src="iconos/arrow_back_ios_22dp_000000_FILL0_wght400_GRAD0_opsz24.svg" alt="">Atrás</a>
-    </section>
+    <header data-navbar></header>
+    <main class="container narrow">
+        <h1 class="page-title">Crear cuenta</h1>
+    <div class="card form-card">
     <form>
-        <br><br><input type="text" placeholder="Usuario">
-        <br><br><input type="email" placeholder="Email">
-        <br><br><input type="password" placeholder="Contraseña"><button><img src="iconos/visibility_19dp_000000_FILL0_wght400_GRAD0_opsz20.svg" alt=""></button>
-        <br><br><input type="password" placeholder="Repetir contraseña"><button><img src="iconos/visibility_19dp_000000_FILL0_wght400_GRAD0_opsz20.svg" alt=""></button>
+        <br><br><input type="text" placeholder="Usuario" class="field">
+        <br><br><input type="email" placeholder="Email" class="field">
+        <br><br><input type="password" placeholder="Contraseña" class="field" id="ps1"><button type="button" onclick="ver('ps1', 'img1')"><img id="img1" src="iconos/visibility.svg" alt=""></button>
+        <br><br><input type="password" placeholder="Repetir contraseña" class="field" id="ps2"><button type="button" onclick="ver('ps2' , 'img2')"><img id="img2" src="iconos/visibility.svg" alt=""></button>
         <br><br><input type="submit">
     </form>
+    </div>
+    </main>
+    <script src="js/common.js"></script>
+    <script src="js/data.js"></script>
+    <script>
+        function ver(id , idimg){
+            let ps = document.getElementById(id);
+            let img = document.getElementById(idimg);
+            if (ps.type == "password") {
+                ps.type = "text";
+                img.src = "iconos/visibility_off.svg"
+            }else{
+                ps.type = "password";
+                img.src = "iconos/visibility.svg"
+            }
+        }
+    </script>
 </body>
 </html>

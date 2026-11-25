@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiGames · Crear una conversacion</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="crear">
+  <header data-navbar></header>
+    <main class="container narrow">
+            <h1 class="page-title">Crear conversacion</h1>
+            <div class="card form-card">
+        <form>
+            <label class="label" for="titulo">Título <span class="req" aria-hidden="true">*</span></label>
+            <input name="titulo" id="titulo" type="text" placeholder="Titulo de la conversación" class="field" required>
+            <br><br><label class="label" for="titulo">Mensaje <span class="req" aria-hidden="true">*</span></label>
+            <textarea name="Mensaje" placeholder="Contenido a mostrar" class="field"></textarea>
+            <br><br><label class="label" for="titulo">Fichero <span class="req" aria-hidden="true">*</span></label>
+            <input name="Fichro" id="Fichero" type="file" class="field">
+            <div class="form-actions">
+            <br><br><a class="btn btn-ghost" href="index.html">Cancelar</a>
+            <input type="submit" class="btn btn-primary" value="Crear">
+            </div>
+        </form>
+    </div>
+</main>
+  <nav data-bottombar></nav>
+</body>
+</html>
