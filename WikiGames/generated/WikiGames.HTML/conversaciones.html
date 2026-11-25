@@ -37,7 +37,7 @@
             const u = UI.user(t.usuarioCreador);
             const n = WG.comentarios.filter((c) => c.tema === t.id).length;
             return `
-            <a class="card thread-card" href="#tema-${t.id}">
+            <a class="card thread-card" href="comentariosConversacion.html#tema-${t.id}">
               <h3 class="thread-title">${UI.esc(t.titulo)}</h3>
               <p class="thread-desc">${UI.esc(t.texto)}</p>
               <div class="thread-meta">

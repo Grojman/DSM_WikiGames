@@ -61,7 +61,7 @@
       <a class="brand" href="index.html">${ICONS.logo}<span>WikiGames</span></a>
       <nav class="nav-actions" aria-label="Cuenta">
         <a class="icon-btn" href="#" title="Ajustes" aria-label="Ajustes">${ICONS.settings}</a>
-        <a class="btn btn-ghost" href="#">${ICONS.login}<span>Iniciar sesión</span></a>
+        <a class="btn btn-ghost" href="iniciar.html">${ICONS.login}<span>Iniciar sesión</span></a>
       </nav>`;
   }
 
