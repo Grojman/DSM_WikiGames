@@ -1,4 +1,4 @@
-// HARIA-WEB GENERATED sha256:3899267e834baa5360aab961d78e7da03e3580f7e91fa5266fbb87471f94fb43
+// HARIA-WEB GENERATED sha256:0e6ae0e6f7a70e00c4f3c84c563e71b37a2ba207b600fce0217c5e606b5ee1d5
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,15 +37,16 @@ public sealed class AccountController : Controller
             return View(model);
         }
 
-        var token = await _userService.LoginAsync(model.Id, model.Password);
+        // Usuario.login customized: el identificador es el nombre o el email.
+        var rawIdentifier = model.Identifier ?? string.Empty;
+        var token = await _userService.LoginAsync(rawIdentifier, model.Password);
         if (string.IsNullOrWhiteSpace(token))
         {
             ModelState.AddModelError(string.Empty, "Credenciales incorrectas.");
             return View(model);
         }
 
-        await using var unitOfWork = _userRepository.Create();
-        var entity = await unitOfWork.UsuarioRepository.ReadAsync(model.Id);
+        var entity = await _userService.FindByNombreOEmailAsync(rawIdentifier);
         if (entity is null)
         {
             ModelState.AddModelError(string.Empty, "Credenciales incorrectas.");
