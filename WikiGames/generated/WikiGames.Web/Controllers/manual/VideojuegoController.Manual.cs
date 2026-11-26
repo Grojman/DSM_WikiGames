@@ -10,6 +10,7 @@ using WikiGames.Domain.Enums;
 using WikiGames.Application.Exceptions;
 using WikiGames.Web.Models.Usuarios;
 using WikiGames.Web.Utils.Paginas;
+using WikiGames.Web.Utils.Security;
 using WikiGames.Web.ViewModels.Paginas;
 /*PROTECTED REGION END*/
 
@@ -349,4 +350,454 @@ public partial class VideojuegoController
             .ToList(),
         Nueva = nueva,
     };
+
+    /// <summary>videojuego.html · Ficha completa del videojuego (vista pública, autor y moderador).</summary>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Ficha(int id)
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        var model = new FichaVideojuegoViewModel
+        {
+            Videojuego = VideojuegoAssembler.ToViewModelConCategorias(entity),
+            AutorEmail = entity.UsuarioCreador?.Email,
+            EstaAutenticado = usuarioId is not null,
+            TieneMeGusta = usuarioId is int uidMg && entity.UsuariosMeGusta.Any(u => u.Id == uidMg),
+            EsFavorito = usuarioId is int uidFav && entity.UsuarioFavorito.Any(u => u.Id == uidFav),
+            YaDenunciado = usuarioId is int uidDen && entity.Denuncias.Any(d => d.Denunciante?.Id == uidDen && d.Estado == EstadoContenido.Pendiente),
+            EsDueno = usuarioId is int uidDueno && entity.UsuarioCreador?.Id == uidDueno,
+            EsModerador = User.IsUsuario<ModeradorModel>(),
+            RechazoId = entity.Rechazo?.Id,
+            RechazoMotivo = entity.Rechazo?.Motivo,
+            RechazoFecha = entity.Rechazo?.Fecha,
+            RechazoGestor = entity.Rechazo?.Gestor?.Name,
+        };
+        return View(model);
+    }
+
+    /// <summary>Alterna el Me gusta del usuario actual sobre un videojuego.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AlternarMeGusta(int id)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+
+        var yaTieneMeGusta = entity.UsuariosMeGusta.Any(u => u.Id == usuarioId.Value);
+        try
+        {
+            if (yaTieneMeGusta)
+            {
+                await unitOfWork.BeginTransactionAsync("MVC.Videojuego.RetirarMeGusta");
+                await new ContenidoService(unitOfWork).RetirarMeGustaAsync(id, usuarioId.Value);
+                await unitOfWork.CommitAsync();
+                TempData["Toast"] = "Me gusta retirado";
+            }
+            else
+            {
+                var useCase = new WikiGames.Application.UseCases.Contenido.ContenidoUseCase(unitOfWork);
+                await useCase.DarMeGustaAsync(id, usuarioId.Value);
+                TempData["Toast"] = "Has dado Me gusta a este videojuego";
+            }
+        }
+        catch (ModelException error)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogWarning(error, "Could not toggle like for Videojuego {Id}.", id);
+            TempData["Toast"] = "No se ha podido actualizar el Me gusta";
+        }
+
+        return RedirectToAction(nameof(Ficha), new { id });
+    }
+
+    /// <summary>Alterna el estado de Favorito del usuario actual sobre un videojuego.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AlternarFavorito(int id)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+
+        var usuario = await unitOfWork.UsuarioRepository.ReadAsync(usuarioId.Value);
+        if (usuario is null) return Challenge();
+
+        var yaEsFavorito = usuario.ContenidoFavorito.Any(c => c.Id == id);
+        try
+        {
+            await unitOfWork.BeginTransactionAsync("MVC.Videojuego.AlternarFavorito");
+            if (yaEsFavorito)
+            {
+                var existente = usuario.ContenidoFavorito.FirstOrDefault(c => c.Id == id);
+                if (existente is not null) usuario.ContenidoFavorito.Remove(existente);
+                entity.UsuarioFavorito.Remove(usuario);
+                await unitOfWork.UsuarioRepository.SaveAsync(usuario);
+                await unitOfWork.VideojuegoRepository.SaveAsync(entity);
+                TempData["Toast"] = "Eliminado de favoritos";
+            }
+            else
+            {
+                await new ContenidoService(unitOfWork).AddUsuarioFavoritoAsync(id, new[] { usuarioId.Value });
+                TempData["Toast"] = "Añadido a favoritos";
+            }
+            await unitOfWork.CommitAsync();
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogError(error, "Could not toggle favorite for Videojuego {Id}.", id);
+            TempData["Toast"] = "No se ha podido actualizar favoritos";
+        }
+
+        return RedirectToAction(nameof(Ficha), new { id });
+    }
+
+    /// <summary>Crea una denuncia sobre el videojuego actual (DenunciaUseCase.NewCustomized).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Denunciar(int id)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null || !PuedeVerVideojuego(entity)) return NotFound();
+
+        if (entity.Denuncias.Any(d => d.Denunciante?.Id == usuarioId.Value && d.Estado == EstadoContenido.Pendiente))
+        {
+            TempData["Toast"] = "Ya tienes una denuncia pendiente sobre este videojuego";
+            return RedirectToAction(nameof(Ficha), new { id });
+        }
+
+        try
+        {
+            var denunciaUseCase = new WikiGames.Application.UseCases.Denuncia.DenunciaUseCase(unitOfWork);
+            var denuncia = await denunciaUseCase.NewCustomizedAsync(usuarioId.Value);
+
+            await unitOfWork.BeginTransactionAsync("MVC.Videojuego.Denunciar.Asociar");
+            denuncia.ContenidoDenunciado = entity;
+            denuncia.Denunciado = entity.UsuarioCreador;
+            await unitOfWork.DenunciaRepository.SaveAsync(denuncia);
+            await unitOfWork.CommitAsync();
+
+            TempData["Toast"] = "Denuncia enviada para revisión";
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogError(error, "Could not report Videojuego {Id}.", id);
+            TempData["Toast"] = "No se ha podido enviar la denuncia";
+        }
+
+        return RedirectToAction(nameof(Ficha), new { id });
+    }
+
+    /// <summary>Formulario de edición del videojuego para su autor o un moderador.</summary>
+    [HttpGet]
+    public async Task<IActionResult> Editar(int id)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        if (entity.UsuarioCreador?.Id != usuarioId.Value && !User.IsUsuario<ModeradorModel>()) return Forbid();
+
+        var categorias = await unitOfWork.CategoriaRepository.ReadAllAsync();
+        var model = new EditarVideojuegoViewModel
+        {
+            Id = entity.Id,
+            Titulo = entity.Titulo,
+            Texto = entity.Texto,
+            Enlace = entity.Enlace,
+            ImagenActual = entity.Imagen,
+            CategoriaIds = entity.Categorias.Select(c => c.Id).ToList(),
+            Categorias = WikiGamesPaginas.ArbolCategorias(categorias),
+        };
+        return View(model);
+    }
+
+    /// <summary>Guarda los cambios de la ficha de un videojuego (autor o moderador).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Editar(int id, EditarVideojuegoViewModel model,
+        [FromServices] IWebHostEnvironment environment, [FromServices] IConfiguration configuration)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        if (entity.UsuarioCreador?.Id != usuarioId.Value && !User.IsUsuario<ModeradorModel>()) return Forbid();
+
+        var categorias = await unitOfWork.CategoriaRepository.ReadAllAsync();
+        model.Id = id;
+        model.ImagenActual = entity.Imagen;
+        model.CategoriaIds = model.CategoriaIds.Distinct().ToList();
+        if (model.CategoriaIds.Any(cid => categorias.All(c => c.Id != cid)))
+            ModelState.AddModelError(nameof(model.CategoriaIds), "Selecciona categorías existentes.");
+        if (string.IsNullOrWhiteSpace(model.Titulo))
+            ModelState.AddModelError(nameof(model.Titulo), "El título es obligatorio.");
+        if (model.Imagen is not null && WikiGamesPaginas.ValidarImagen(model.Imagen, configuration) is string imageError)
+            ModelState.AddModelError(nameof(model.Imagen), imageError);
+        if (!ModelState.IsValid)
+        {
+            model.Categorias = WikiGamesPaginas.ArbolCategorias(categorias);
+            return View(model);
+        }
+
+        try
+        {
+            var nuevaImagen = model.Imagen is null ? null
+                : await WikiGamesPaginas.GuardarImagenAsync(model.Imagen, environment, configuration, "Videojuego", "Imagen", entity.Id, HttpContext.RequestAborted);
+
+            await unitOfWork.BeginTransactionAsync("MVC.Videojuego.Editar");
+            entity.Titulo = model.Titulo.Trim();
+            entity.Texto = model.Texto?.Trim() ?? string.Empty;
+            entity.Enlace = model.Enlace?.Trim() ?? string.Empty;
+            if (nuevaImagen is not null) entity.Imagen = nuevaImagen;
+
+            entity.Categorias.Clear();
+            foreach (var categoria in categorias.Where(c => model.CategoriaIds.Contains(c.Id)))
+                entity.Categorias.Add(categoria);
+
+            await unitOfWork.VideojuegoRepository.SaveAsync(entity);
+            await unitOfWork.CommitAsync();
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogError(error, "Could not update Videojuego {Id}.", id);
+            ModelState.AddModelError(string.Empty, "No se han podido guardar los cambios. Inténtalo de nuevo.");
+            model.Categorias = WikiGamesPaginas.ArbolCategorias(categorias);
+            return View(model);
+        }
+
+        TempData["Toast"] = $"«{entity.Titulo}» actualizado";
+        return RedirectToAction(nameof(Ficha), new { id });
+    }
+
+    /// <summary>Elimina un videojuego (su autor o un moderador/administrador).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EliminarFicha(int id, string? origen)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+
+        var esDueno = entity.UsuarioCreador?.Id == usuarioId.Value;
+        var esModerador = User.IsUsuario<ModeradorModel>();
+        if (!esDueno && !esModerador) return Forbid();
+
+        var titulo = entity.Titulo;
+        try
+        {
+            async Task LimpiarContenidoAsync(Contenido contenido)
+            {
+                foreach (var u in contenido.UsuariosMeGusta.ToList())
+                {
+                    u.ContenidosMeGusta.Remove(contenido);
+                    await unitOfWork.UsuarioRepository.SaveAsync(u);
+                }
+                contenido.UsuariosMeGusta.Clear();
+
+                foreach (var u in contenido.UsuarioFavorito.ToList())
+                {
+                    u.ContenidoFavorito.Remove(contenido);
+                    await unitOfWork.UsuarioRepository.SaveAsync(u);
+                }
+                contenido.UsuarioFavorito.Clear();
+
+                foreach (var d in contenido.Denuncias.ToList())
+                {
+                    d.ContenidoDenunciado = null;
+                    await unitOfWork.DenunciaRepository.SaveAsync(d);
+                }
+                contenido.Denuncias.Clear();
+
+                foreach (var a in contenido.Acciones.ToList())
+                    await unitOfWork.AccionSistemaRepository.DeleteAsync(a);
+                contenido.Acciones.Clear();
+            }
+
+            await unitOfWork.BeginTransactionAsync("MVC.Videojuego.LimpiarRelaciones");
+            await LimpiarContenidoAsync(entity);
+            entity.Categorias.Clear();
+
+            foreach (var valoracion in entity.Valoraciones.ToList())
+                await LimpiarContenidoAsync(valoracion);
+
+            foreach (var tema in entity.Temas.ToList())
+            {
+                foreach (var comentario in tema.Comentarios.ToList())
+                {
+                    await LimpiarContenidoAsync(comentario);
+                    comentario.ComentarioAsociado = null;
+                    await unitOfWork.ComentarioRepository.SaveAsync(comentario);
+                }
+                foreach (var comentario in tema.Comentarios.ToList())
+                    await unitOfWork.ComentarioRepository.DeleteAsync(comentario);
+                await LimpiarContenidoAsync(tema);
+                await unitOfWork.TemaConversacionRepository.DeleteAsync(tema);
+            }
+            entity.Temas.Clear();
+
+            var rechazo = entity.Rechazo;
+            if (rechazo is not null)
+            {
+                entity.Rechazo = null;
+                await unitOfWork.VideojuegoRepository.SaveAsync(entity);
+                await unitOfWork.RechazoRepository.DeleteAsync(rechazo);
+            }
+            else
+            {
+                await unitOfWork.VideojuegoRepository.SaveAsync(entity);
+            }
+            await unitOfWork.CommitAsync();
+
+            if (esModerador && !esDueno)
+            {
+                var useCase = new WikiGames.Application.UseCases.Contenido.ContenidoUseCase(unitOfWork);
+                await useCase.DestroyAsync(id);
+            }
+            else
+            {
+                await unitOfWork.BeginTransactionAsync("MVC.Videojuego.Eliminar");
+                await new VideojuegoService(unitOfWork).DestroyAsync(id);
+                await unitOfWork.CommitAsync();
+            }
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogError(error, "Could not delete Videojuego {Id}.", id);
+            TempData["Toast"] = $"No se ha podido eliminar «{titulo}»";
+            return RedirectToAction(nameof(Ficha), new { id });
+        }
+
+        TempData["Toast"] = $"Videojuego «{titulo}» eliminado";
+        return string.Equals(origen, "pendientes", StringComparison.OrdinalIgnoreCase)
+            ? RedirectToAction(nameof(Pendientes))
+            : RedirectToAction("Index", "Home");
+    }
+
+    /// <summary>videojuegos-pendientes.html · Listado de videojuegos pendientes de aprobación. Moderadores y administradores.</summary>
+    [HttpGet]
+    [Authorize(Roles = UserRoles.Moderador)]
+    public async Task<IActionResult> Pendientes(string? q)
+    {
+        await using var unitOfWork = _formUnitOfWorkFactory.Create();
+        var filtro = q?.Trim();
+        var videojuegos = (await unitOfWork.VideojuegoRepository.ReadAllAsync())
+            .Where(v => v.Estado == EstadoContenido.Pendiente);
+
+        if (!string.IsNullOrEmpty(filtro))
+        {
+            videojuegos = videojuegos.Where(v =>
+                v.Titulo.Contains(filtro, StringComparison.CurrentCultureIgnoreCase)
+                || v.Texto.Contains(filtro, StringComparison.CurrentCultureIgnoreCase)
+                || (v.UsuarioCreador?.Name?.Contains(filtro, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                || (v.UsuarioCreador?.Email?.Contains(filtro, StringComparison.CurrentCultureIgnoreCase) ?? false));
+        }
+
+        var model = new VideojuegosPendientesViewModel
+        {
+            Q = filtro,
+            Videojuegos = videojuegos
+                .OrderByDescending(v => v.FechaCreacion)
+                .ThenByDescending(v => v.Id)
+                .Select(v => new VideojuegoPendienteItemViewModel
+                {
+                    Videojuego = VideojuegoAssembler.ToViewModelConCategorias(v),
+                    AutorEmail = v.UsuarioCreador?.Email,
+                })
+                .ToList(),
+        };
+        return View(model);
+    }
+
+    /// <summary>Aprueba un videojuego pendiente (VideojuegoUseCase.aprobarVideojuego).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.Moderador)]
+    public async Task<IActionResult> Aprobar(int id, string? origen, string? q)
+    {
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        var titulo = entity.Titulo;
+
+        try
+        {
+            var useCase = new WikiGames.Application.UseCases.Videojuego.VideojuegoUseCase(unitOfWork);
+            await useCase.AprobarVideojuegoAsync(id);
+            TempData["Toast"] = $"«{titulo}» aprobado y publicado";
+        }
+        catch (ModelException error)
+        {
+            _logger.LogWarning(error, "Could not approve Videojuego {Id}.", id);
+            TempData["Toast"] = error.InnerException is ModelException regla ? regla.Message : $"No se ha podido aprobar «{titulo}»";
+        }
+
+        return string.Equals(origen, "ficha", StringComparison.OrdinalIgnoreCase)
+            ? RedirectToAction(nameof(Ficha), new { id })
+            : RedirectToAction(nameof(Pendientes), new { q });
+    }
+
+    /// <summary>Rechaza un videojuego pendiente con motivo obligatorio (VideojuegoUseCase.rechazarVideojuego).</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.Moderador)]
+    public async Task<IActionResult> Rechazar(int id, string? motivo, string? origen, string? q)
+    {
+        var gestorId = WikiGamesPaginas.UsuarioActualId(User);
+        if (gestorId is null) return Challenge();
+
+        if (string.IsNullOrWhiteSpace(motivo))
+        {
+            TempData["Toast"] = "Debes indicar un motivo de rechazo";
+            return string.Equals(origen, "ficha", StringComparison.OrdinalIgnoreCase)
+                ? RedirectToAction(nameof(Ficha), new { id })
+                : RedirectToAction(nameof(Pendientes), new { q });
+        }
+
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.VideojuegoRepository.ReadAsync(id);
+        if (entity is null) return NotFound();
+        var titulo = entity.Titulo;
+
+        try
+        {
+            var useCase = new WikiGames.Application.UseCases.Videojuego.VideojuegoUseCase(unitOfWork);
+            await useCase.RechazarVideojuegoAsync(id, motivo.Trim(), gestorId.Value);
+            TempData["Toast"] = $"«{titulo}» rechazado";
+        }
+        catch (ModelException error)
+        {
+            _logger.LogWarning(error, "Could not reject Videojuego {Id}.", id);
+            TempData["Toast"] = error.InnerException is ModelException regla ? regla.Message : $"No se ha podido rechazar «{titulo}»";
+        }
+
+        return string.Equals(origen, "ficha", StringComparison.OrdinalIgnoreCase)
+            ? RedirectToAction(nameof(Ficha), new { id })
+            : RedirectToAction(nameof(Pendientes), new { q });
+    }
 }

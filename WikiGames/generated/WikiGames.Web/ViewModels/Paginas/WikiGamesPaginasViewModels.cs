@@ -101,3 +101,111 @@ public sealed class ListaDenunciasViewModel
     public EstadoContenido? Estado { get; set; }
     public List<DenunciaViewModel> Denuncias { get; set; } = new();
 }
+
+/// <summary>Página Ficha del videojuego (videojuego.html).</summary>
+public sealed class FichaVideojuegoViewModel
+{
+    public VideojuegoViewModel Videojuego { get; set; } = new();
+    public string? AutorEmail { get; set; }
+    public bool EstaAutenticado { get; set; }
+    public bool TieneMeGusta { get; set; }
+    public bool EsFavorito { get; set; }
+    public bool YaDenunciado { get; set; }
+    public bool EsDueno { get; set; }
+    public bool EsModerador { get; set; }
+    public int? RechazoId { get; set; }
+    public string? RechazoMotivo { get; set; }
+    public DateTime? RechazoFecha { get; set; }
+    public string? RechazoGestor { get; set; }
+}
+
+/// <summary>Edición de un videojuego desde la ficha (autor o moderador).</summary>
+public sealed class EditarVideojuegoViewModel
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "El título es obligatorio.")]
+    [StringLength(120, ErrorMessage = "El título no puede superar los {1} caracteres.")]
+    [Display(Name = "Título")]
+    public string Titulo { get; set; } = string.Empty;
+
+    [Display(Name = "Descripción")]
+    public string? Texto { get; set; }
+
+    [Url(ErrorMessage = "Introduce una URL válida (https://…).")]
+    [Display(Name = "Enlace externo")]
+    public string? Enlace { get; set; }
+
+    [Display(Name = "Imagen")]
+    public IFormFile? Imagen { get; set; }
+
+    [BindNever, ValidateNever]
+    public string? ImagenActual { get; set; }
+
+    public List<int> CategoriaIds { get; set; } = new();
+
+    [BindNever, ValidateNever]
+    public List<CategoriaOpcionViewModel> Categorias { get; set; } = new();
+}
+
+/// <summary>Elemento de la página Videojuegos pendientes (videojuegos-pendientes.html).</summary>
+public sealed class VideojuegoPendienteItemViewModel
+{
+    public VideojuegoViewModel Videojuego { get; set; } = new();
+    public string? AutorEmail { get; set; }
+}
+
+/// <summary>Página Videojuegos pendientes de aprobación (videojuegos-pendientes.html). Moderadores y administradores.</summary>
+public sealed class VideojuegosPendientesViewModel
+{
+    public string? Q { get; set; }
+    public List<VideojuegoPendienteItemViewModel> Videojuegos { get; set; } = new();
+}
+
+/// <summary>Elemento de la página Contenido con Me gusta (me-gusta.html).</summary>
+public sealed class ContenidoMeGustaItemViewModel
+{
+    public int ContenidoId { get; set; }
+    public string Tipo { get; set; } = string.Empty;
+    public string TipoFiltro { get; set; } = string.Empty;
+    public string Titulo { get; set; } = string.Empty;
+    public string? Descripcion { get; set; }
+    public string? AutorNombre { get; set; }
+    public string? AutorEmail { get; set; }
+    public DateTime FechaCreacion { get; set; }
+    public string? Enlace { get; set; }
+    public bool EsVideojuego { get; set; }
+}
+
+/// <summary>Página Contenido con Me gusta (me-gusta.html). Usuario autenticado.</summary>
+public sealed class ContenidoMeGustaViewModel
+{
+    public const string TipoTodos = "todos";
+    public const string TipoVideojuegos = "videojuegos";
+    public const string TipoConversaciones = "conversaciones";
+    public const string TipoComentarios = "comentarios";
+
+    public string Tipo { get; set; } = TipoTodos;
+    public List<ContenidoMeGustaItemViewModel> Elementos { get; set; } = new();
+}
+
+/// <summary>Elemento y detalle de notificación (notificaciones.html / notificacion.html).</summary>
+public sealed class NotificacionItemViewModel
+{
+    public int Id { get; set; }
+    public string Texto { get; set; } = string.Empty;
+    public DateTime Fecha { get; set; }
+    public int? RechazoId { get; set; }
+    public int? DenunciaId { get; set; }
+    public string? ElementoRelacionadoTipo { get; set; }
+    public string? ElementoRelacionadoTitulo { get; set; }
+    public string? ElementoRelacionadoEnlace { get; set; }
+    public string? ElementoRelacionadoIcono { get; set; }
+}
+
+/// <summary>Página Notificaciones (notificaciones.html). Usuario autenticado.</summary>
+public sealed class ListaNotificacionesViewModel
+{
+    public string? Q { get; set; }
+    public List<NotificacionItemViewModel> Notificaciones { get; set; } = new();
+}

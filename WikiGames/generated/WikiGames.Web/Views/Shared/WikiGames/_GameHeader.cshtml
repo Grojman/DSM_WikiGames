@@ -1,5 +1,5 @@
-@* MANUAL FILE. Cabecera del foro de un videojuego, con pestañas Conversaciones / Comentarios. *@
-@* ViewData["Tab"] = "conversaciones" | "comentarios" *@
+@* MANUAL FILE. Cabecera del foro de un videojuego, con pestañas Ficha / Conversaciones / Comentarios. *@
+@* ViewData["Tab"] = "ficha" | "conversaciones" | "comentarios" *@
 @model WikiGames.Web.ViewModels.VideojuegoViewModel
 @{ var tab = ViewData["Tab"] as string; }
 <section class="game-header">
@@ -16,6 +16,7 @@
         </div>
     </div>
     <nav class="tabs" aria-label="Secciones del foro">
+        <a asp-controller="Videojuego" asp-action="Ficha" asp-route-id="@Model.Id" class="@(tab == "ficha" ? "active" : "")">Ficha</a>
         <a asp-controller="Videojuego" asp-action="Conversaciones" asp-route-id="@Model.Id" class="@(tab == "conversaciones" ? "active" : "")">Conversaciones</a>
         <a asp-controller="Videojuego" asp-action="Valoraciones" asp-route-id="@Model.Id" class="@(tab == "comentarios" ? "active" : "")">Comentarios</a>
     </nav>
