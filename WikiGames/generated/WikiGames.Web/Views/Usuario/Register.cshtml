@@ -2,50 +2,37 @@
 @model WikiGames.Web.ViewModels.UsuarioViewModel
 
 @{
+    Layout = "_WikiGamesLayout";
     ViewData["Title"] = "Crear";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-8 col-xl-7">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-body p-4">
-                <span class="badge text-bg-primary-subtle text-primary-emphasis mb-3">Crear</span>
-                <h1 class="h3 mb-1">Usuario</h1>
-                <p class="text-body-secondary mb-0">Completa los campos y guarda los cambios.</p>
-            </div>
-            <form asp-action="Register" method="post">
-                @Html.AntiForgeryToken()
-                <div class="card-body p-4">
-                    <div asp-validation-summary="All" class="alert alert-danger py-2" role="alert"></div>
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Password" class="form-label"></label>
-            <input asp-for="Password" type="password" value="" autocomplete="new-password" required class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="RolUsuario" class="form-label"></label>
-            <select asp-for="RolUsuario" asp-items="Html.GetEnumSelectList<WikiGames.Domain.Enums.Rol>()" class="form-select"></select>
-            <span asp-validation-for="RolUsuario" class="text-danger"></span>
-        </div>
-                </div>
-                <div class="card-footer bg-body p-4 d-flex flex-column flex-sm-row gap-2">
-                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
-                </div>
-            </form>
-        </div>
+<main class="container narrow">
+        <h1 class="page-title">Crear cuenta</h1>
+    <div class="card form-card">
+    <form asp-action="Register" method="post">
+        <br><br><input asp-for="Name" type="text" placeholder="Usuario" class="field" required>
+        <br><br><input asp-for="Email" type="email" placeholder="Email" class="field" required>
+        <br><br><input asp-for="Password" type="password" placeholder="Contraseña" class="field" id="ps1" required><button type="button" onclick="ver('ps1', 'img1')"><img id="img1" src="iconos/visibility.svg" alt=""></button>
+        <br><br><input asp-for="RolUsuario" type="number" placeholder="Rol" class="field" required step="1" min="1" max="3">
+        <br><br><input type="submit">
+    </form>
     </div>
-</div>
+    </main>
+    <script src="js/common.js"></script>
+    <script src="js/data.js"></script>
+    <script>
+        function ver(id , idimg){
+            let ps = document.getElementById(id);
+            let img = document.getElementById(idimg);
+            if (ps.type == "password") {
+                ps.type = "text";
+                img.src = "iconos/visibility_off.svg"
+            }else{
+                ps.type = "password";
+                img.src = "iconos/visibility.svg"
+            }
+        }
+    </script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

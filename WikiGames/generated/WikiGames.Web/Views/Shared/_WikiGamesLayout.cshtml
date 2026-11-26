@@ -58,7 +58,8 @@
     {
     <nav class="bottombar" aria-label="Accesos rápidos">
         <a href="#" class="bb-item @(pagina == "perfil" ? "active" : "")" title="Mi perfil"><span data-icon="user"></span><span>Perfil</span></a>
-        <a asp-controller="Videojuego" asp-action="Nuevo" class="bb-item bb-primary @(pagina == "crear" ? "active" : "")" title="Publicar videojuego"><span data-icon="plus"></span><span>Publicar</span></a>
+        <a asp-controller="Videojuego" asp-action="Nuevo" class="bb-item bb-primary @(pagina == "crear" ? "active" : "")" title="Publicar videojuego"><span data-icon="plus"></span><span>Publicar Videojuego</span></a>
+        <a asp-controller="TemaConversacion" asp-action="Create" class="bb-item bb-primary @(pagina == "crear" ? "active" : "")" title="crear conversacion"><span data-icon="plus"></span><span>Crear conversacion</span></a>
         <a href="#" class="bb-item @(pagina == "favoritos" ? "active" : "")" title="Favoritos"><span data-icon="heart"></span><span>Favoritos</span></a>
     </nav>
     }

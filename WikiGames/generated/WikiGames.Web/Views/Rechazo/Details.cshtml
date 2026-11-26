@@ -2,29 +2,22 @@
 @model WikiGames.Web.ViewModels.RechazoViewModel
 
 @{
+    Layout = "_WikiGamesLayout";
     ViewData["Title"] = "Detalles";
 }
-
+<main class="container narrow">
 <div class="row justify-content-center">
-    <div class="col-xl-9">
+    <div class="class="container narrow"">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-body p-4">
-                <span class="badge text-bg-primary-subtle text-primary-emphasis mb-3">Detalles</span>
-                <h1 class="h3 mb-1">Rechazo</h1>
-                <p class="text-body-secondary mb-0">Review the complete record information.</p>
-            </div>
-            <div class="card-body p-4">
+            <h1 class="page-title">Lo sentimos, tu propuesta ha sido rechazada</h1>
+            <div class="card form-card">
                 <dl class="row mb-0 gy-2">
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Id)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Id)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Fecha)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Fecha)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Motivo)</dt>
             <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Motivo)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.VideojuegoLabel)</dt>
+            <br /><br /><dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.VideojuegoLabel)</dt>
             <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.VideojuegoLabel)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.GestorLabel)</dt>
+            <br /><br /><dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.GestorLabel)</dt>
             <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.GestorLabel)</dd>
+            <br /><dd name="toast" style="text-alaign: right; float: left;">@Html.DisplayFor(model => model.Fecha)</dd>
                 </dl>
 
 
@@ -38,3 +31,7 @@
         </div>
     </div>
 </div>
+</main>
+<nav data-bottombar></nav>
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>

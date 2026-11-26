@@ -102,7 +102,7 @@ public partial class TemaConversacionController : Controller
         try
         {
 
-            var entity = await service.NewAsync(model.Texto, model.FechaCreacion, model.NumeroMeGusta, model.Titulo, model.VideojuegoId.GetValueOrDefault(), model.UsuarioCreadorId.GetValueOrDefault());
+            var entity = await service.NewAsync(model.Texto, DateTime.Now, model.NumeroMeGusta, model.Titulo, model.VideojuegoId.GetValueOrDefault(), model.UsuarioCreadorId.GetValueOrDefault());
             entity.Videojuego = model.VideojuegoId is int referenceVideojuego
                 ? await unitOfWork.VideojuegoRepository.ReadAsync(referenceVideojuego) ?? throw new InvalidOperationException("El registro seleccionado de Videojuego ya no existe.") : null!;
             entity.UsuarioCreador = model.UsuarioCreadorId is int referenceUsuarioCreador

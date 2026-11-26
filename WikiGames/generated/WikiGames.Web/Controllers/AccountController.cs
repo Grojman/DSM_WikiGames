@@ -61,7 +61,7 @@ public sealed class AccountController : Controller
             ? LocalRedirect(model.ReturnUrl!)
             : RedirectToAction("Index", "Home");
     }
-
+   
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
