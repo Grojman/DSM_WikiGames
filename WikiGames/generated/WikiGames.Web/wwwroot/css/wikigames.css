@@ -22,6 +22,13 @@
   --subtitle-font: 'Odibee Sans', sans-serif;
   --interface-font: 'Iceland', sans-serif;
 
+  /* Tamaños de letra (uno por tipo de texto) */
+  --videogame-font-size: 2.75rem;
+  --title-font-size: 2.25rem;
+  --subtitle-font-size: 1.75rem;
+  --user-content-font-size: 1.5rem;
+  --interface-font-size: 1.5rem;
+
   /* 60 % · fondos */
   --bg-color: #393939;
   --bg-scnd-color: #554747;
@@ -150,7 +157,7 @@ textarea.field { height: auto; min-height: 120px; padding: 12px 14px; resize: ve
 /* ---------- Conversaciones ---------- */
 .thread-list { display: grid; gap: 12px; }
 .thread-card { display: block; padding: 18px 20px; }
-.thread-title { font-size: 1.5em; margin-bottom: 6px; } /* requisito: nombre en letra grande */
+.thread-title { font-size: var(--title-font-size); margin-bottom: 6px; } /* requisito: nombre en letra grande */
 .thread-desc { margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
 .thread-meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .thread-meta .avatar { width: 22px; height: 22px; }
@@ -262,24 +269,26 @@ h1, h2, h3, h4, h5, h6, .page-title, .thread-title, strong, b { color: var(--sec
 
 /* ---- Interfaz: todo lo que no sea contenido (botones, inputs, combos, menús…) ---- */
 body, button, input, select, textarea, option, .field, .btn { font-family: var(--interface-font); }
+body { font-size: var(--interface-font-size); }
 button, input, select, textarea { font-size: inherit; }
 
 /* ---- Contenido creado por los usuarios (comentarios, descripciones, mensajes) ---- */
 .review-text, .thread-desc, .game-header-info > p,
-.report-main p.muted { font-family: var(--user-content-font); }
+.report-main p.muted { font-family: var(--user-content-font); font-size: var(--user-content-font-size); }
 
 /* ---- Subtítulos ---- */
 h3, h4, h5, h6, .page-sub,
-.review-text :is(h3, h4, h5, h6), .thread-desc :is(h3, h4, h5, h6) { font-family: var(--subtitle-font); }
+.review-text :is(h3, h4, h5, h6), .thread-desc :is(h3, h4, h5, h6) { font-family: var(--subtitle-font); font-size: var(--subtitle-font-size); }
 
 /* ---- Títulos (aunque los haya escrito un usuario, p. ej. el título de una conversación) ---- */
 h1, h2, .page-title, .thread-title,
-.review-text :is(h1, h2), .thread-desc :is(h1, h2) { font-family: var(--title-font); }
+.review-text :is(h1, h2), .thread-desc :is(h1, h2) { font-family: var(--title-font); font-size: var(--title-font-size); }
 
 /* ---- Nombres de videojuegos (máxima prioridad, solo videojuegos) ---- */
 .game-header-info h1, .game-header-cover .cover-ph, .game-card .cover-ph,
 .cover-ph, .cover-ph span,
 .thread-title a[href^="videojuego.html"], .videogame-font { font-family: var(--videogame-font); }
+.game-header-info h1 { font-size: var(--videogame-font-size); }   /* el resto (portadas, enlaces) hereda su tamaño */
 
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
