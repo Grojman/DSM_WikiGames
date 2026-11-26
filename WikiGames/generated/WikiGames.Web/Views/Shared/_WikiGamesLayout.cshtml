@@ -9,7 +9,8 @@
     // En las páginas de inicio de sesión y registro no se muestran las barras de navegación.
     var controlador = ViewContext.RouteData.Values["controller"] as string;
     var accion = ViewContext.RouteData.Values["action"] as string;
-    var esPaginaAuth = (string.Equals(controlador, "Account", StringComparison.OrdinalIgnoreCase) && string.Equals(accion, "Login", StringComparison.OrdinalIgnoreCase))
+    var esPaginaAuth = ((string.Equals(controlador, "Account", StringComparison.OrdinalIgnoreCase) || string.Equals(controlador, "Login", StringComparison.OrdinalIgnoreCase))
+                        && string.Equals(accion, "Login", StringComparison.OrdinalIgnoreCase))
                     || (string.Equals(controlador, "Usuario", StringComparison.OrdinalIgnoreCase) && string.Equals(accion, "Register", StringComparison.OrdinalIgnoreCase));
 }
 <!doctype html>
