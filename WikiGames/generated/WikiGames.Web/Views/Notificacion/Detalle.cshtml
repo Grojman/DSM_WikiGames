@@ -58,7 +58,7 @@
                 <a class="btn btn-primary" asp-controller="Rechazo" asp-action="Details" asp-route-id="@rechazoId">Ver detalle del rechazo</a>
             }
             <form class="inline-form" method="post" asp-controller="Notificacion" asp-action="Eliminar" asp-route-id="@Model.Id"
-                  data-confirm="¿Eliminar esta notificación?">
+                  data-confirm-title="Eliminar notificación" data-confirm-ok="Eliminar" data-confirm="¿Eliminar esta notificación?">
                 <button type="submit" class="btn btn-ghost btn-danger">
                     <span data-icon="trash"></span>Eliminar notificación
                 </button>

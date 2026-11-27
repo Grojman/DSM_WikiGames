@@ -95,6 +95,7 @@
                 </form>
 
                 <form class="inline-form" method="post" asp-controller="Videojuego" asp-action="Denunciar" asp-route-id="@v.Id"
+                      data-confirm-title="Denunciar publicación" data-confirm-ok="Enviar denuncia" data-confirm-icon="flag"
                       data-confirm="¿Enviar una denuncia sobre «@v.Titulo» para que la revise un moderador?">
                     <button type="submit" class="btn btn-ghost" disabled="@Model.YaDenunciado" title="Denunciar publicación">
                         <span data-icon="flag"></span>
@@ -123,6 +124,7 @@
                         <span data-icon="settings"></span>Editar videojuego
                     </a>
                     <form class="inline-form" method="post" asp-controller="Videojuego" asp-action="EliminarFicha" asp-route-id="@v.Id"
+                          data-confirm-title="Eliminar videojuego" data-confirm-ok="Eliminar"
                           data-confirm="¿Eliminar tu videojuego «@v.Titulo»? Esta acción no se puede deshacer.">
                         <button type="submit" class="btn btn-ghost btn-danger">
                             <span data-icon="trash"></span>Eliminar videojuego
@@ -163,6 +165,7 @@
                         </button>
                     }
                     <form class="inline-form" method="post" asp-controller="Videojuego" asp-action="EliminarFicha" asp-route-id="@v.Id"
+                          data-confirm-title="Eliminar por infracción" data-confirm-ok="Eliminar"
                           data-confirm="¿Eliminar «@v.Titulo» por infracción? Esta acción no se puede deshacer.">
                         <button type="submit" class="btn btn-ghost btn-danger">
                             <span data-icon="trash"></span>Eliminar por infracción

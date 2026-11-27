@@ -362,3 +362,20 @@ h1, h2, .page-title, .thread-title,
 .comment-reply-box[open] > summary { border-color: var(--main-scnd-color); color: var(--main-scnd-color); }
 .comment-reply-form { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 8px; }
 .comment-likes { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-color); }
+
+/* ---------- Modal de confirmación (sustituye a window.confirm) ---------- */
+.modal {
+  width: min(460px, calc(100% - 32px)); padding: 0; margin: auto;
+  background: var(--bg-scnd-color); color: var(--primary-color);
+  border: 1px solid var(--border-color); border-top: 3px solid var(--main-color);
+}
+.modal[data-variant="primary"] { border-top-color: var(--main-scnd-color); }
+.modal::backdrop { background: color-mix(in srgb, var(--bg-color) 75%, transparent); backdrop-filter: blur(2px); }
+.modal[open] { animation: modal-in .14s ease-out; }
+@keyframes modal-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.modal-body { padding: 22px 24px; }
+.modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.modal-icon { width: 40px; height: 40px; flex: none; display: inline-grid; place-items: center; border: 1px solid var(--main-scnd-color); color: var(--main-scnd-color); background: var(--bg-thrd-color); }
+.modal-msg { margin: 0 0 22px; overflow-wrap: anywhere; font-family: var(--user-content-font); font-size: calc(var(--user-content-font-size) * .8); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 560px) { .modal-actions .btn { flex: 1; } }

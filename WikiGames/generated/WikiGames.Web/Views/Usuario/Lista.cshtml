@@ -51,6 +51,7 @@
                 }
                 @* UsuarioUseCase.destroy *@
                 <form class="inline-form" method="post" asp-controller="Usuario" asp-action="Eliminar" asp-route-id="@u.Id" asp-route-q="@Model.Q"
+                      data-confirm-title="Eliminar usuario" data-confirm-ok="Eliminar"
                       data-confirm="¿Eliminar al usuario «@u.Name»? Esta acción no se puede deshacer.">
                     <button class="icon-btn btn-danger" type="submit" data-del="@u.Id" disabled="@fijo" title="Eliminar usuario" aria-label="Eliminar a @u.Name"><span data-icon="trash"></span></button>
                 </form>

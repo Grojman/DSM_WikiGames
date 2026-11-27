@@ -60,7 +60,53 @@
     try { return JSON.parse(el.textContent); } catch { return fallback; }
   }
 
-  window.UI = { ICONS, STAR, esc, toast, paintIcons, readJson };
+  /**
+   * Modal de confirmación con el estilo de la web (sustituye a window.confirm).
+   * Devuelve una Promise<boolean>. Esc o clic fuera = cancelar.
+   */
+  function confirmModal({ title = "Confirmar acción", message = "", ok = "Confirmar", cancel = "Cancelar", variant = "danger", icon } = {}) {
+    let dlg = document.getElementById("wg-confirm");
+    if (!dlg) {
+      dlg = document.createElement("dialog");
+      dlg.id = "wg-confirm";
+      dlg.className = "modal card";
+      dlg.setAttribute("aria-labelledby", "wg-confirm-title");
+      dlg.setAttribute("aria-describedby", "wg-confirm-msg");
+      dlg.innerHTML = `
+        <form method="dialog" class="modal-body">
+          <div class="modal-head">
+            <span class="modal-icon" aria-hidden="true"></span>
+            <h3 id="wg-confirm-title"></h3>
+          </div>
+          <p id="wg-confirm-msg" class="modal-msg"></p>
+          <div class="modal-actions">
+            <button type="submit" value="cancel" class="btn btn-ghost" data-role="cancel"></button>
+            <button type="submit" value="ok" class="btn" data-role="ok"></button>
+          </div>
+        </form>`;
+      // Clic en el fondo (fuera de la caja) cierra como cancelar.
+      dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close("cancel"); });
+      document.body.appendChild(dlg);
+    }
+    const iconName = icon || (variant === "danger" ? "trash" : "check");
+    dlg.querySelector(".modal-icon").innerHTML = ICONS[iconName] || "";
+    dlg.querySelector("#wg-confirm-title").textContent = title;
+    dlg.querySelector("#wg-confirm-msg").textContent = message;
+    dlg.querySelector('[data-role="cancel"]').textContent = cancel;
+    const okBtn = dlg.querySelector('[data-role="ok"]');
+    okBtn.textContent = ok;
+    okBtn.className = "btn " + (variant === "danger" ? "btn-danger" : "btn-primary");
+    dlg.dataset.variant = variant;
+
+    return new Promise((resolve) => {
+      dlg.returnValue = "cancel";
+      dlg.addEventListener("close", () => resolve(dlg.returnValue === "ok"), { once: true });
+      dlg.showModal();
+      dlg.querySelector('[data-role="cancel"]').focus();
+    });
+  }
+
+  window.UI = { ICONS, STAR, esc, toast, paintIcons, readJson, confirm: confirmModal };
 
   document.addEventListener("DOMContentLoaded", () => {
     paintIcons();
@@ -72,9 +118,25 @@
     document.querySelectorAll("[data-autosubmit]").forEach((el) =>
       el.addEventListener("change", () => el.form && el.form.requestSubmit()));
 
-    // <form data-confirm="..."> pide confirmación antes de enviarse.
+    // <form data-confirm="..."> pide confirmación (modal propio) antes de enviarse.
+    // Opcionales: data-confirm-title, data-confirm-ok (texto del botón), data-confirm-variant="danger|primary".
     document.querySelectorAll("form[data-confirm]").forEach((f) =>
-      f.addEventListener("submit", (e) => { if (!confirm(f.dataset.confirm)) e.preventDefault(); }));
+      f.addEventListener("submit", (e) => {
+        if (f._confirmed) { f._confirmed = false; return; }
+        e.preventDefault();
+        const submitter = e.submitter;
+        confirmModal({
+          title: f.dataset.confirmTitle || "Confirmar acción",
+          message: f.dataset.confirm,
+          ok: f.dataset.confirmOk || "Confirmar",
+          variant: f.dataset.confirmVariant || "danger",
+          icon: f.dataset.confirmIcon,
+        }).then((ok) => {
+          if (!ok) return;
+          f._confirmed = true;
+          f.requestSubmit(submitter && submitter.form === f ? submitter : undefined);
+        });
+      }));
 
     // Tarjetas clicables (denuncias): navegan a data-href salvo si se pulsa un control.
     document.querySelectorAll("[data-href]").forEach((card) => {
