@@ -350,3 +350,15 @@ h1, h2, .page-title, .thread-title,
   .report-card.list-card { grid-template-columns: 1fr; }
   .pending-reject { flex-direction: column; align-items: stretch; }
 }
+
+/* Página del tema de conversación: árbol de comentarios con respuestas tabuladas */
+.comment-tree { display: flex; flex-direction: column; gap: 10px; }
+.comment-item { padding: 12px 14px; border: 1px solid var(--border-color); background: var(--bg-scnd-color); }
+.comment-reply { border-left: 3px solid var(--main-scnd-color); }
+.comment-actions { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+.comment-reply-box { flex-basis: 100%; }
+.comment-reply-box > summary { list-style: none; display: inline-flex; align-items: center; cursor: pointer; }
+.comment-reply-box > summary::-webkit-details-marker { display: none; }
+.comment-reply-box[open] > summary { border-color: var(--main-scnd-color); color: var(--main-scnd-color); }
+.comment-reply-form { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 8px; }
+.comment-likes { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-color); }

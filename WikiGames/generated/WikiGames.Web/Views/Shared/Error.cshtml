@@ -1,21 +1,20 @@
 @model ErrorViewModel
 @{
+    Layout = "_WikiGamesLayout";
     ViewData["Title"] = "Error";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-7">
-        <div class="card border-danger-subtle shadow-sm">
-            <div class="card-body p-4 p-md-5 text-center">
-                <span class="badge text-bg-danger mb-3">Error</span>
-                <h1 class="h2">Se ha producido un error</h1>
-                <p class="text-body-secondary">No se ha podido completar la petición. Inténtalo de nuevo.</p>
-                @if (Model.ShowRequestId)
-                {
-                    <p class="small mb-4"><strong>Identificador de petición:</strong> <code>@Model.RequestId</code></p>
-                }
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al inicio</a>
-            </div>
+<main class="container narrow">
+    <h1 class="page-title">Se ha producido un error</h1>
+    <div class="card form-card center">
+        <span class="avatar lg" style="margin: 0 auto 16px;"><span data-icon="flag"></span></span>
+        <p>No se ha podido completar la petición. Inténtalo de nuevo.</p>
+        @if (Model.ShowRequestId)
+        {
+            <p class="hint">Identificador de petición: <code>@Model.RequestId</code></p>
+        }
+        <div class="form-actions" style="justify-content: center;">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al inicio</a>
         </div>
     </div>
-</div>
+</main>

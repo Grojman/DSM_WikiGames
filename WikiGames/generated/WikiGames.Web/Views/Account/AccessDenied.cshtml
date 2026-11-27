@@ -1,14 +1,16 @@
 @* HARIA-WEB GENERATED sha256:9baba7bbb87a5c908636f1c2d1a854a12cfb6effc95d966c5a2b04e3f81e0f89 *@
-@{ ViewData["Title"] = "Acceso denegado"; }
-<div class="row justify-content-center">
-    <div class="col-lg-7">
-        <div class="card border-warning-subtle shadow-sm text-center">
-            <div class="card-body p-4 p-md-5">
-                <span class="badge text-bg-warning mb-3">Restringido</span>
-                <h1 class="h2">Acceso denegado</h1>
-                <p class="text-body-secondary">No tienes permiso para acceder a esta página.</p>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al inicio</a>
-            </div>
+@{
+    Layout = "_WikiGamesLayout";
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<main class="container narrow">
+    <h1 class="page-title">Acceso denegado</h1>
+    <div class="card form-card center">
+        <span class="avatar lg" style="margin: 0 auto 16px;"><span data-icon="x"></span></span>
+        <p>No tienes permiso para acceder a esta página.</p>
+        <div class="form-actions" style="justify-content: center;">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al inicio</a>
         </div>
     </div>
-</div>
+</main>

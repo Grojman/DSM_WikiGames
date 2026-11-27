@@ -57,11 +57,6 @@ public sealed class HomeController : Controller
         });
     }
 
-    /// <summary>Portada generada por HARIA (enlaces a los listados CRUD de cada entidad).</summary>
-    public IActionResult Entidades() => View("Index");
-
-    public IActionResult Privacy() => View();
-
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() =>
         View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

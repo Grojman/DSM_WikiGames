@@ -52,6 +52,12 @@ public sealed class ComentarioViewModel : IValidatableObject
 
     /*PROTECTED REGION ID(ComentarioViewModel_manual) ENABLED START*/
     // Add custom properties and validation here.
+    // Página del tema: profundidad en el árbol de respuestas (0 = comentario raíz). Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public int Nivel { get; set; }
+    // Página del tema: indica si el usuario actual ya ha dado Me gusta. Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public bool TieneMeGusta { get; set; }
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;

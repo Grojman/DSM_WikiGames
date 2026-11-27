@@ -61,10 +61,11 @@ public async Task<IActionResult> Details(int id)
 
     var comentarios = await unitOfWork.ComentarioRepository.ReadAllAsync();
 
-    model.Comentarios = comentarios
-        .Where(c => c.Tema != null && c.Tema.Id == id)
-        .Select(ComentarioAssembler.ToViewModel)
-        .ToList();
+    var usuarioId = WikiGames.Web.Utils.Paginas.WikiGamesPaginas.UsuarioActualId(User);
+    model.EstaAutenticado = usuarioId is not null;
+    model.Comentarios = ArbolComentarios(
+        comentarios.Where(c => c.Tema != null && c.Tema.Id == id),
+        usuarioId);
 
     return View(model);
 }

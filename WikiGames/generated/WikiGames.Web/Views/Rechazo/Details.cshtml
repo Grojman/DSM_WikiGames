@@ -1,37 +1,48 @@
 @* HARIA-WEB GENERATED sha256:d395686df3230fe3e7a6964bf78fd41362f1e7b41375c3f89c89f741c10cb1d9 *@
 @model WikiGames.Web.ViewModels.RechazoViewModel
-
 @{
     Layout = "_WikiGamesLayout";
-    ViewData["Title"] = "Detalles";
+    ViewData["Title"] = "Detalle del rechazo";
 }
+
 <main class="container narrow">
-<div class="row justify-content-center">
-    <div class="class="container narrow"">
-        <div class="card border-0 shadow-sm">
-            <h1 class="page-title">Lo sentimos, tu propuesta ha sido rechazada</h1>
-            <div class="card form-card">
-                <dl class="row mb-0 gy-2">
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Motivo)</dd>
-            <br /><br /><dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.VideojuegoLabel)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.VideojuegoLabel)</dd>
-            <br /><br /><dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.GestorLabel)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.GestorLabel)</dd>
-            <br /><dd name="toast" style="text-alaign: right; float: left;">@Html.DisplayFor(model => model.Fecha)</dd>
-                </dl>
+    <a class="back-link" asp-controller="Notificacion" asp-action="Lista"><span data-icon="back"></span>Volver a notificaciones</a>
 
+    <h1 class="page-title">Lo sentimos, tu propuesta ha sido rechazada</h1>
 
-            </div>
-            <div class="card-footer bg-body p-4">
-                <div class="d-flex flex-column flex-sm-row gap-2">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
-                <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
-            </div>
-            </div>
+    <article class="card form-card" aria-label="Detalle del rechazo">
+        <div class="form-group">
+            <span class="label">Motivo</span>
+            <p class="review-text">@Model.Motivo</p>
         </div>
-    </div>
-</div>
+
+        @if (!string.IsNullOrEmpty(Model.VideojuegoLabel))
+        {
+            <div class="form-group">
+                <span class="label">Videojuego</span>
+                @if (Model.VideojuegoId is int videojuegoId)
+                {
+                    <a class="chip" asp-controller="Videojuego" asp-action="Ficha" asp-route-id="@videojuegoId"><span data-icon="gamepad"></span><span>@Model.VideojuegoLabel</span></a>
+                }
+                else
+                {
+                    <span class="chip"><span data-icon="gamepad"></span><span>@Model.VideojuegoLabel</span></span>
+                }
+            </div>
+        }
+
+        <div class="form-group">
+            <span class="label">Revisado por</span>
+            <p class="review-text">@(Model.GestorLabel ?? "Moderación")</p>
+            <p class="hint">El <time datetime="@Model.Fecha.ToString("o")">@Model.Fecha.ToString("dd 'de' MMMM 'de' yyyy")</time></p>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn" asp-controller="Notificacion" asp-action="Lista">Volver</a>
+            @if (Model.VideojuegoId is int idJuego)
+            {
+                <a class="btn btn-primary" asp-controller="Videojuego" asp-action="Ficha" asp-route-id="@idJuego">Ver videojuego</a>
+            }
+        </div>
+    </article>
 </main>
-<nav data-bottombar></nav>
-<script src="js/common.js"></script>
-<script src="js/data.js"></script>

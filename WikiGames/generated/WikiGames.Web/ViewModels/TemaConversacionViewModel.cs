@@ -50,6 +50,9 @@ public sealed class TemaConversacionViewModel : IValidatableObject
     // Página Conversaciones: número de comentarios (respuestas) del tema. Solo lectura.
     [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
     public int NumeroRespuestas { get; set; }
+    // Página del tema: hay usuario autenticado (puede responder y dar Me gusta). Solo lectura.
+    [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+    public bool EstaAutenticado { get; set; }
     private IEnumerable<ValidationResult> ValidateAdditional(ValidationContext validationContext)
     {
         yield break;

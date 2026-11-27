@@ -1,61 +1,85 @@
 @* HARIA-WEB GENERATED sha256:17aa53bb6ba6d440bf496e056cc10432da138fcbc3e01de6d746271566ba749d *@
 @model WikiGames.Web.ViewModels.TemaConversacionViewModel
-
+@using WikiGames.Web.Utils.Paginas
 @{
-    ViewData["Title"] = "Detalles";
     Layout = "_WikiGamesLayout";
+    ViewData["Title"] = Model.Titulo;
+    ViewData["Page"] = "conversaciones";
+    var esAutor = WikiGamesPaginas.UsuarioActualId(User) is int uid && uid == Model.UsuarioCreadorId;
 }
 
-<div class="row justify-content-center">
-    <div class="col-xl-9">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-body p-4">
-                <span class="badge text-bg-primary-subtle text-primary-emphasis mb-3">Detalles</span>
-                <h1 class="h3 mb-1">TemaConversacion</h1>
-                <p class="text-body-secondary mb-0">Review the complete record information.</p>
-            </div>
-          
-            <div class="card-body p-4">
-                <dl class="row mb-0 gy-2">
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Titulo)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Titulo)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Id)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Id)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Texto)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.Texto)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.FechaCreacion)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.NumeroMeGusta)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.NumeroMeGusta)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.VideojuegoLabel)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.VideojuegoLabel)</dd>
-            <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.UsuarioCreadorLabel)</dt>
-            <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.UsuarioCreadorLabel)</dd>
-                </dl>
-            <div class="mt-4 border-top pt-4">
-    <h3 class="h5 mb-3">
-        Comentarios del tema (@Model.Comentarios.Count)
-    </h3>
+<main class="container narrow">
+    @if (Model.VideojuegoId is int videojuegoId)
+    {
+        <a class="back-link" asp-controller="Videojuego" asp-action="Conversaciones" asp-route-id="@videojuegoId" asp-fragment="tema-@Model.Id"><span data-icon="back"></span>Volver a las conversaciones</a>
+    }
+
+    <article class="card form-card" aria-label="Tema de conversación">
+        <h1 class="thread-title">@Model.Titulo</h1>
+        <div class="thread-meta">
+            <partial name="WikiGames/_Avatar" model="Model.UsuarioCreadorLabel" /><span>@(Model.UsuarioCreadorLabel ?? "usuario eliminado")</span>
+            <span aria-hidden="true">·</span>
+            <time datetime="@Model.FechaCreacion.ToString("o")">@Model.FechaCreacion.ToString("dd MMM yyyy")</time>
+            @if (!string.IsNullOrEmpty(Model.VideojuegoLabel))
+            {
+                <span aria-hidden="true">·</span>
+                <span class="videogame-font">@Model.VideojuegoLabel</span>
+            }
+        </div>
+        <p class="review-text" style="margin-top: 16px;">@Model.Texto</p>
+
+        <div class="form-actions">
+            <span class="comment-likes"><span data-icon="heart"></span> @Model.NumeroMeGusta Me gusta</span>
+            @if (esAutor)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm">Editar</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-ghost btn-danger"><span data-icon="trash"></span>Eliminar</a>
+            }
+        </div>
+    </article>
+
+    <h2 class="page-title" style="margin-top: 32px;">Comentarios (@Model.Comentarios.Count)</h2>
 
     @if (Model.Comentarios.Any())
     {
-        <div class="list-group">
+        <div class="comment-tree">
             @foreach (var comentario in Model.Comentarios)
             {
-                <div class="list-group-item">
-                    <p class="mb-2">@comentario.Texto</p>
+                <div class="card comment-item@(comentario.Nivel > 0 ? " comment-reply" : "")"
+                     id="comentario-@comentario.Id"
+                     style="margin-left: @(Math.Min(comentario.Nivel, 6) * 32)px">
+                    <p class="review-text">@comentario.Texto</p>
 
-                    <small class="text-body-secondary">
-                        @comentario.FechaCreacion
-                    </small>
+                    <div class="thread-meta">
+                        <partial name="WikiGames/_Avatar" model="comentario.UsuarioCreadorLabel" /><span>@(comentario.UsuarioCreadorLabel ?? "usuario eliminado")</span>
+                        <span aria-hidden="true">·</span>
+                        <time datetime="@comentario.FechaCreacion.ToString("o")">@comentario.FechaCreacion.ToString("dd MMM yyyy HH:mm")</time>
+                    </div>
 
-                    <div class="mt-2">
-                        <a asp-controller="Comentario"
-                           asp-action="Details"
-                           asp-route-id="@comentario.Id"
-                           class="btn btn-sm btn-outline-primary">
-                            Ver comentario
-                        </a>
+                    <div class="comment-actions">
+                        @if (Model.EstaAutenticado)
+                        {
+                            <form class="inline-form" method="post" asp-action="AlternarMeGustaComentario" asp-route-id="@Model.Id" asp-route-comentarioId="@comentario.Id">
+                                <button type="submit" class="btn btn-sm @(comentario.TieneMeGusta ? "btn-active" : "")"
+                                        title="@(comentario.TieneMeGusta ? "Quitar me gusta" : "Dar me gusta")">
+                                    <span data-icon="heart"></span>
+                                    <span>@comentario.NumeroMeGusta Me gusta</span>
+                                </button>
+                            </form>
+
+                            <details class="comment-reply-box">
+                                <summary class="btn btn-sm">Responder</summary>
+                                <form method="post" asp-action="ResponderComentario" asp-route-id="@Model.Id" asp-route-comentarioId="@comentario.Id" class="comment-reply-form">
+                                    <textarea name="texto" class="field" rows="3" required maxlength="2000"
+                                              placeholder="Escribe tu respuesta..." aria-label="Respuesta al comentario"></textarea>
+                                    <button type="submit" class="btn btn-sm">Enviar respuesta</button>
+                                </form>
+                            </details>
+                        }
+                        else
+                        {
+                            <span class="comment-likes"><span data-icon="heart"></span> @comentario.NumeroMeGusta Me gusta</span>
+                        }
                     </div>
                 </div>
             }
@@ -63,19 +87,6 @@
     }
     else
     {
-        <p class="text-body-secondary">
-            Todavía no hay comentarios en este tema.
-        </p>
+        <div class="empty">Todavía no hay comentarios en este tema.</div>
     }
-</div>
-
-            </div>
-            <div class="card-footer bg-body p-4">
-                <div class="d-flex flex-column flex-sm-row gap-2">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
-                <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
-            </div>
-            </div>
-        </div>
-    </div>
-</div>
+</main>
