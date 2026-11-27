@@ -8,6 +8,8 @@ public sealed class TemaConversacionViewModel : IValidatableObject
     [Required(ErrorMessage = "Debes indicar {0}.")]
     public string Titulo { get; set; } = string.Empty;
 
+    public List<ComentarioViewModel> Comentarios { get; set; } = new();
+
     [Key]
     public int Id { get; set; }
 

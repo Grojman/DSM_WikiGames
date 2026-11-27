@@ -11,6 +11,8 @@ public sealed class ComentarioViewModel : IValidatableObject
     [Required(ErrorMessage = "Debes indicar {0}.")]
     public string Texto { get; set; } = string.Empty;
 
+    public ComentarioViewModel? ComentarioAsociado { get; set; }
+
     [DataType(DataType.Date)]
     public DateTime FechaCreacion { get; set; }
 

@@ -47,15 +47,26 @@ public partial class ComentarioController : Controller
     [HttpGet]
     /*PROTECTED REGION ID(ComentarioController_Details_GET_attributes) START*/
     /*PROTECTED REGION END*/
-    public async Task<IActionResult> Details(int id)
-    {
-    /*PROTECTED REGION ID(ComentarioController_Details_GET_body) START*/
+    [HttpGet]
+public async Task<IActionResult> Details(int id)
+{
+    var entity = await _comentarioService.ReadOIDComentarioDefaultAsync(id);
 
-        var entity = await _comentarioService.ReadOIDAsync(id);
-        if (entity is null) return NotFound();
-        return View(ComentarioAssembler.ToViewModel(entity));
-    /*PROTECTED REGION END*/
+    if (entity == null)
+        return NotFound();
+
+    var model = ComentarioAssembler.ToViewModel(entity);
+
+    if (entity.ComentarioAsociado != null)
+    {
+        model.ComentarioAsociado =
+            ComentarioAssembler.ToViewModel(entity.ComentarioAsociado);
     }
+
+    return View(model);
+}
+
+    
 
     [HttpGet]
     /*PROTECTED REGION ID(ComentarioController_Create_GET_attributes) START*/

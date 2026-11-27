@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Detalles";
+    Layout = "_WikiGamesLayout";
 }
 
 <div class="row justify-content-center">
@@ -13,6 +14,7 @@
                 <h1 class="h3 mb-1">TemaConversacion</h1>
                 <p class="text-body-secondary mb-0">Review the complete record information.</p>
             </div>
+          
             <div class="card-body p-4">
                 <dl class="row mb-0 gy-2">
             <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.Titulo)</dt>
@@ -30,7 +32,42 @@
             <dt class="col-sm-4 col-lg-3 text-body-secondary">@Html.DisplayNameFor(model => model.UsuarioCreadorLabel)</dt>
             <dd class="col-sm-8 col-lg-9">@Html.DisplayFor(model => model.UsuarioCreadorLabel)</dd>
                 </dl>
+            <div class="mt-4 border-top pt-4">
+    <h3 class="h5 mb-3">
+        Comentarios del tema (@Model.Comentarios.Count)
+    </h3>
 
+    @if (Model.Comentarios.Any())
+    {
+        <div class="list-group">
+            @foreach (var comentario in Model.Comentarios)
+            {
+                <div class="list-group-item">
+                    <p class="mb-2">@comentario.Texto</p>
+
+                    <small class="text-body-secondary">
+                        @comentario.FechaCreacion
+                    </small>
+
+                    <div class="mt-2">
+                        <a asp-controller="Comentario"
+                           asp-action="Details"
+                           asp-route-id="@comentario.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            Ver comentario
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-body-secondary">
+            Todavía no hay comentarios en este tema.
+        </p>
+    }
+</div>
 
             </div>
             <div class="card-footer bg-body p-4">

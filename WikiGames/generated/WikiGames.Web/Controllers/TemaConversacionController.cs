@@ -47,15 +47,27 @@ public partial class TemaConversacionController : Controller
     [HttpGet]
     /*PROTECTED REGION ID(TemaConversacionController_Details_GET_attributes) START*/
     /*PROTECTED REGION END*/
-    public async Task<IActionResult> Details(int id)
-    {
-    /*PROTECTED REGION ID(TemaConversacionController_Details_GET_body) START*/
+[HttpGet]
+public async Task<IActionResult> Details(int id)
+{
+    var entity = await _temaConversacionService.ReadOIDAsync(id);
 
-        var entity = await _temaConversacionService.ReadOIDAsync(id);
-        if (entity is null) return NotFound();
-        return View(TemaConversacionAssembler.ToViewModel(entity));
-    /*PROTECTED REGION END*/
-    }
+    if (entity is null)
+        return NotFound();
+
+    var model = TemaConversacionAssembler.ToViewModel(entity);
+
+    await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+
+    var comentarios = await unitOfWork.ComentarioRepository.ReadAllAsync();
+
+    model.Comentarios = comentarios
+        .Where(c => c.Tema != null && c.Tema.Id == id)
+        .Select(ComentarioAssembler.ToViewModel)
+        .ToList();
+
+    return View(model);
+}
 
     [HttpGet]
     /*PROTECTED REGION ID(TemaConversacionController_Create_GET_attributes) START*/

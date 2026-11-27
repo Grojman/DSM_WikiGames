@@ -18,7 +18,7 @@
         }
         @foreach (var t in Model.Temas)
         {
-            <a class="card thread-card" id="tema-@t.Id" href="#tema-@t.Id">
+            <a class="card thread-card" id="tema-@t.Id" href="../../TemaConversacion/Details/@t.Id">
                 <h3 class="thread-title">@t.Titulo</h3>
                 <p class="thread-desc">@t.Texto</p>
                 <div class="thread-meta">
