@@ -209,3 +209,27 @@ public sealed class ListaNotificacionesViewModel
     public string? Q { get; set; }
     public List<NotificacionItemViewModel> Notificaciones { get; set; } = new();
 }
+
+/// <summary>
+/// Página Ajustes. El backend (Usuario.modify) solo expone como configuración propia del
+/// usuario la contraseña, así que la página solo permite cambiarla.
+/// </summary>
+public sealed class AjustesViewModel
+{
+    [Required(ErrorMessage = "Indica tu contraseña actual.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "Contraseña actual")]
+    public string PasswordActual { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Indica la nueva contraseña.")]
+    [StringLength(128, MinimumLength = 4, ErrorMessage = "La nueva contraseña debe tener entre {2} y {1} caracteres.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "Nueva contraseña")]
+    public string PasswordNueva { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Repite la nueva contraseña.")]
+    [Compare(nameof(PasswordNueva), ErrorMessage = "Las contraseñas no coinciden.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "Repetir nueva contraseña")]
+    public string PasswordConfirmacion { get; set; } = string.Empty;
+}

@@ -1,4 +1,4 @@
-// HARIA-WEB MVC managed manual-controller
+﻿// HARIA-WEB MVC managed manual-controller
 /*PROTECTED REGION ID(UsuarioController_manual_usings) ENABLED START*/
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -200,5 +200,55 @@ public partial class UsuarioController
 
         TempData["Toast"] = $"Usuario «{nombre}» eliminado";
         return RedirectToAction(nameof(Lista), new { q });
+    }
+
+    // =====================================================================
+    // Página WikiGames "Ajustes". Usuario autenticado: cambia su propia contraseña.
+    // Acciones enteramente manuales: HARIA las conserva al regenerar.
+    // =====================================================================
+
+    [HttpGet]
+    public IActionResult Ajustes()
+    {
+        if (WikiGamesPaginas.UsuarioActualId(User) is null) return Challenge();
+        return View(new AjustesViewModel());
+    }
+
+    /// <summary>Cambia la contraseña del usuario actual (Usuario.modify) tras verificar la actual.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Ajustes(AjustesViewModel model)
+    {
+        var usuarioId = WikiGamesPaginas.UsuarioActualId(User);
+        if (usuarioId is null) return Challenge();
+
+        await using var unitOfWork = _useCaseUnitOfWorkFactory.Create();
+        var entity = await unitOfWork.UsuarioRepository.ReadAsync(usuarioId.Value);
+        if (entity is null) return Challenge();
+
+        if (ModelState.IsValid && !unitOfWork.PasswordHasher.VerifyPassword(entity.Password, model.PasswordActual))
+            ModelState.AddModelError(nameof(model.PasswordActual), "La contraseña actual no es correcta.");
+        if (ModelState.IsValid && unitOfWork.PasswordHasher.VerifyPassword(entity.Password, model.PasswordNueva))
+            ModelState.AddModelError(nameof(model.PasswordNueva), "La nueva contraseña debe ser distinta de la actual.");
+        if (!ModelState.IsValid) return View(model); // los <input type="password"> nunca reenvían su valor
+
+        try
+        {
+            await unitOfWork.BeginTransactionAsync("MVC.Usuario.Ajustes");
+            // Se hashea aquí para que un texto con forma de hash nunca se guarde tal cual.
+            await new UsuarioService(unitOfWork).ModifyAsync(entity.Id, entity.Name, entity.Email,
+                unitOfWork.PasswordHasher.HashPassword(model.PasswordNueva), entity.RolUsuario);
+            await unitOfWork.CommitAsync();
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            await unitOfWork.RollbackAsync();
+            _logger.LogError(error, "Could not change the password of Usuario {Id}.", entity.Id);
+            ModelState.AddModelError(string.Empty, "No se ha podido cambiar la contraseña. Inténtalo de nuevo.");
+            return View(model); // los <input type="password"> nunca reenvían su valor
+        }
+
+        TempData["Toast"] = "Contraseña actualizada";
+        return RedirectToAction(nameof(Ajustes));
     }
 }
